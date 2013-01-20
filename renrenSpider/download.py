@@ -13,13 +13,15 @@ urls={
 	'status':'http://status.renren.com/status?curpage={}&id={}&__view=async-html',
 	'friendList':"http://friend.renren.com/GetFriendList.do?curpage={}&id={}",
 	'profile_info':"http://www.renren.com/{}/profile?v=info_ajax",
-	'login':"http://www.renren.com/PLogin.do"}
+	'login':"http://www.renren.com/PLogin.do",
+	'homepage':"http://www.renren.com/{}/profile"}
 
 class download:
 	itemReg={
 		'status':r'id="status-.+?ilike_icon',
 		'friendList':re.compile(r'<dd><a\s+href=\"http://www.renren.com/profile.do\?id=\d+\">.+?<\/a>'),
-		'profile_info':re.compile(r'<dl\sclass="info">.*?</dl>',re.DOTALL)}
+		'profile_info':re.compile(r'<dl\sclass="info">.*?</dl>',re.DOTALL),
+		'homepage':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL)}
 
 	def __init__(self,user='yyttrr3242342@163.com',passwd=None):
 		if passwd is None:
@@ -58,6 +60,12 @@ class download:
 			#parse
 			items_curpage=self.itemReg[pageStyle].findall(html_content)
 			return items_curpage,'success'
+
+	def homepage(self,renrenId):
+		pageStyle='homepage'
+		html_content,time=self.onePage(urls[pageStyle].format(renrenId))
+		#print('{},{}'.format(renrenId,html_content[0:50]))
+		#TODO:deal with parse
 
 	def onePage(self,url):
 		startTime=time.time()
