@@ -12,13 +12,15 @@ timeout=3
 urls={
 	'status':'http://status.renren.com/status?curpage={}&id={}&__view=async-html',
 	'friendList':"http://friend.renren.com/GetFriendList.do?curpage={}&id={}",
-	'profileInfo':"http://www.renren.com/{}/profile?v=info_ajax",
+	'profile_info':"http://www.renren.com/{}/profile?v=info_ajax",
 	'login':"http://www.renren.com/PLogin.do"}
 
 class download:
 	itemReg={
 		'status':r'id="status-.+?ilike_icon',
-		'friendList':re.compile(r'<dd><a\s+href=\"http://www.renren.com/profile.do\?id=\d+\">.+?<\/a>')}
+		'friendList':re.compile(r'<dd><a\s+href=\"http://www.renren.com/profile.do\?id=\d+\">.+?<\/a>'),
+		'profile_info':re.compile(r'<dl\sclass="info">.*?</dl>',re.DOTALL)}
+
 	def __init__(self,user='yyttrr3242342@163.com',passwd=None):
 		if passwd is None:
 			passwd=mytools.getPasswd('renren',user)
@@ -45,8 +47,17 @@ class download:
 			return self.onePage(urls[pageStyle].format(curpage,renrenId))
 
 	def profile(self,renrenId):
-		pageStyle='profile'
-		return self.onePage(urls[pageStyle].format(renrenId))
+		pageStyle='profile_info'
+		html_content,time=self.onePage(urls[pageStyle].format(renrenId))
+		if html_content is None:
+			print(time)
+			return set(),'timeout'
+		elif html_content[0:30].find('<div class="col-left">')==-1:
+			return set(),'privacy'
+		else:
+			#parse
+			items_curpage=self.itemReg[pageStyle].findall(html_content)
+			return items_curpage,'success'
 
 	def onePage(self,url):
 		startTime=time.time()
@@ -65,14 +76,14 @@ class download:
 		start=time.time()
 		itemsAll=set()
 		for curpage in range(uppage+1):
-			htmlStr,timecost=self.onePage(urls[pageStyle].format(curpage,renrenId))
-			if htmlStr is None:
-				return None,'{} ,page={},renrenId={},{}.'.format(pageStyle,curpage,renrenId,timecost)
+			html_content,timecost=self.onePage(urls[pageStyle].format(curpage,renrenId))
+			if html_content is None:
+				return set(),'{} ,page={},renrenId={},{}.'.format(pageStyle,curpage,renrenId,timecost)
 			else:
-				items_curpage=self.itemReg[pageStyle].findall(htmlStr)
+				items_curpage=self.itemReg[pageStyle].findall(html_content)
 			if len(items_curpage) < 1:#all pages request
 				stop=time.time()
-				if htmlStr.find('f-privacy-tip')>0:
+				if html_content.find('f-privacy-tip')>0:
 					return set(),'privacy'
 				break
 			else:
