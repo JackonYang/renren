@@ -7,20 +7,22 @@ class Test_download(unittest.TestCase):
 		user='yyttrr3242342@163.com'
 		self.dl=download(user)
 	def tearDown(self):
-		pass
+		print(self.dl.out_err())
+		print(self.dl.out_timecost())
 
 	def test_profile_detail(self):
 		renrenIds={'233330059','230760442','223981104','410941086','285060168'}
 							#myself,timeline ok/unavailable,old style ok/unavailable
 		for rid in renrenIds:
-			info,reason=self.dl.profile_detail(rid)
-			print('{},{},{}'.format(rid,len(info),reason))
+			info=self.dl.profile_detail(rid)
+			print('{},{}'.format(rid,info))
 
 	def test_friendList(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
 							#myself,3+pages/2pages/1page/unavailable
 		for rid in renrenIds:
-			fl,info=self.dl.friendList(rid)
+			fl=self.dl.friendList(rid)
+			info=''
 			print('{},{},{}'.format(rid,len(fl),info))
 		#flist={'232639310':35,'242543024':152,'285060168':5}
 		#for item in flist.items():
@@ -29,8 +31,8 @@ class Test_download(unittest.TestCase):
 	def test_homepage(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
 		for rid in renrenIds:
-			info,reason=self.dl.homepage(rid)
-			print('{},{},{}'.format(rid,len(info),reason))
+			info=self.dl.homepage(rid)
+			print('{},{}'.format(rid,info))
 
 	def test_login(self):
 		users=['yyttrr3242342@163.com','jiekunyang@gmail.com','zhangxiaoxu_521@yahoo.com.cn','none@adaf.com']
@@ -40,7 +42,7 @@ class Test_download(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(Test_download('test_friendList'))
+	suite.addTest(Test_download('test_friendList'))
 	suite.addTest(Test_download('test_profile_detail'))
 	suite.addTest(Test_download('test_homepage'))
 	#suite.addTest(Test_download('test_login'))

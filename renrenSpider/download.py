@@ -6,6 +6,8 @@ import http.cookiejar
 import re
 import time
 
+import parse
+
 timeout=3
 urls={
 	'login':"http://www.renren.com/PLogin.do",
@@ -20,6 +22,14 @@ itemReg={
 	'homepage_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
 	'homepage_basic':re.compile(r'<(?:u|d)l class="(?:user-info )*?clearfix">.*?</(?:u|d)l>',re.DOTALL)}
 
+err=set()
+def _error(info):
+	err.add(info)
+
+timecost=dict()
+def _log_time(url,time):
+	timecost[url]=time
+
 class download:
 
 	def __init__(self,user='yyttrr3242342@163.com',passwd=None):
@@ -31,17 +41,15 @@ class download:
 			print('login failed,user={},{}'.format(user,reason))
 
 	def friendList(self,renrenId='285060168',targetPage=None, uppage=100):
-		"""friendList('234234') -->
-		return (friendList,info) if success
-		return (set(),'privacy') if can't access because of privacy policy
-		return (set(),info) if some pages parse error
-		return (set(),'timeout') if timeout"""
+		"""friendList('285060168') --> 
+		return {friend_rid1:name1,friend_rid2:name2} if success
+		return dict{} if can't access because of privacy policy, pages parse error, or timeout"""
 		pageStyle='friendList'
 		if targetPage==None:
-			return self.iterPage(pageStyle,renrenId,uppage)
+			hrefs=self.iterPage(pageStyle,renrenId,uppage)
 		else:
-			return self.onePage(urls[pageStyle].format(curpage,renrenId))
-			#parse
+			hrefs=self.onePage(urls[pageStyle].format(curpage,renrenId))
+		return parse.friendList(hrefs)
 
 	def status(self,renrenId=None,targetPage=None, uppage=100):
 		pageStyle='status'
@@ -52,67 +60,58 @@ class download:
 
 	def profile_detail(self,renrenId):
 		"""profile_detail('234234') -->
-		return (items,'success') if success
-		return (set(),'privacy') if can't access because of privacy policy
-		return (set(),'timeout') if timeout"""
+		return items if success
+		return set() if can't access because of privacy policy or timeout"""
 		pageStyle='profile_detail'
-		html_content,info=self.onePage(urls[pageStyle].format(renrenId))
+		html_content=self.onePage(urls[pageStyle].format(renrenId))
 		if html_content is None:
-			return set(),info
+			return dict()
 		elif html_content[0:30].find('<div class="col-left">') > -1:
-			items_curpage=itemReg[pageStyle].findall(html_content)
-			return items_curpage,'success'
+			return parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		else:
-			return set(),'privacy'
+			_error('{},{},privacy'.format(renrenId,pageStyle))
+			return dict()
 
 	def homepage(self,renrenId):
 		pageStyle='homepage'
-		html_content,info=self.onePage(urls[pageStyle].format(renrenId))
+		html_content=self.onePage(urls[pageStyle].format(renrenId))
 		if html_content is None:
-			return set(),info
+			return set()
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
-			items_curpage=itemReg[pageStyle+'_tl'].findall(html_content)
-			return items_curpage,'tl'
+			return parse.homepage_tl(itemReg[pageStyle+'_tl'].findall(html_content))
 		else:
-			items_curpage=itemReg[pageStyle+'_basic'].findall(html_content)
-			return items_curpage,'basic'
+			return parse.homepage_basic(itemReg[pageStyle+'_basic'].findall(html_content))
 
 	def onePage(self,url):
 		try:
+			request_start=time.time()
 			rsp=self.opener.open(url)
-			#rspurl=rsp.geturl()
 			html_content=rsp.read().decode('UTF-8','ignore')
+			_log_time(url,time.time()-request_start)
 		except urllib.error.URLError as e:
-			return None,'timeout'
-		#TODO: deal with resend
+			#TODO: deal with resend
+			_error('{}----{}'.format(url,'timeout'))
+			return None
 		else:
-			return html_content,'success'
+			return html_content
 
 	def iterPage(self,pageStyle=None,renrenId=None,uppage=100):
 		itemsAll=set()
 		request_time=[]
 		for curpage in range(uppage):
-			request_start=time.time()
-			html_content,info=self.onePage(urls[pageStyle].format(curpage,renrenId))
-			request_time.append(time.time()-request_start)
-			if html_content is None:
-				return set(),info
-			else:
+			html_content=self.onePage(urls[pageStyle].format(curpage,renrenId))
+			if html_content is not None:#if timeout,go on with next page
 				items_curpage=itemReg[pageStyle].findall(html_content)
-				if len(items_curpage) < 1:#all pages request
-					if html_content.find('f-privacy-tip')>0:
-						return set(),'privacy'
+				if len(items_curpage) < 1:#all pages parsed
 					break
 				else:
 					itemsAll=itemsAll | set(items_curpage)
 					last_num=len(items_curpage)
-
-		#check data
-		if len(itemsAll) == 20*curpage-20+last_num:#success
-			#return itemsAll,'timecost:{}/{}/{}(max/min/ave)'.format(0,0,0)
-			return itemsAll,'timecost:{}'.format(request_time)
-		else:
-			return set(),'parse error.expt={},actual={}'.format(curpage*20-20+n,len(itemsAll))
+		if html_content.find('f-privacy-tip')>0:
+			_error('{},{},privacy'.format(renrenId,pageStyle))
+		elif len(itemsAll) != 20*curpage-20+last_num:
+			_error('parse error.expt={},actual={}'.format(curpage*20-20+n,len(itemsAll)))
+		return itemsAll
 
 	def login(self,user,passwd):
 		"""return (renrenId,'success') if login successfully.
@@ -133,3 +132,8 @@ class download:
 				return None,'login failed,rsp={}'.format(url)
 			else:
 				return m.group(1),'success'
+
+	def out_timecost(self):
+		print(timecost.values())
+	def out_err(self):
+		print(err)
