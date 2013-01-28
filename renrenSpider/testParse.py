@@ -36,11 +36,26 @@ class Test_parse(unittest.TestCase):
 		for pfHref,name in zip(pfHrefs,names):
 			self.assertEquals(parse.friendList(pfHref),name)
 
-	def test_homepage(self):
-		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
+	def test_homepage_tl(self):
+		renrenIds={'233330059','478995942','230760442'}
+		#'410941086','267654044','285060168','240303471'}
 		for rid in renrenIds:
 			info,reason=self.dl.homepage(rid)
-			print('{},{},{}'.format(rid,len(info),reason))
+			if reason=='tl':
+				print(parse.homepage_tl(info))
+
+				
+		#print('{},{},{}'.format(rid,len(info),reason))
+
+	def test_homepage_basic(self):
+		renrenIds={'410941086','267654044','233960464','285060168','240303471'}
+		for rid in renrenIds:
+			info,reason=self.dl.homepage(rid)
+			if reason=='basic':
+				print(parse.homepage_basic(info))
+
+				
+		#print('{},{},{}'.format(rid,len(info),reason))
 
 	def test_login(self):
 		users=['yyttrr3242342@163.com','jiekunyang@gmail.com','zhangxiaoxu_521@yahoo.com.cn','none@adaf.com']
@@ -51,8 +66,9 @@ class Test_parse(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(Test_parse('test_friendList'))
-	suite.addTest(Test_parse('test_profile_detail'))
-	#suite.addTest(Test_parse('test_homepage'))
+	#suite.addTest(Test_parse('test_profile_detail'))
+	#suite.addTest(Test_parse('test_homepage_tl'))
+	suite.addTest(Test_parse('test_homepage_basic'))
 	#suite.addTest(Test_parse('test_login'))
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
