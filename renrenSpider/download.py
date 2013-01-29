@@ -110,7 +110,7 @@ class download:
 		if html_content.find('f-privacy-tip')>0:
 			_error('{},{},privacy'.format(renrenId,pageStyle))
 		elif len(itemsAll) != 20*curpage-20+last_num:
-			_error('parse error.expt={},actual={}'.format(curpage*20-20+n,len(itemsAll)))
+			_error('parse error.expt={},actual={}'.format(curpage*20-20+last_num,len(itemsAll)))
 		return itemsAll
 
 	def login(self,user,passwd):
@@ -134,6 +134,10 @@ class download:
 				return m.group(1),'success'
 
 	def out_timecost(self):
-		print(timecost.values())
+		global timecost
+		import numpy as np
+		tm=np.float32(list(timecost.values()))
+		print('max/min/ave:{}/{}/{}.'.format(tm.max(),tm.min(),tm.mean()))
+		timecost=dict()
 	def out_err(self):
 		print(err)
