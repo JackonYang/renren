@@ -4,11 +4,11 @@ from download import download
 class Test_download(unittest.TestCase):
 
 	def setUp(self):
-		user='yyttrr3242342@163.com'
+		#user='yyttrr3242342@163.com'
+		user='jiekunyang@gmail.com'
 		self.dl=download(user)
 	def tearDown(self):
-		print(self.dl.out_err())
-		print(self.dl.out_timecost())
+		pass
 
 	def test_profile_detail(self):
 		renrenIds={'233330059','230760442','223981104','410941086','285060168'}
@@ -21,9 +21,8 @@ class Test_download(unittest.TestCase):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
 							#myself,3+pages/2pages/1page/unavailable
 		for rid in renrenIds:
-			fl=self.dl.friendList(rid)
-			info=''
-			print('{},{},{}'.format(rid,len(fl),info))
+			fl,timecost=self.dl.friendList(rid)
+			print('{},{},{}'.format(rid,len(fl),timecost))
 		#flist={'232639310':35,'242543024':152,'285060168':5}
 		#for item in flist.items():
 			#self.assertEqual(len(self.browser.friendList(item[0])),item[1])
@@ -42,8 +41,8 @@ class Test_download(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	suite.addTest(Test_download('test_friendList'))
-	suite.addTest(Test_download('test_profile_detail'))
+	#suite.addTest(Test_download('test_friendList'))
+	#suite.addTest(Test_download('test_profile_detail'))
 	suite.addTest(Test_download('test_homepage'))
 	#suite.addTest(Test_download('test_login'))
 	runner=unittest.TextTestRunner()
