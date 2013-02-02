@@ -1,10 +1,10 @@
 import unittest
-from db import *
+from database import *
 
 class TestRenrenDb(unittest.TestCase):
 
 	def setUp(self):
-		self.db=rDb()
+		self.db=database()
 		#self.db.dropTempTable()
 		#self.db.createTempTable()#not exists
 
@@ -51,9 +51,9 @@ class TestRenrenDb(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(TestRenrenDb('testInsertFriendList'))
+	suite.addTest(TestRenrenDb('testInsertFriendList'))
 	#suite.addTest(TestRenrenDb('testTableManage'))
 	#suite.addTest(TestRenrenDb('testGetRenrenId'))
-	suite.addTest(TestRenrenDb('testGetSearched'))
+	#suite.addTest(TestRenrenDb('testGetSearched'))
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
