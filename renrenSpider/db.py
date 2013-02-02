@@ -22,6 +22,11 @@ class rDb:
 		self.cur.close()
 
 	def insertFriendList(self,renrenId,names):
+		if names is None:
+			return -1
+		elif names is dict():
+			names={'0':'null'}
+			
 		valFl='),({},'.format(renrenId).join(names.keys())
 		sqlFl='insert into {} (renrenId1,renrenId2) values ({},{})'.format(self.tempTable['relation'],renrenId,valFl)
 		valNm=str(set(names.items())).strip('{}')
