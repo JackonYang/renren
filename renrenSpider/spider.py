@@ -1,24 +1,20 @@
-from download import download
-from db import rDb
+import download
+import time
 
 user='jiekunyang@gmail.com'
-dl=download(user)
-db=rDb('ttt')
+dl=download.download(user)
 
-fl_searched=db.getSearched('relation')
+fl_searched=set()#db.getSearched('relation')
 
 def getNet2(rid='410941086'):
-	fl=dl.friendList(rid)
-	dl.out_timecost()
-	db.insertFriendList(rid,fl)
-
+	fl,timecost=dl.friendList(rid)
+	#db.insertFriendList(rid,fl)
 	toSearch=set(fl.keys())-fl_searched
+	print('renrenId={},toSearch/total:{}/{}'.format(rid,len(toSearch),len(fl)))
 	for i,item in zip(range(len(toSearch)),toSearch):
-		print('{}/{} searching,rid={},name={}'.format(i,len(toSearch),item,fl[item]))
-		db.insertFriendList(item,dl.friendList(item))
-		dl.out_timecost()
-	dl.out_err()
-#dl.out_timecost()
+		friends,timecost=dl.friendList(item)
+		print('{}/{} {},{},{},{} friends,{}'.format(i,len(toSearch),time.strftime('%H:%M:%S',time.localtime()),item,fl[item],len(friends),timecost))
+		#db.insertFriendList(item,friends)
 
 if __name__ == '__main__':
 	rid=input('renrenId= ')
