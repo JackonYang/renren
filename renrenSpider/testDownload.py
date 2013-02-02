@@ -41,8 +41,8 @@ class Test_download(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(Test_download('test_friendList'))
-	#suite.addTest(Test_download('test_profile_detail'))
+	suite.addTest(Test_download('test_friendList'))
+	suite.addTest(Test_download('test_profile_detail'))
 	suite.addTest(Test_download('test_homepage'))
 	#suite.addTest(Test_download('test_login'))
 	runner=unittest.TextTestRunner()
