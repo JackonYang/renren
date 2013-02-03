@@ -7,11 +7,15 @@ pfHrefs=[
 	'<dd><a href="http://www.renren.com/profile.do?id=331442">En.王哲</a>'},
 	{'<dd><a href="http://www.renren.com/profile.do?id=9439171"></a>'},
 	'<dd><a href="http://www.renren.com/profile.do?id=34134">～@%……</a>',
-	{'error'}]
+	{},
+	{'error'},
+	None]
 names=[
 	{'6754031':'王瑛','331442':'En.王哲'},
 	{'9439171':''},
 	{'34134':'～@%……'},
+	dict(),
+	None,
 	None]
 
 
@@ -65,10 +69,10 @@ class Test_parse(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(Test_parse('test_friendList'))
+	suite.addTest(Test_parse('test_friendList'))
 	#suite.addTest(Test_parse('test_profile_detail'))
 	#suite.addTest(Test_parse('test_homepage_tl'))
-	suite.addTest(Test_parse('test_homepage_basic'))
+	#suite.addTest(Test_parse('test_homepage_basic'))
 	#suite.addTest(Test_parse('test_login'))
 	runner=unittest.TextTestRunner()
 	runner.run(suite)

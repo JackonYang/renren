@@ -14,14 +14,21 @@ details={
 _nameprog=None
 def friendList(pfHrefs):
 	"""friendList({'<a href="..?id=1">name1</a>','<a href="..?id=3">name2</a>'}) 
-	--> {id1:name1,id2:name2}"""
+	--> 
+	return {id1:name1,id2:name2} if success
+	return dict() if pfHrefs is set()
+	return None if no group searched in one element of pfHrefs
+	return None if pfHrefs is None
+	"""
+	if pfHrefs is None:
+		return None
+	elif isinstance(pfHrefs,str):
+		pfHrefs={pfHrefs}
 	global _nameprog
 	if _nameprog is None:
 		import re
 		_nameprog=re.compile(r'id=(\d+)">([^<]*?)</a>')
 
-	if isinstance(pfHrefs,str):
-		pfHrefs={pfHrefs}
 	name=dict()
 	for pfHref in pfHrefs:
 		m=_nameprog.search(pfHref)
@@ -85,7 +92,6 @@ def homepage_basic(content):
 		return homepage_basic_privacy(content)
 	else:
 		return profile_detail(content)
-
 
 _homepage_basicprog=None
 _homepage_basicgprog=None
