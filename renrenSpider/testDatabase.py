@@ -13,9 +13,11 @@ class TestRenrenDb(unittest.TestCase):
 		self.db.close()
 		self.db=None
 
-	def testInsertFriendList(self):
-		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
-		self.db.insertFriendList('11111',name)
+	def test_friendList(self):
+		names=[{'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'},dict(),None,set()]
+		for name in names:
+			print(name)
+			print(self.db.friendList('11111',name))
 	def testGetSearched(self):
 		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
 		renrenId='11111'
@@ -51,7 +53,7 @@ class TestRenrenDb(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	suite.addTest(TestRenrenDb('testInsertFriendList'))
+	suite.addTest(TestRenrenDb('test_friendList'))
 	#suite.addTest(TestRenrenDb('testTableManage'))
 	#suite.addTest(TestRenrenDb('testGetRenrenId'))
 	#suite.addTest(TestRenrenDb('testGetSearched'))

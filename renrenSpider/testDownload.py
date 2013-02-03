@@ -22,10 +22,10 @@ class Test_download(unittest.TestCase):
 							#myself,3+pages/2pages/1page/unavailable
 		for rid in renrenIds:
 			fl,timecost=self.dl.friendList(rid)
-			print('{},{},{}'.format(rid,len(fl),timecost))
-		#flist={'232639310':35,'242543024':152,'285060168':5}
-		#for item in flist.items():
-			#self.assertEqual(len(self.browser.friendList(item[0])),item[1])
+			if isinstance(fl,dict):
+				print('{},{},{}'.format(rid,len(fl),timecost))
+			else:
+				print('error.interface specification')
 
 	def test_homepage(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
