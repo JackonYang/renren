@@ -107,9 +107,6 @@ class download:
 		else:
 			return html_content
 
-	#XXX:iterPage
-	#deal with logout
-	#friendList privacy:html_content.find('f-privacy-tip')>0
 	def iterPage(self,pageStyle=None,renrenId=None,uppage=100,log=None):
 		"""iterPage(pageStyle,renrenId)  --> 
 		return set(items),timecost if success,

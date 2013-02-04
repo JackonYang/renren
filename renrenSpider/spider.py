@@ -72,7 +72,11 @@ def getProfile():
 	toSearch=fl_searched-pf_searched
 	print('{} get profiles toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
 	for i,item in zip(range(1,len(toSearch)+1),toSearch):
-		pfStyle,pf=dl.profile(item)
+		try:
+			pfStyle,pf=dl.profile(item)
+		except Exception as e:
+			print(item)
+			return None
 		if pf is None:
 			timeout_list.add(item)
 		elif pf == {}:
