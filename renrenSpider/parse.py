@@ -42,7 +42,7 @@ def profile_detail(content):
 	for item in items:
 		pair=_profilegprog.search(item)
 		value=drop_extra(pair.group(2))
-		tag=drop_extra(pair.group(1)).strip(' ')
+		tag=drop_extra(pair.group(1))
 		pf[tag]=value
 	return pf
 
@@ -140,5 +140,5 @@ def drop_extra(content):
 	if _extraprog is None:
 		import re
 		_extraprog=re.compile(r'(?:&nbsp;)|(?:\"\+response\.[a-z]+\+\")|(?:\\n)|\n|\t|(?:\\u3000)|(?:\\t)|:')
-	return _extraprog.sub(r'',drop_href(content))
+	return _extraprog.sub(r'',drop_href(content)).strip(' ')
 
