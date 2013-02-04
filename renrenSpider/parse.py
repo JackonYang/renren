@@ -30,6 +30,8 @@ def profile_detail(content):
 	"""profile_detail({'<dt>name</dt><dd>zh</dd><dt>gender</dt>\n<dd>f</dd>',
 	'<dt>birth</dt><dd>1993</dd><dt>city</dt>\n<dd>x</dd>'})
 	-->{name:zh,gender:f,birth:1993,city:x}"""
+	if content is None:
+		return None
 	global _profileprog
 	global _profilegprog
 	if _profileprog is None:
@@ -37,18 +39,21 @@ def profile_detail(content):
 		_profileprog =re.compile(r'<dt>[^<]*?</dt>[^<]*?<dd>.*?</dd>',re.DOTALL)
 		_profilegprog=re.compile(r'<dt>(.*?)</dt>[^<]*?<dd>(.*?)</dd>',re.DOTALL)
 
-	items=_profileprog.findall(str(content))
+	content=drop_extra(str(content))
+	items=_profileprog.findall(content)
 	pf=dict()
 	for item in items:
 		pair=_profilegprog.search(item)
-		value=drop_extra(pair.group(2))
-		tag=drop_extra(pair.group(1))
+		value=pair.group(2).strip(' ')
+		tag=pair.group(1).strip(' :：')
 		pf[tag]=value
 	return pf
 
 _homepage_tlprog=None
 _homepage_tlgprog=None
 def homepage_tl(content):
+	if content is None:
+		return None
 	global _homepage_tlprog
 	global _homepage_tlgprog
 	if _homepage_tlprog is None:
@@ -56,89 +61,86 @@ def homepage_tl(content):
 		_homepage_tlprog=re.compile(r'<li[^>]+?>.*?</li>',re.DOTALL)
 		_homepage_tlgprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
 
-	items=_homepage_tlprog.findall(str(content))
+	content=drop_extra(str(content))
+	items=_homepage_tlprog.findall(content)
 	mini_pf=dict()
 	for item in items:
 		pair=_homepage_tlgprog.search(item)
 		tag=pair.group(1)
-		value=pair.group(2)
+		value=pair.group(2).strip(' ')
 		if tag == 'birthday':
-			mini_pf['gender'],mini_pf['birth']=tlbirth(value)
-		elif tag == 'school':
-			mini_pf['school']=cut_tlpf_school(value)
-		else:#address and hometown, drop head.
-			mini_pf[tag]=value[2:]
-	return mini_pf 
-
-def homepage_basic(content):
-	content=str(content)
-	if content[:5].find('ul')>0:
-		return homepage_basic_privacy(content)
+			mini_pf['gender'],mini_pf['birth']=split_tlbirth(value)
+		else:
+			mini_pf[tag]=value
+	if None in mini_pf.values():
+		return None
 	else:
-		return profile_detail(content)
+		return mini_pf
 
 _homepage_basicprog=None
 _homepage_basicgprog=None
-_spanprog=None
 def homepage_basic_privacy(content):
 	if content is None:
 		return None
 	global _homepage_basicprog
 	global _homepage_basicgprog
-	global _spanprog
 	if _homepage_basicprog is None:
 		import re
 		_homepage_basicprog=re.compile(r'<li[^>]+?>.*?</li>',re.DOTALL)
-		_homepage_basicgprog=re.compile(r'<li\sclass="(\w+?)">\w+<span[^>]+>(.*?)</span>\w*?</li>',re.DOTALL)
-		_spanprog=re.compile(r'</span><spanclass="link">')
+		_homepage_basicgprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
 
-	items=_homepage_basicprog.findall(str(content))
+	content=drop_extra(str(content))
+	items=_homepage_basicprog.findall(content)
 	mini_pf=dict()
 	for item in items:
 		pair=_homepage_basicgprog.search(item)
-		mini_pf[pair.group(1)]=pair.group(2)
-	if 'hometown' in mini_pf:
-			mini_pf['hometown']=_spanprog.sub('',mini_pf['hometown'])
+		if pair is None:
+			print(item)
+		else:
+			mini_pf[pair.group(1)]=pair.group(2).strip(' ')
 	return mini_pf
 
-_tlpf_birthprog=None
-def tlbirth(content):
-	global _tlpf_birthprog
-	if _tlpf_birthprog is None:
-		import re
-		_tlpf_birthprog=re.compile(r'<span>(\w+)</span><span>\D*(\w+)</span>')
-	m=_tlpf_birthprog.search(drop_extra(content))
-	if m is None:
-		print('birth error:{}'.format(content))
-		return '','' 
+def split_tlbirth(value):
+	if value is None:
+		return None
+	"""split_tlbirth(gender, birth) --> (gender,birth)"""
+	#span/href/space is dropped before split
+	tmp=value.replace('，',',').split(',')
+	if len(tmp) < 2:
+		return None,'src={},res={}'.format(value,tmp)
 	else:
-		return m.group(1,2)
-
-_tlpf_spanprog=None
-def cut_tlpf_school(content):
-	global _tlpf_spanprog
-	if _tlpf_spanprog is None:
-		import re
-		_tlpf_spanprog=re.compile(r'<span>就读于(\w+)</span>')
-	m=_tlpf_spanprog.search(content)
-	if m is None:
-		return content
-	else:
-		return m.group(1)
+		return tmp[0].strip(' '),tmp[1].strip(' ')
 
 _linkprog=None
 def drop_href(content):
+	if content is None:
+		return None
 	global _linkprog
 	if _linkprog is None:
 		import re
 		_linkprog=re.compile(r'<a\s[^>]+?>([^<]*?)</a>')
 	return _linkprog.sub(r'\1',content)
-	
-_extraprog=None
-def drop_extra(content):
-	global _extraprog
-	if _extraprog is None:
+
+_spanprog=None
+def drop_span(content):
+	if content is None:
+		return None
+	global _spanprog
+	if _spanprog is None:
 		import re
-		_extraprog=re.compile(r'(?:&nbsp;)|(?:\"\+response\.[a-z]+\+\")|(?:\\n)|\n|\t|(?:\\u3000)|(?:\\t)|:')
-	return _extraprog.sub(r'',drop_href(content)).strip(' ')
+		_spanprog=re.compile(r'<span(?:\sclass="link")*?>([^<]*?)</span>')
+	return _spanprog.sub(r'\1',content)
+
+_spaceprog=None
+def drop_space(content):
+	if content is None:
+		return None
+	global _spaceprog
+	if _spaceprog is None:
+		import re
+		_spaceprog=re.compile(r'(?:&nbsp;)|(?:\"\+response\.[a-z]+\+\")|(?:\\n)|\n|\t|(?:\\u3000)|(?:\\t)')
+	return _spaceprog.sub(r'',str(content)).strip(' ')
+
+def drop_extra(content):
+	return drop_space(drop_span((drop_href(content))))
 
