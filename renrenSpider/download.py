@@ -1,4 +1,4 @@
-"""download data from www.renren.com"""
+"""provide interface to download data of a certain pageStyle of someone from www.renren.com"""
 import urllib.request
 from urllib.parse import urlencode
 import http.cookiejar
@@ -62,12 +62,13 @@ class download:
 
 	def profile_detail(self,renrenId):
 		"""profile_detail('234234') -->
-		return items if success
-		return set() if can't access because of privacy policy or timeout"""
+		return {tag1:value1,...,tagn:valuen} if success
+		return dict() if can't access because of privacy policy
+		return None if timeout"""
 		pageStyle='profile_detail'
 		html_content=self.onePage(urls[pageStyle].format(renrenId))
 		if html_content is None:
-			return dict()
+			return None
 		elif html_content[0:30].find('<div class="col-left">') > -1:
 			return parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		else:#forbidden by privacy
