@@ -15,7 +15,7 @@ def runlog(tt='run'):
 		logger.setLevel(20)#20 info, 40 error
 		return logger
 
-pf_sleep=3
+pf_sleep=2
 user='jiekunyang@gmail.com'
 dl=download.download(user)
 save=database.database('renren_orig')
@@ -76,14 +76,19 @@ def getProfile():
 		if pf is None:
 			timeout_list.add(item)
 		elif pf == {}:
-			log.info('{}/{} profile no items.rid={},pfStyle={}'.format(i,len(toSearch),item,pfStyle))
+			n=save.profile_empty(item,pfStyle)
+			if n == 0:
+				log.error('{}/{} error, {} profile has 0 items. but save 0'.format(i,len(toSearch),item))
 		else:
 			if pfStyle == 'detail':
 				n=save.profile(item,pf,'profile_detail')
-				time.sleep(pf_sleep)
 			else:
 				n=save.profile(item,pf,'profile_mini')
 			if n == 0:
 				log.error('{}/{} error, {} profile has {} items. but save 0'.format(i,len(toSearch),item,len(pf)))
+		if pfStyle == 'detail':
+			time.sleep(pf_sleep)
+		if i%20 == 0:
+			print('{} {}/{} profile done'.format(time.strftime('%H:%M:%S',time.localtime()),i,len(toSearch)))
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))
