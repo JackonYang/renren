@@ -21,8 +21,9 @@ itemReg={
 	'status':r'id="status-.+?ilike_icon',
 	'friendList':re.compile(r'<dd><a\s+href=\"http://www.renren.com/profile.do\?id=\d+\">[^<]*<\/a>'),
 	'profile_detail':re.compile(r'<dl\sclass="info">.*?</dl>',re.DOTALL),
-	'homepage_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
-	'homepage_basic':re.compile(r'<(?:u|d)l class="(?:user-info )*?clearfix">.*?</(?:u|d)l>',re.DOTALL)}
+	'profile_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
+	'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
+	#'homepage_basic':re.compile(r'<(?:u|d)l class="(?:user-info )*?clearfix">.*?</(?:u|d)l>',re.DOTALL)}
 
 def format_timecost(timecost):
 	if isinstance(timecost,list):
@@ -60,19 +61,21 @@ class download:
 		else:
 			return self.onePage(urls[pageStyle].format(curpage,renrenId))
 
-	def profile_detail(self,renrenId):
-		"""profile_detail('234234') -->
-		return {tag1:value1,...,tagn:valuen} if success
-		return dict() if can't access because of privacy policy
+	def profile(self,renrenId):
+		"""profile('234234') -->
+		return {tag1:value1,...,tagn:valuen} in detail page if available
+		return {tag1:value1,...,tagn:valuen} in homepage if detail page unavailable
 		return None if timeout"""
 		pageStyle='profile_detail'
 		html_content=self.onePage(urls[pageStyle].format(renrenId))
 		if html_content is None:
 			return None
 		elif html_content[0:30].find('<div class="col-left">') > -1:
-			return parse.profile_detail(itemReg[pageStyle].findall(html_content))
-		else:#forbidden by privacy
-			return dict()
+			return 'detail',parse.profile_detail(itemReg[pageStyle].findall(html_content))
+		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
+			return 'mini_tl',parse.homepage_tl(itemReg['profile_tl'].findall(html_content))
+		else:
+			return 'mini_basic',parse.homepage_basic_privacy(itemReg['profile_basic'].findall(html_content))
 
 	def homepage(self,renrenId):
 		pageStyle='homepage'

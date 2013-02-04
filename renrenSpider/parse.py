@@ -1,15 +1,3 @@
-pf_details={
-	#basic
-	'生日':'birth','家乡':'hometown','性别':'gender',
-	#edu
-	'大学':'edu_college','高中':'edu_senior','中专技校':'edu_tech','初中':'edu_junior','小学':'edu_primary',
-	#work
-	'公司':'company','时间':'work_time',
-	#contact
-	'QQ':'qq','MSN':'msn','手机号':'phone','个人网站':'personal_website','我的域名':'domain1','个性域名':'domain2'
-	}
-pf_mini={'所在城市':'address','所在公司':'work','所在学校':'school','等级':'rrlvl','生肖':'shengxiao','星座':'star','家乡':'hometown'}
-
 _nameprog=None
 def friendList(pfHrefs):
 	"""friendList({'<a href="..?id=1">name1</a>','<a href="..?id=3">name2</a>'}) 
@@ -54,7 +42,7 @@ def profile_detail(content):
 	for item in items:
 		pair=_profilegprog.search(item)
 		value=drop_extra(pair.group(2))
-		tag=pf_details[drop_extra(pair.group(1))]
+		tag=drop_extra(pair.group(1)).strip(' ')
 		pf[tag]=value
 	return pf
 
@@ -73,7 +61,7 @@ def homepage_tl(content):
 	for item in items:
 		pair=_homepage_tlgprog.search(item)
 		tag=pair.group(1)
-		value=drop_extra(pair.group(2))
+		value=pair.group(2)
 		if tag == 'birthday':
 			mini_pf['gender'],mini_pf['birth']=tlbirth(value)
 		elif tag == 'school':
@@ -93,6 +81,8 @@ _homepage_basicprog=None
 _homepage_basicgprog=None
 _spanprog=None
 def homepage_basic_privacy(content):
+	if content is None:
+		return None
 	global _homepage_basicprog
 	global _homepage_basicgprog
 	global _spanprog
@@ -102,15 +92,13 @@ def homepage_basic_privacy(content):
 		_homepage_basicgprog=re.compile(r'<li\sclass="(\w+?)">\w+<span[^>]+>(.*?)</span>\w*?</li>',re.DOTALL)
 		_spanprog=re.compile(r'</span><spanclass="link">')
 
-	items=_homepage_basicprog.findall(content)
+	items=_homepage_basicprog.findall(str(content))
 	mini_pf=dict()
 	for item in items:
 		pair=_homepage_basicgprog.search(item)
-		tag=drop_extra(pair.group(1))
-		value=drop_extra(pair.group(2))
-		if tag == 'hometown':
-			value=_spanprog.sub('',value)
-		mini_pf[tag]=value
+		mini_pf[pair.group(1)]=pair.group(2)
+	if 'hometown' in mini_pf:
+			mini_pf['hometown']=_spanprog.sub('',mini_pf['hometown'])
 	return mini_pf
 
 _tlpf_birthprog=None
@@ -119,8 +107,12 @@ def tlbirth(content):
 	if _tlpf_birthprog is None:
 		import re
 		_tlpf_birthprog=re.compile(r'<span>(\w+)</span><span>\D*(\w+)</span>')
-	m=_tlpf_birthprog.search(content)
-	return m.group(1,2)
+	m=_tlpf_birthprog.search(drop_extra(content))
+	if m is None:
+		print('birth error:{}'.format(content))
+		return '','' 
+	else:
+		return m.group(1,2)
 
 _tlpf_spanprog=None
 def cut_tlpf_school(content):
@@ -147,6 +139,6 @@ def drop_extra(content):
 	global _extraprog
 	if _extraprog is None:
 		import re
-		_extraprog=re.compile(r'(?:&nbsp;)|(?:\"\+response\.[a-z]+\+\")|\s+|(?:\\n)|(?:\\u3000)|(?:\\t)|:')
+		_extraprog=re.compile(r'(?:&nbsp;)|(?:\"\+response\.[a-z]+\+\")|(?:\\n)|\n|\t|(?:\\u3000)|(?:\\t)|:')
 	return _extraprog.sub(r'',drop_href(content))
 

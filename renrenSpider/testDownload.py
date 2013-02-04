@@ -10,12 +10,12 @@ class Test_download(unittest.TestCase):
 	def tearDown(self):
 		pass
 
-	def test_profile_detail(self):
+	def test_profile(self):
 		renrenIds={'233330059','230760442','223981104','410941086','285060168'}
 							#myself,timeline ok/unavailable,old style ok/unavailable
 		for rid in renrenIds:
-			details=self.dl.profile_detail(rid)
-			print('{},{}'.format(rid,details))
+			pfStyle,details=self.dl.profile(rid)
+			print('{},{},{}'.format(rid,pfStyle,details))
 
 	def test_friendList(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
@@ -42,7 +42,7 @@ class Test_download(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(Test_download('test_friendList'))
-	suite.addTest(Test_download('test_profile_detail'))
+	suite.addTest(Test_download('test_profile'))
 	#suite.addTest(Test_download('test_homepage'))
 	#suite.addTest(Test_download('test_login'))
 	runner=unittest.TextTestRunner()

@@ -9,14 +9,16 @@ pf_details={
 	#contact
 	'QQ':'qq','MSN':'msn','手机号':'phone','个人网站':'personal_website','我的域名':'domain1','个性域名':'domain2'
 }
+pf_mini={'location':'nowCity','address':'nowCity','work':'nowCompany','school':'nowSchool','birth':'birth','hometown':'hometown','gender':'gender'}
 
 class database:
 	sqls=dict()
 	sqls['name']='CREATE TABLE if not exists {} (renrenId1 varchar(15) NOT NULL,name varchar(20),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;'
 	sqls['friendList']='CREATE TABLE if not exists {} (renrenId1 varchar(15) NOT NULL,renrenId2 varchar(15) NOT NULL,KEY one(renrenId1),KEY two(renrenId2),lastmodified TIMESTAMP DEFAULT NOW() {} )ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;'
-	sqls['profile_detail']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(pf_details.values())+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
-	key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)'}
-	primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)'}
+	sqls['profile_detail']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_details.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
+	sqls['profile_mini']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_mini.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
+	key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)','profile_mini':',KEY (renrenId1)'}
+	primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)'}
 
 	def __init__(self,namePre='test'):
 		self.conn=pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Kunth123',db='data_bang',charset='utf8')
@@ -55,7 +57,7 @@ class database:
 			self.conn.commit()
 			return n
 
-	def profile_detail(self,renrenId,pf):
+	def profile(self,renrenId,pf,pfStyle):
 		"""insert into db, and return rows affected.return None if input error"""
 		if pf is None:
 			return None
@@ -64,9 +66,15 @@ class database:
 		elif pf == {}:
 			return 0
 		valPf="renrenId1='{}'".format(renrenId)
-		for tag,value in pf.items():
-			valPf += ",{}='{}'".format(tag,value)
-		sqlPf='insert into {} set {}'.format(self.tempTable['profile_detail'],valPf)
+		if pfStyle == 'profile_detail':
+			for tag,value in pf.items():
+				valPf += ",{}='{}'".format(pf_details[tag],value)
+		elif pfStyle == 'profile_mini':
+			for tag,value in pf.items():
+				valPf += ",{}='{}'".format(pf_mini[tag],value)
+		else:
+			return None
+		sqlPf='insert into {} set {}'.format(self.tempTable[pfStyle],valPf)
 		try:
 			n=self.cur.execute(sqlPf)
 		except Exception as e:

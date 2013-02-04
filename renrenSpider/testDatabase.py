@@ -18,10 +18,11 @@ class TestRenrenDb(unittest.TestCase):
 		for name in names:
 			print(name)
 			print(self.db.friendList('11111',name))
-	def test_profile_detail(self):
-		pfs={'11111':{'edu_college': '西北大学-2007年-物理学系<br>山东大学-2012年-电气工程学院<br>', 'edu_primary': '烟台市芝罘区新海阳小学-1995年', 'edu_junior': '烟台二中-2000年', 'gender': '男', 'edu_senior': '烟台二中-2004年', 'birth': '1989年3月11日双鱼座', 'hometown': '山东烟台市', 'domain2': 'wangzhongzhe.renren.com'},'2222':{'qq': '309097050', 'edu_college': '西北大学-2013年-其它院系<br>', 'edu_primary': '', 'edu_junior': '西安四中', 'personal_website': '', 'msn': '', 'gender': '男', 'company': '', 'phone': '15191895258', 'edu_senior': '西安交通大学附中-1999年', 'birth': '1998年2月13日<!--水瓶座-->水瓶座', 'hometown': '内蒙古呼伦贝尔市', 'edu_tech': '西安市二轻局职工中等专业学校'},'33333':{'edu_college': '西北大学-2011年-物理学系<br>', 'edu_junior': '西安交通大学阳光中学-2005年', 'edu_senior': '阳光中学-2008年'},'5555':{},'6666':None}
-		for rid,pf in pfs.items():
-			print('{},{}'.format(rid,self.db.profile_detail(rid,pf)))
+	def test_profile(self):
+		pfs={'profile_detail':{'大学': '西北大学- 2011年- 物理学系<br>', '高中': '阳光中学- 2008年', '初中': '西安交通大学阳光中学- 2005年'},'profile_detail':{'小学': '烟台市芝罘区新海阳小学- 1995年', '家乡': '山东 烟台市', '生日': ' 1989 年3 月 11 日双鱼座', '高中': '烟台二中- 2004年', '初中': '烟台二中- 2000年', '个性域名': 'wangzhongzhe.renren.com', '性别': '男', '大学': '西北大学- 2007年- 物理学系<br>山东大学- 2012年- 电气工程学院<br>'},'profile_mini':{'gender': '女生', 'location': '烟台市'}}
+		rids=['111','222','333']
+		for rid,pf in zip(rids,pfs.items()):
+			print('{},{}'.format(rid,self.db.profile(rid,pf[1],pf[0])))
 
 	def testGetSearched(self):
 		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
@@ -60,7 +61,7 @@ class TestRenrenDb(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(TestRenrenDb('test_friendList'))
-	suite.addTest(TestRenrenDb('test_profile_detail'))
+	suite.addTest(TestRenrenDb('test_profile'))
 	#suite.addTest(TestRenrenDb('testTableManage'))
 	#suite.addTest(TestRenrenDb('test_getFriendList'))
 	#suite.addTest(TestRenrenDb('testGetRenrenId'))

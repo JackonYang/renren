@@ -67,9 +67,16 @@ class Test_parse(unittest.TestCase):
 		for user,rid in zip(users,rids):
 			dl=download(user)
 
+	def test_cutbirth(self):
+		births=['\n<span>男生</span>\n<span>，11月21日</span>\t','\n<span>男生</span>\\n<span>，11月21日</span>\t']
+		for birth in births:
+			print(parse.tlbirth(birth))
+
+
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	suite.addTest(Test_parse('test_friendList'))
+	#suite.addTest(Test_parse('test_friendList'))
+	suite.addTest(Test_parse('test_cutbirth'))
 	#suite.addTest(Test_parse('test_profile_detail'))
 	#suite.addTest(Test_parse('test_homepage_tl'))
 	#suite.addTest(Test_parse('test_homepage_basic'))
