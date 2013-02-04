@@ -1,15 +1,14 @@
-details={
+pf_details={
 	#basic
-	'生日':'birth','星座':'star','家乡':'hometown','性别':'gender',
+	'生日':'birth','家乡':'hometown','性别':'gender',
 	#edu
 	'大学':'edu_college','高中':'edu_senior','中专技校':'edu_tech','初中':'edu_junior','小学':'edu_primary',
 	#work
 	'公司':'company','时间':'work_time',
 	#contact
-	'QQ':'qq','MSN':'msn','手机号':'phone','个人网站':'personal_website','我的域名':'domain1','个性域名':'domain2',
-	#mini_pf
-	'所在城市':'address','所在公司':'work','所在学校':'school','等级':'rrlvl','生肖':'shengxiao'
+	'QQ':'qq','MSN':'msn','手机号':'phone','个人网站':'personal_website','我的域名':'domain1','个性域名':'domain2'
 	}
+pf_mini={'所在城市':'address','所在公司':'work','所在学校':'school','等级':'rrlvl','生肖':'shengxiao','星座':'star','家乡':'hometown'}
 
 _nameprog=None
 def friendList(pfHrefs):
@@ -55,11 +54,8 @@ def profile_detail(content):
 	for item in items:
 		pair=_profilegprog.search(item)
 		value=drop_extra(pair.group(2))
-		if value=='':
-			continue
-		else:
-			tag=details[drop_extra(pair.group(1))]
-			pf[tag]=value
+		tag=pf_details[drop_extra(pair.group(1))]
+		pf[tag]=value
 	return pf
 
 _homepage_tlprog=None
