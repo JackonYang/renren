@@ -97,8 +97,12 @@ class database:
 				res.add(item[0])
 		return res
 	def getSearched(self,pageStyle):
+		if pageStyle=='profile':
+			tables={self.mainTable['profile_detail'],self.tempTable['profile_detail'],self.mainTable['profile_mini'],self.tempTable['profile_mini']}
+		else:
+			tables={self.mainTable[pageStyle],self.tempTable[pageStyle]}
 		res=set()
-		for table in [self.mainTable[pageStyle],self.tempTable[pageStyle]]:
+		for table in tables:
 			self.cur.execute("SELECT renrenId1 FROM {} group by renrenId1".format(table))
 			for item in self.cur.fetchall():
 				res.add(item[0])

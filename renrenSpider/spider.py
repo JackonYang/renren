@@ -15,6 +15,7 @@ def runlog(tt='run'):
 		logger.setLevel(20)#20 info, 40 error
 		return logger
 
+pf_sleep=3
 user='jiekunyang@gmail.com'
 dl=download.download(user)
 save=database.database('renren_orig')
@@ -22,7 +23,7 @@ log=runlog()
 
 
 fl_searched=save.getSearched('friendList')
-#pf_detail_searched=save.getSearched('profile_detail')
+pf_searched=save.getSearched('profile')
 
 def getNet2(rid='410941086'):
 	log.debug('{} start to search net2 of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
@@ -46,30 +47,43 @@ def getNet2(rid='410941086'):
 	#print('timeout list: {}'.format(timeout_list()))
 
 def getProfile_friend(rid='410941086'):
-	print('{} start to search profile of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
+	print('{} start to search friend profile of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
 	timeout_list=set()
-	friends=save.getFriendList(item)
-	#save.profile_detail(rid,fl)
+	friends=save.getFriendList(rid)
 	toSearch=set(friends)-pf_detail_searched
 	print('{} renrenId={},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),rid,len(toSearch),len(friends)))
-	for i,item in zip(range(len(toSearch)),toSearch):
-		pf_detail=dl.profile_detail(rid)
-		if friends is None:
-			timeout_list.add(rid)
+	for i,item in zip(range(1,len(toSearch)+1),toSearch):
+		pf=dl.profile_detail(item)
+		if pf is None:
+			timeout_list.add(item)
 		else:
-			n=save.friendList(item,friends)
+			n=save.profile_detail(item,pf)
 			if n>0:
-				log.info('{}/{} download/saved:{}/{},net2 of {},{},{},{}'.format(i+1,len(toSearch),len(friends),n,rid,item,fl[item],timecost))
+				print('{}/{} {}'.format(i,len(toSearch),item))
+				time.sleep(pf_sleep)
 			else:
-				log.warn('{}/{} friendList privacy.download:{},{},{}'.format(i+1,len(toSearch),len(friends),item,fl[item]))
-	log.debug('{} net2 of {} done'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
+				print('{}/{} profile no items.{}'.format(i,len(toSearch),item))
+	#log.debug('{} net2 of {} done'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))
 
-if __name__ == '__main__':
-	#rid=input('renrenId= ')
-	#getNet2('233330059')
-	getNet2('224227137')
-	#getNet2('410941086')
-	#getNet2('285060168')
-	save.close()
+def getProfile():
+	timeout_list=set()
+	toSearch=fl_searched-pf_searched
+	print('{} get profiles toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
+	for i,item in zip(range(1,len(toSearch)+1),toSearch):
+		pfStyle,pf=dl.profile(item)
+		if pf is None:
+			timeout_list.add(item)
+		elif pf == {}:
+			log.info('{}/{} profile no items.rid={},pfStyle={}'.format(i,len(toSearch),item,pfStyle))
+		else:
+			if pfStyle == 'detail':
+				n=save.profile(item,pf,'profile_detail')
+				time.sleep(pf_sleep)
+			else:
+				n=save.profile(item,pf,'profile_mini')
+			if n == 0:
+				log.error('{}/{} error, {} profile has {} items. but save 0'.format(i,len(toSearch),item,len(pf)))
+	#TODO:deal with timeout list
+	#print('timeout list: {}'.format(timeout_list()))
