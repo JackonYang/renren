@@ -1,0 +1,3 @@
+import spider
+
+spider.getProfile()
