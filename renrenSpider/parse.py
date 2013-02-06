@@ -26,6 +26,7 @@ def friendList(pfHrefs):
 
 _statprog=None
 def status(stats):
+	"""return {statusId:dict_of_details,statusId2:dict2}"""
 	if stats is None:
 		return None
 	elif isinstance(stats,str):
@@ -43,8 +44,8 @@ def status(stats):
 		else:
 			tmpStat=dict()
 			status_id=m.group('id')
-			tmpStat['cur_owner'],tmpStat['cur_content']=split_owner(drop_url(m.group('content')))
-			tmpStat['orig_owner'],tmpStat['orig_content']=split_owner(drop_url(m.group('orig')))
+			tmpStat['renrenId1'],tmpStat['cur_name'],tmpStat['cur_content']=split_owner(drop_url(m.group('content')))
+			tmpStat['orig_owner'],tmpStat['orig_name'],tmpStat['orig_content']=split_owner(drop_url(m.group('orig')))
 			tmpStat['timestamp']=m.group('timestamp').strip()
 			res[status_id]=tmpStat
 	return res 
@@ -186,8 +187,8 @@ def drop_pf(content):
 	global _pfprog
 	if _pfprog is None:
 		import re
-		_pfprog=re.compile(r'<a\W[^>]+?http://www.renren.com/profile.do\?id=(\d+)[^>]+>.*?</a>',re.DOTALL)
-	return _pfprog.sub(r'(p\1p)',content)
+		_pfprog=re.compile(r'<a\W[^>]+?http://www.renren.com/profile.do\?id=(\d+)[^>]+>(.*?)</a>',re.DOTALL)
+	return _pfprog.sub(r'(\1,\2)',content)
 
 _pubpfprog=None
 def drop_pubpf(content):
@@ -196,8 +197,8 @@ def drop_pubpf(content):
 	global _pubpfprog
 	if _pubpfprog is None:
 		import re
-		_pubpfprog=re.compile(r'<a\W[^>]+?http://page.renren.com/(\d+)[^>]+>.*?</a>',re.DOTALL)
-	return _pubpfprog.sub(r'href(p\1p)',str(content))
+		_pubpfprog=re.compile(r'<a\W[^>]+?http://page.renren.com/(\d+)[^>]+>(.*?)</a>',re.DOTALL)
+	return _pubpfprog.sub(r'(\1,\2)',str(content))
 
 _atprog=None
 def drop_at(content):
@@ -223,11 +224,24 @@ def drop_url(content):
 	if content is None:
 		return None
 	else:
-		return combine_space(drop_img(drop_pf(drop_pubpf(drop_at(content)))))
+		return combine_space(drop_rrurl(drop_img(drop_pf(drop_pubpf(drop_at(content))))))
+
+_rrurlprog=None
+def drop_rrurl(content):
+	if content is None:
+		return None
+	global _rrurlprog
+	if _rrurlprog is None:
+		import re
+		_rrurlprog=re.compile(r"<a\W[^>]+title='([^>]+)'>[^<]+</a>",re.DOTALL)
+	return _rrurlprog.sub(r'(\1)',content)
 
 def split_owner(content):
 	if content is None:
-		return None,None
+		return None,None,None
 	else:
 		idx=content.replace('：',':').find(':')
-		return content[:idx].strip('()p '),content[idx+1:]
+		idx2=content.find(',')
+		if (idx < 0) or (idx2 <0):
+			return None,None,None
+		return content[:idx2].strip('( '),content[idx2+1:idx].strip(') '),content[idx+1:].strip(' ')
