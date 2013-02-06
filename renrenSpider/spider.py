@@ -27,24 +27,25 @@ fl_searched=save.getSearched('friendList')
 pf_searched=save.getSearched('profile')
 status_searched=save.getSearched('status')
 
-def getNet2(rid='410941086'):
-	log.debug('{} start to search net2 of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
+def getNet2(orig_id='410941086'):
+	log.debug('start to search net2 of {}'.format(orig_id))
 	timeout_list=set()
-	fl,timecost=dl.friendList(rid)
+	fl,timecost=dl.friendList(orig_id)
 	save.friendList(rid,fl)
 	toSearch=set(fl.keys())-fl_searched
-	log.debug('{} renrenId={},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),rid,len(toSearch),len(fl)))
-	for i,item in zip(range(len(toSearch)),toSearch):
+	print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),rid,len(toSearch),len(fl)))
+	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
 		friends,timecost=dl.friendList(item)
 		if friends is None:
+			print('error.friendList None.renrenid={}'.format(rid))
 			timeout_list.add(rid)
 		else:
 			n=save.friendList(item,friends)
-			if n>0:
-				log.info('{}/{} download/saved:{}/{},net2 of {},{},{},{}'.format(i+1,len(toSearch),len(friends),n,rid,item,fl[item],timecost))
+			info='{}/{},saved/download:{}/{},friendList of {}, time={}'.format(i,len(toSearch),len(friends),n,rid,timecost)
+			if n<len(friends):
+				log.error(info)
 			else:
-				log.warn('{}/{} friendList privacy.download:{},{},{}'.format(i+1,len(toSearch),len(friends),item,fl[item]))
-	log.debug('{} net2 of {} done'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
+				log.info(info)
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))
 
@@ -76,7 +77,7 @@ def getProfile():
 	for i,item in zip(range(1,len(toSearch)+1),toSearch):
 		pfStyle,pf=dl.profile(item)
 		if pf is None:
-			print('{} error, pfStyle={},pf={}'.format(item,pfStyle,pf))
+			print('error.profile None.renrenid={},pfStyle={}'.format(item,pfStyle))
 			timeout_list.add(item)
 		elif pf == {}:
 			n=save.profile_empty(item,pfStyle)
@@ -99,20 +100,19 @@ def getProfile():
 def getStatus():
 	timeout_list=set()
 	toSearch=fl_searched-status_searched
-	#toSearch=['263293320']
 	print('{} get status toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
 	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
 		stat,timecost=dl.status(rid)
 		if stat is None:
-			print('error,status None')
+			print('error.status None,renrenId={}'.format(rid))
+			timeout_list.add(rid)
 		else:
 			n=save.status(stat)
-			info='{}/{} status saved/download:{}/{},renrenId={},{}'.format(i,len(toSearch),len(stat),n,item,timecost)
+			info='{}/{},saved/download:{}/{},status of {}, time={}'.format(i,len(toSearch),len(stat),n,rid,timecost)
 			if n<len(stat):
-				log.info(info)
-			else:
 				log.error(info)
-
+			else:
+				log.info(info)
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))
 
