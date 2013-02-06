@@ -18,8 +18,8 @@ urls={
 	'status':'http://status.renren.com/status?curpage={}&id={}&__view=async-html',
 	'homepage':"http://www.renren.com/{}/profile"}
 itemReg={
-	'status':r'id="status-.+?ilike_icon',
-	'friendList':re.compile(r'<dd><a\s+href=\"http://www.renren.com/profile.do\?id=\d+\">[^<]*<\/a>'),
+	'status':re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>',re.DOTALL),
+	'friendList':re.compile(r'<dd><a\s+href="http://www.renren.com/profile.do\?id=\d+">[^<]*</a>'),
 	'profile_detail':re.compile(r'<dl\sclass="info">.*?</dl>',re.DOTALL),
 	'profile_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
 	'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
@@ -53,13 +53,12 @@ class download:
 		pageStyle='friendList'
 		hrefs,timecost=self.iterPage(pageStyle,renrenId,uppage)
 		return parse.friendList(hrefs),timecost
-
-	def status(self,renrenId=None,targetPage=None, uppage=100):
+	def status(self,renrenId='285060168',uppage=100):
+		"""status('285060168') --> 
+		(statusId,cur_content,orig_content,timestamp)"""
 		pageStyle='status'
-		if targetPage==None:
-			return self.iterPage(pageStyle,renrenId,uppage)
-		else:
-			return self.onePage(urls[pageStyle].format(curpage,renrenId))
+		stat,timecost=self.iterPage(pageStyle,renrenId,uppage)
+		return parse.status(stat),timecost
 
 	def profile(self,renrenId):
 		"""profile('234234') -->
@@ -69,7 +68,7 @@ class download:
 		pageStyle='profile_detail'
 		html_content=self.onePage(urls[pageStyle].format(renrenId))
 		if html_content is None:
-			return None
+			return None,None
 		elif html_content[0:30].find('<div class="col-left">') > -1:
 			return 'detail',parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
