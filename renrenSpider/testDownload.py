@@ -27,6 +27,14 @@ class Test_download(unittest.TestCase):
 			else:
 				print('error.interface specification')
 
+	def test_status(self):
+		#renrenIds={'233330059','410941086','267654044','285060168','240303471'}
+		renrenIds={'410941086','284874220'}
+		for rid in renrenIds:
+			stat,timecost=self.dl.status(rid)
+			#print('{},{},{}'.format(rid,len(stat),timecost))
+			print('{},{},{}'.format(rid,stat,timecost))
+
 	def test_homepage(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
 		for rid in renrenIds:
@@ -42,7 +50,8 @@ class Test_download(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(Test_download('test_friendList'))
-	suite.addTest(Test_download('test_profile'))
+	suite.addTest(Test_download('test_status'))
+	#suite.addTest(Test_download('test_profile'))
 	#suite.addTest(Test_download('test_homepage'))
 	#suite.addTest(Test_download('test_login'))
 	runner=unittest.TextTestRunner()

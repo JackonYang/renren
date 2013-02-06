@@ -3,6 +3,7 @@ import logging
 
 import download
 import database
+import parse
 
 
 def runlog(tt='run'):
@@ -15,7 +16,7 @@ def runlog(tt='run'):
 		logger.setLevel(20)#20 info, 40 error
 		return logger
 
-pf_sleep=2
+pf_sleep=3
 user='jiekunyang@gmail.com'
 dl=download.download(user)
 save=database.database('renren_orig')
@@ -24,6 +25,7 @@ log=runlog()
 
 fl_searched=save.getSearched('friendList')
 pf_searched=save.getSearched('profile')
+status_searched=set()#save.getSearched('status')
 
 def getNet2(rid='410941086'):
 	log.debug('{} start to search net2 of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
@@ -72,12 +74,9 @@ def getProfile():
 	toSearch=fl_searched-pf_searched
 	print('{} get profiles toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
 	for i,item in zip(range(1,len(toSearch)+1),toSearch):
-		try:
-			pfStyle,pf=dl.profile(item)
-		except Exception as e:
-			print(item)
-			return None
+		pfStyle,pf=dl.profile(item)
 		if pf is None:
+			print('{} error, pfStyle={},pf={}'.format(item,pfStyle,pf))
 			timeout_list.add(item)
 		elif pf == {}:
 			n=save.profile_empty(item,pfStyle)
@@ -94,5 +93,24 @@ def getProfile():
 			time.sleep(pf_sleep)
 		if i%20 == 0:
 			print('{} {}/{} profile done'.format(time.strftime('%H:%M:%S',time.localtime()),i,len(toSearch)))
+	#TODO:deal with timeout list
+	#print('timeout list: {}'.format(timeout_list()))
+
+def getStatus():
+	timeout_list=set()
+	toSearch=fl_searched-status_searched
+	#toSearch=['233330059']
+	#toSearch=['410941086']
+	print('{} get status toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
+	for i,item in zip(range(1,len(toSearch)+1),toSearch):
+		stat,timecost=dl.status(item)
+		if stat is None:
+			print('error,status None')
+		else:
+			for item in stat.values():
+				if item['orig_content'] is not None:
+					print(item['timestamp'])
+					print(item['cur_content'])
+					print(item['orig_content'])
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))

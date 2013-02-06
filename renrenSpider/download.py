@@ -53,6 +53,7 @@ class download:
 		pageStyle='friendList'
 		hrefs,timecost=self.iterPage(pageStyle,renrenId,uppage)
 		return parse.friendList(hrefs),timecost
+
 	def status(self,renrenId='285060168',uppage=100):
 		"""status('285060168') --> 
 		(statusId,cur_content,orig_content,timestamp)"""
@@ -72,6 +73,7 @@ class download:
 		elif html_content[0:30].find('<div class="col-left">') > -1:
 			return 'detail',parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
+			#TODO:check whether account safety
 			return 'mini_tl',parse.homepage_tl(itemReg['profile_tl'].findall(html_content))
 		else:
 			return 'mini_basic',parse.homepage_basic_privacy(itemReg['profile_basic'].findall(html_content))

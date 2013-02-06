@@ -24,6 +24,31 @@ def friendList(pfHrefs):
 		name[m.group(1)]=m.group(2)
 	return name
 
+_statprog=None
+def status(stats):
+	if stats is None:
+		return None
+	elif isinstance(stats,str):
+		stats={stats}
+	global _statprog
+	if _statprog is None:
+		import re
+		_statprog=re.compile(r'<li[^>]+id="status-(?P<id>\d+)">.+?<h3>\s*(?P<content>.+?)</h3>\s*?(?:<div class="content">\s*<div[^>]+>(?P<orig>.*?)</div>\s*</div>)?\s*<div class="details">.+?<span class="duration">(?P<timestamp>[^<]+?)</span>',re.DOTALL)
+	res=dict()
+	for stat in stats:
+		m=_statprog.search(stat)
+		if m is None:
+			print('status parse error.stat={}'.format(stat))
+			continue
+		else:
+			tmpStat=dict()
+			status_id=m.group('id')
+			tmpStat['cur_owner'],tmpStat['cur_content']=split_owner(drop_url(m.group('content')))
+			tmpStat['orig_owner'],tmpStat['orig_content']=split_owner(drop_url(m.group('orig')))
+			tmpStat['timestamp']=m.group('timestamp').strip()
+			res[status_id]=tmpStat
+	return res 
+
 _profileprog=None
 _profilegprog=None
 def profile_detail(content):
@@ -138,9 +163,71 @@ def drop_space(content):
 	global _spaceprog
 	if _spaceprog is None:
 		import re
-		_spaceprog=re.compile(r'(?:&nbsp;)|(?:\"\+response\.[a-z]+\+\")|(?:\\n)|\n|\t|(?:\\u3000)|(?:\\t)')
+		_spaceprog=re.compile(r'(?:&nbsp;)|(?:\\n)|\n|(?:\\u3000)|(?:\u3000)|(?:\\t)|\t')
 	return _spaceprog.sub(r'',str(content)).strip(' ')
+
+_multispaceprog=None
+def combine_space(content):
+	if content is None:
+		return None
+	global _multispaceprog
+	if _multispaceprog is None:
+		import re
+		_multispaceprog=re.compile(r'\s+')
+	return _multispaceprog.sub(r' ',content).strip('')
 
 def drop_extra(content):
 	return drop_space(drop_span((drop_href(content))))
 
+_pfprog=None
+def drop_pf(content):
+	if content is None:
+		return None
+	global _pfprog
+	if _pfprog is None:
+		import re
+		_pfprog=re.compile(r'<a\W[^>]+?http://www.renren.com/profile.do\?id=(\d+)[^>]+>.*?</a>',re.DOTALL)
+	return _pfprog.sub(r'(p\1p)',content)
+
+_pubpfprog=None
+def drop_pubpf(content):
+	if content is None:
+		return None
+	global _pubpfprog
+	if _pubpfprog is None:
+		import re
+		_pubpfprog=re.compile(r'<a\W[^>]+?http://page.renren.com/(\d+)[^>]+>.*?</a>',re.DOTALL)
+	return _pubpfprog.sub(r'href(p\1p)',str(content))
+
+_atprog=None
+def drop_at(content):
+	if content is None:
+		return None,None
+	global _atprog
+	if _atprog is None:
+		import re
+		_atprog=re.compile(r"<a\W[^>]+?http://www.renren.com/g/(\d+)[^>]*>(@.*?)</a>",re.DOTALL)
+	return _atprog.sub(r'\2(\1)',str(content))
+
+_imgprog=None
+def drop_img(content):
+	if content is None:
+		return None
+	global _imgprog
+	if _imgprog is None:
+		import re
+		_imgprog=re.compile(r"<img\W[^>]+alt=\'([^>]*?)\'[^>]*?/>",re.DOTALL)
+	return _imgprog.sub(r'(img\1img)',content)
+
+def drop_url(content):
+	if content is None:
+		return None
+	else:
+		return combine_space(drop_img(drop_pf(drop_pubpf(drop_at(content)))))
+
+def split_owner(content):
+	if content is None:
+		return None,None
+	else:
+		idx=content.replace('：',':').find(':')
+		return content[:idx].strip('()p '),content[idx+1:]
