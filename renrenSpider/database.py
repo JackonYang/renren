@@ -18,7 +18,7 @@ class database:
 	sqls['profile_detail']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_details.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
 	sqls['profile_mini']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_mini.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
 	sqls['profile_empty']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,pfStyle varchar(20),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
-	sqls['status']='CREATE TABLE if not exists {} (statusId varchar(20) NOT NULL,timestamp varchar(20),cur_owner varchar(20),cur_content varchar(500),orig_owner varchar(20),orig_content varchar(500),lastmodified TIMESTAMP DEFAULT NOW(),KEY cur_owner(cur_owner),KEY orig_owner(orig_owner) {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
+	sqls['status']='CREATE TABLE if not exists {} (statusId varchar(20) NOT NULL,renrenId1 varchar(20),timestamp varchar(20),cur_name varchar(50),cur_content varchar(500),orig_owner varchar(20),orig_name varchar(50),orig_content varchar(500),lastmodified TIMESTAMP DEFAULT NOW(),KEY cur_owner(renrenId1),KEY orig_owner(orig_owner) {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
 	key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)','status':',key (statusId)','profile_mini':',KEY (renrenId1)','profile_empty':',KEY (renrenId1)'}
 	primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','profile_empty':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)','status':',PRIMARY KEY (statusId)'}
 
@@ -95,12 +95,17 @@ class database:
 			return 0
 		saved=0
 		for statusId,stat in stats.items():
-			valStat='statusId={}'.format(statusId)
+			valStat="statusId='{}'".format(statusId)
 			for tag,value in stat.items():
+				if value is not None:
+					value=value.replace("'","\\'")
 				valStat += ",{}='{}'".format(tag,value)
 			sqlStat='insert into {} set {}'.format(self.tempTable['status'],valStat)
-			print(sqlStat)
-			saved += self.cur.execute(sqlStat)
+			try:
+				saved += self.cur.execute(sqlStat)
+			except Exception as e:
+				print(sqlStat)
+				return 0
 		self.conn.commit()
 		return saved
 
