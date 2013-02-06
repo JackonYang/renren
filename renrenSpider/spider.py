@@ -25,7 +25,7 @@ log=runlog()
 
 fl_searched=save.getSearched('friendList')
 pf_searched=save.getSearched('profile')
-status_searched=set()#save.getSearched('status')
+status_searched=save.getSearched('status')
 
 def getNet2(rid='410941086'):
 	log.debug('{} start to search net2 of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
@@ -99,18 +99,20 @@ def getProfile():
 def getStatus():
 	timeout_list=set()
 	toSearch=fl_searched-status_searched
-	#toSearch=['233330059']
-	#toSearch=['410941086']
+	#toSearch=['263293320']
 	print('{} get status toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
-	for i,item in zip(range(1,len(toSearch)+1),toSearch):
-		stat,timecost=dl.status(item)
+	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
+		stat,timecost=dl.status(rid)
 		if stat is None:
 			print('error,status None')
 		else:
-			for item in stat.values():
-				if item['orig_content'] is not None:
-					print(item['timestamp'])
-					print(item['cur_content'])
-					print(item['orig_content'])
+			n=save.status(stat)
+			info='{}/{} status saved/download:{}/{},renrenId={},{}'.format(i,len(toSearch),len(stat),n,item,timecost)
+			if n<len(stat):
+				log.info(info)
+			else:
+				log.error(info)
+
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))
+
