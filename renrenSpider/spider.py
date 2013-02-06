@@ -17,21 +17,64 @@ def runlog(tt='run'):
 		return logger
 
 pf_sleep=3
-user='jiekunyang@gmail.com'
-dl=download.download(user)
-save=database.database('renren_orig')
-log=runlog()
 
+class spider:
+	def __init__(self,user='yyttrr3242342@163.com',db='test'):
+		self.dl=download.download(user)
+		self.log=runlog('spider')
+		self.save=database.database(db)
 
-fl_searched=save.getSearched('friendList')
-pf_searched=save.getSearched('profile')
-status_searched=save.getSearched('status')
+		self.fl_searched=self.save.getSearched('friendList')
+		self.pf_searched=self.save.getSearched('profile')
+		self.status_searched=self.save.getSearched('status')
+
+	def getStatus_friend(self,rid='410941086'):
+		print('{} start to get status of {}\'s friends'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
+		total=self.save.getFriendList(rid)
+		if len(total) == 0:
+			tmp=self.dl.friendList(rid)
+			total=set(tmp[0].keys())
+		toSearch=set(total)-self.status_searched
+		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'status',rid,len(toSearch),len(total)))
+		self.req_seq(toSearch,'status')
+
+	def req_seq(self,toSearch,pageStyle,resend=3):
+		"""download and save data of toSearch in target pageStyle
+			write runlog"""
+		timeout_list=set()
+		for i,rid in zip(range(1,len(toSearch)+1),toSearch):
+			meth_download=getattr(download.download,pageStyle)
+			toSave,info=meth_download(self.dl,rid)#None,empty,normal
+			if toSave is None:#add to timeout_list and request later
+				timeout_list.add(rid)
+			elif len(toSave) == 0:#empty, TODO
+				#if friendList and profile, not save.if status, save.
+				pass
+			else:#toSave is normal, save and write run log.
+				if pageStyle == 'profile':
+					meth_save=getattr(database.database,info)
+					info_name='pfStyle'
+				else:
+					meth_save=getattr(database.database,pageStyle)
+					info_name='time'
+				n=meth_save(self.save,toSave,rid)
+				log_text='{}/{},saved/download:{}/{},{} of {}, {}={}'.format(i,len(toSearch),n,len(toSave),pageStyle,rid,info_name,info)
+				if n<len(toSave):
+					self.log.error(log_text)
+				else:
+					self.log.info(log_text)
+	#t	imeout_list, resend 3 times
+		if (len(timeout_list)>0) and (resend > 0):
+			print('resend timeout_list,{} times left'.format(resend-1))
+			self.req_seq(timeout_list,pageStyle,resend-1)
+		else:#print error log
+			print('{} timeout list:{}'.format(pageStyle,timeout_list))
 
 def getNet2(orig_id='410941086'):
 	print('start to search net2 of {}'.format(orig_id))
 	timeout_list=set()
 	fl,timecost=dl.friendList(orig_id)
-	save.friendList(orig_id,fl)
+	save.friendList(fl,orig_id)
 	toSearch=set(fl.keys())-fl_searched
 	print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id,len(toSearch),len(fl)))
 	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
@@ -40,17 +83,15 @@ def getNet2(orig_id='410941086'):
 			print('error.friendList None.renrenid={}'.format(rid))
 			timeout_list.add(rid)
 		else:
-			n=save.friendList(rid,friends)
+			n=save.friendList(friends,rid)
 			info='{}/{},saved/download:{}/{},friendList of {}, time={}'.format(i,len(toSearch),len(friends),n,rid,timecost)
 			if n<len(friends):
-				log.error(info)
+				self.log.error(info)
 			else:
-				log.info(info)
-	#TODO:deal with timeout list
-	#print('timeout list: {}'.format(timeout_list()))
+				self.log.info(info)
 
 def getProfile_friend(rid='410941086'):
-	print('{} start to search friend profile of {}'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
+	print('{} start to get profile of {}\'s friends'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
 	timeout_list=set()
 	friends=save.getFriendList(rid)
 	toSearch=set(friends)-pf_detail_searched

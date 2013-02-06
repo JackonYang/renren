@@ -15,8 +15,9 @@ urls={
 	'login':"http://www.renren.com/PLogin.do",
 	'friendList':"http://friend.renren.com/GetFriendList.do?curpage={}&id={}",
 	'profile_detail':"http://www.renren.com/{}/profile?v=info_ajax",
-	'status':'http://status.renren.com/status?curpage={}&id={}&__view=async-html',
-	'homepage':"http://www.renren.com/{}/profile"}
+	'homepage':"http://www.renren.com/{}/profile",
+	'status':'http://status.renren.com/status?curpage={}&id={}&__view=async-html'
+	}
 itemReg={
 	'status':re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>',re.DOTALL),
 	'friendList':re.compile(r'<dd><a\s+href="http://www.renren.com/profile.do\?id=\d+">[^<]*</a>'),
@@ -43,7 +44,6 @@ class download:
 		renrenId,detail=self.login(user,passwd)
 		if renrenId is None:
 			print('login failed,user={},{}'.format(user,detail))
-		#socket.setdefaulttimeout(timeout)
 
 	def friendList(self,renrenId='285060168',uppage=100):
 		"""friendList('285060168') --> 
@@ -69,15 +69,16 @@ class download:
 		pageStyle='profile_detail'
 		html_content=self.onePage(urls[pageStyle].format(renrenId))
 		if html_content is None:
-			return None,None
+			return None,'profile'
 		elif html_content[0:30].find('<div class="col-left">') > -1:
-			return 'detail',parse.profile_detail(itemReg[pageStyle].findall(html_content))
+			return parse.profile_detail(itemReg[pageStyle].findall(html_content)),'pf_detail'
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
 			#TODO:check whether account safety
-			return 'mini_tl',parse.homepage_tl(itemReg['profile_tl'].findall(html_content))
+			return parse.homepage_tl(itemReg['profile_tl'].findall(html_content)),'mini_tl'
 		else:
-			return 'mini_basic',parse.homepage_basic_privacy(itemReg['profile_basic'].findall(html_content))
+			return parse.homepage_basic_privacy(itemReg['profile_basic'].findall(html_content)),'mini_basic'
 
+	#depraced
 	def homepage(self,renrenId):
 		pageStyle='homepage'
 		html_content=self.onePage(urls[pageStyle].format(renrenId))
@@ -91,12 +92,9 @@ class download:
 	def onePage(self,url,request_time=None):
 		"""onePage(url) --> 
 		return html_content if success
-		return None if timeout.
-		write request_time in _request_time
-		"""
+		return None if timeout."""
+		request_start=time.time()
 		try:
-			if request_time is not None:
-				request_start=time.time()
 			rsp=self.opener.open(url,timeout=timeout)
 			html_content=rsp.read().decode('UTF-8','ignore')
 			if request_time is not None:
@@ -108,11 +106,11 @@ class download:
 		else:
 			return html_content
 
-	def iterPage(self,pageStyle=None,renrenId=None,uppage=100,log=None):
+	def iterPage(self,pageStyle=None,renrenId=None,uppage=100):
 		"""iterPage(pageStyle,renrenId)  --> 
-		return set(items),timecost if success,
-		return set(),timecost if forbidden by privacy policy,
-		return None,timecost if timeout."""
+		return (items_set,timecost) if success,
+		return (None,timecost) if one or more pages timeout."""
+		#return set(),timecost if forbidden by privacy policy,
 		itemsAll=set()
 		timeout_list=list()
 		req_time=list()
@@ -124,6 +122,7 @@ class download:
 				timeout_list.append(curpage)
 			else:
 				items_curpage=itemReg[pageStyle].findall(html_content)
+				#TODO:check data,deal with rsp pageStyle
 				if len(items_curpage) < 1:#privacy/all pages requested.
 					break
 				else:
@@ -136,10 +135,7 @@ class download:
 			else:
 				items_curpage=itemReg[pageStyle].findall(html_content)
 				itemsAll=itemsAll | set(items_curpage)
-		#timecost
-		runtime=time.time()-runtime_start
-		#data check
-		#request last page and check by number of datas
+		runtime=time.time()-runtime_start#total request time
 		return itemsAll,'{},{}'.format(format(runtime,'.2f'),format_timecost(req_time))
 
 	def login(self,user,passwd):
@@ -155,7 +151,7 @@ class download:
 		except socket.timeout as e:
 			return None,'timeout'
 		except urllib.error.URLError as e:
-			return None
+			return None,'timeout'
 		else:
 			#check whether login is successful. 
 			m=re.compile(r'http://www.renren.com/(\d+)').match(url)
@@ -163,6 +159,3 @@ class download:
 				return None,'login failed,rsp={}'.format(url)
 			else:
 				return m.group(1),'success'
-
-		if _err is not set():
-			print('error:{}'.format(_err))
