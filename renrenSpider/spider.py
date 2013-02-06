@@ -28,19 +28,19 @@ pf_searched=save.getSearched('profile')
 status_searched=save.getSearched('status')
 
 def getNet2(orig_id='410941086'):
-	log.debug('start to search net2 of {}'.format(orig_id))
+	print('start to search net2 of {}'.format(orig_id))
 	timeout_list=set()
 	fl,timecost=dl.friendList(orig_id)
-	save.friendList(rid,fl)
+	save.friendList(orig_id,fl)
 	toSearch=set(fl.keys())-fl_searched
-	print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),rid,len(toSearch),len(fl)))
+	print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id,len(toSearch),len(fl)))
 	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
-		friends,timecost=dl.friendList(item)
+		friends,timecost=dl.friendList(rid)
 		if friends is None:
 			print('error.friendList None.renrenid={}'.format(rid))
 			timeout_list.add(rid)
 		else:
-			n=save.friendList(item,friends)
+			n=save.friendList(rid,friends)
 			info='{}/{},saved/download:{}/{},friendList of {}, time={}'.format(i,len(toSearch),len(friends),n,rid,timecost)
 			if n<len(friends):
 				log.error(info)
@@ -74,26 +74,24 @@ def getProfile():
 	timeout_list=set()
 	toSearch=fl_searched-pf_searched
 	print('{} get profiles toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),len(toSearch),len(fl_searched)))
-	for i,item in zip(range(1,len(toSearch)+1),toSearch):
-		pfStyle,pf=dl.profile(item)
+	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
+		pfStyle,pf=dl.profile(rid)
 		if pf is None:
-			print('error.profile None.renrenid={},pfStyle={}'.format(item,pfStyle))
-			timeout_list.add(item)
+			print('error.profile None.renrenid={},pfStyle={}'.format(rid,pfStyle))
+			timeout_list.add(rid)
 		elif pf == {}:
-			n=save.profile_empty(item,pfStyle)
-			if n == 0:
-				log.error('{}/{} error, {} profile has 0 items. but save 0'.format(i,len(toSearch),item))
+			save.profile_empty(rid,pfStyle)
 		else:
 			if pfStyle == 'detail':
-				n=save.profile(item,pf,'profile_detail')
+				n=save.profile(rid,pf,'profile_detail')
 			else:
-				n=save.profile(item,pf,'profile_mini')
+				n=save.profile(rid,pf,'profile_mini')
 			if n == 0:
-				log.error('{}/{} error, {} profile has {} items. but save 0'.format(i,len(toSearch),item,len(pf)))
+				print('{}/{}, saved/download:{}/{} profile of {}'.format(i,len(toSearch),n,len(pf),rid))
 		if pfStyle == 'detail':
 			time.sleep(pf_sleep)
-		if i%20 == 0:
-			print('{} {}/{} profile done'.format(time.strftime('%H:%M:%S',time.localtime()),i,len(toSearch)))
+		if i%50 == 0:
+			log.info('{}/{} profiles done'.format(i,len(toSearch)))
 	#TODO:deal with timeout list
 	#print('timeout list: {}'.format(timeout_list()))
 
