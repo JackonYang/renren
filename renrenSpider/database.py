@@ -98,7 +98,7 @@ class database:
 			valStat="statusId='{}'".format(statusId)
 			for tag,value in stat.items():
 				if value is not None:
-					value=value.replace("'","\\'").strip('\\')
+					value=value.replace("'","\\'").rstrip('\\')
 				valStat += ",{}='{}'".format(tag,value)
 			sqlStat='insert into {} set {}'.format(self.tempTable['status'],valStat)
 			try:
