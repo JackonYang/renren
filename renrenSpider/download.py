@@ -140,7 +140,7 @@ class download:
 		runtime=time.time()-runtime_start
 		#data check
 		#request last page and check by number of datas
-		return itemsAll,'time={},{}'.format(format(runtime,'.2f'),format_timecost(req_time))
+		return itemsAll,'{},{}'.format(format(runtime,'.2f'),format_timecost(req_time))
 
 	def login(self,user,passwd):
 		"""return (renrenId,'success') if login successfully.
