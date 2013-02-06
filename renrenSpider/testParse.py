@@ -87,6 +87,18 @@ class Test_parse(unittest.TestCase):
 		for content,expt in contents.items():
 			self.assertEquals(parse.drop_span(content),expt)
 
+	def test_drop_rrurl(self):
+		contents={"<a href='http://rrurl.cn/pN' target='_blank' title='http://lang-8.com/'>http://rrurl.cn/pNVUbN </a>":'(http://lang-8.com/)',
+			None:None,
+			'norrurl':'norrurl'
+		}
+		for content,expt in contents.items():
+			self.assertEquals(parse.drop_rrurl(content),expt)
+
+	def test_split_owner(self):
+		contents={' (123456,name) : testcase':('123456','name','testcase'),None:(None,None,None),'no ptn':(None,None,None),'32:only':(None,None,None),'asdf,only':(None,None,None)}
+		for content,expt in contents.items():
+			self.assertEquals(parse.split_owner(content),expt)
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
@@ -98,6 +110,8 @@ if __name__=='__main__':
 	suite.addTest(Test_parse('test_split_tlbirth'))
 	suite.addTest(Test_parse('test_drop_href'))
 	suite.addTest(Test_parse('test_drop_span'))
+	suite.addTest(Test_parse('test_drop_rrurl'))
+	suite.addTest(Test_parse('test_split_owner'))
 	#suite.addTest(Test_parse('test_drop_space'))
 	#suite.addTest(Test_parse('test_drop_extra'))
 	runner=unittest.TextTestRunner()
