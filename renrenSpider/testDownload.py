@@ -1,12 +1,47 @@
+
 import unittest
 from download import download
 
-class Test_download(unittest.TestCase):
+_url2fileprog=None
+def url2file(url):
+	global _url2fileprog
+	if _url2fileprog is None:
+		import re
+		_url2fileprog=re.compile(r'http://(\w+).renren.com/(?:\D+)?(\d+)\D+(\d+)?')
+	m=_url2fileprog.search(url)
+	if m is None:
+		return None
+	else:
+		if m.group(3) is None:
+			return 'test_data/{}_{}_profile.html'.format(m.group(1),m.group(2))
+		else:
+			return 'test_data/{}_{}_{}.html'.format(m.group(1),m.group(2),m.group(3))
 
+class newDownload(download):
+	def __init__(self):
+		download.__init__(self,None)#no auto login
+	def onePage(self,url,request_time=None):
+		try:
+			f=open(url2file(url),'r')
+			html_content=str(f.readlines())
+			f.close()
+		except Exception as e:
+			return None
+		if request_time is not None:
+			request_time.append(1.11)#random time
+		return html_content
+
+class Test_download(unittest.TestCase):
 	def setUp(self):
-		#user='yyttrr3242342@163.com'
-		user='jiekunyang@gmail.com'
-		self.dl=download(user)
+		pass
+
+	def test_newDownload(self):
+		new_dl=newDownload()
+		request_time=[]
+		new_dl.onePage('http://www.renren.com/233330059/profile',request_time)
+		print(request_time)
+		print(new_dl.iterPage('friendList','439682367'))
+
 	def tearDown(self):
 		pass
 
@@ -50,9 +85,11 @@ class Test_download(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(Test_download('test_friendList'))
-	suite.addTest(Test_download('test_status'))
+	#suite.addTest(Test_download('test_status'))
 	#suite.addTest(Test_download('test_profile'))
 	#suite.addTest(Test_download('test_homepage'))
 	#suite.addTest(Test_download('test_login'))
+	suite.addTest(Test_download('test_newDownload'))
+	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
