@@ -33,10 +33,10 @@ class database:
 		self.createTempTable()
 		self.createMainTable()
 	def close(self):
-		self.conn.close()
 		self.cur.close()
+		self.conn.close()
 
-	def friendList(self,renrenId,names):
+	def friendList(self,names,renrenId):
 		"""insert into db, and return rows affected.return None if input error"""
 		if names is None:
 			return None
@@ -49,6 +49,8 @@ class database:
 		valNm=str(set(names.items())).strip('{}')
 		sqlNm='insert into {} (renrenId1,name) values {}'.format(self.tempTable['name'],valNm)
 		try:
+			#print('database.friendList()')
+			#n=0
 			n=self.cur.execute(sqlFl)
 			self.cur.execute(sqlNm)
 		except Exception as e:
@@ -86,7 +88,7 @@ class database:
 			self.conn.commit()
 			return n
 
-	def status(self,stats):
+	def status(self,stats,renrenId=None):
 		if stats is None:
 			return None
 		elif not isinstance(stats,dict):
@@ -103,6 +105,7 @@ class database:
 			sqlStat='insert into {} set {}'.format(self.tempTable['status'],valStat)
 			try:
 				saved += self.cur.execute(sqlStat)
+				#print('database.status()')
 			except Exception as e:
 				print(sqlStat)
 				return 0
