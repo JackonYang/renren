@@ -1,4 +1,4 @@
-"""provide interface to download data of a certain pageStyle of someone from www.renren.com"""
+"""provide interface to browser data of a certain pageStyle of someone from www.renren.com"""
 import urllib.request
 from urllib.parse import urlencode
 import http.cookiejar
@@ -25,7 +25,6 @@ itemReg={
 	'profile_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
 	'safety':re.compile(r'<title>.*?安全.*?</title>'),
 	'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
-	#'homepage_basic':re.compile(r'<(?:u|d)l class="(?:user-info )*?clearfix">.*?</(?:u|d)l>',re.DOTALL)}
 
 def format_time(runtime,req_time):
 	if isinstance(req_time,list):
@@ -35,21 +34,30 @@ def format_time(runtime,req_time):
 	else:
 		return 'timecost should be list'
 
-class download:
+_url2fileprog=None
+def url2file(url):
+	global _url2fileprog
+	if _url2fileprog is None:
+		import re
+		_url2fileprog=re.compile(r'http://(\w+).renren.com/(?:\D+)?(\d+)\D+(\d+)?')
+	m=_url2fileprog.search(url)
+	if m is None:
+		return None
+	else:
+		if m.group(3) is None:
+			return 'test_data/{}_{}_profile.html'.format(m.group(1),m.group(2))
+		else:
+			return 'test_data/{}_{}_{}.html'.format(m.group(1),m.group(2),m.group(3))
 
+class browser:
 	def __init__(self,user='yyttrr3242342@163.com',passwd=None):
-		if user is not None:
-			if passwd is None:
-				import mytools #used to get passwd from personal mysql
-				passwd=mytools.getPasswd('renren',user)
-			renrenId,detail=self.login(user,passwd)
-			if renrenId is None:
-				print('login failed,user={},{}'.format(user,detail))
+		self.user=user
+		self.passwd=passwd
 
 	def friendList(self,renrenId='285060168',uppage=100):
-		"""friendList('285060168') --> 
-		return ({friend_rid1:name1,friend_rid2:name2},timecost) of renrenId,
+		"""friendList(renrenId:str) --> (record:dict(),timecost:str)
 		return (None,info) if error occurs, such as timeout or safetyPage"""
+		#generate request list
 		return self.download_hdlr('friendList',renrenId,uppage)
 	def status(self,renrenId='285060168',uppage=100):
 		"""status('285060168') --> 
@@ -62,7 +70,7 @@ class download:
 		return {tag1:value1,...,tagn:valuen} in homepage if detail page unavailable
 		return None if timeout"""
 		pageStyle='profile_detail'
-		html_content=self._one_page(urls[pageStyle].format(renrenId))
+		html_content=self._download(urls[pageStyle].format(renrenId))
 		if html_content is None:
 			return None,'profile'
 		elif html_content[0:30].find('<div class="col-left">') > -1:
@@ -73,9 +81,15 @@ class download:
 		else:
 			return parse.homepage_basic_privacy(itemReg['profile_basic'].findall(html_content)),'mini_basic'
 
-	def login(self,user,passwd):
+	def login(self,user=None,passwd=None):
 		"""return (renrenId,'success') if login successfully.
-		return (None,reason) if failed."""
+		return (None,info) if failed."""
+		if user is None:
+			user=self.user
+			passwd=self.passwd
+		if passwd is None:
+			import mytools #used to get passwd from personal mysql
+			passwd=mytools.getPasswd('renren',user)
 		data=urlencode({"email":user,"password":passwd}).encode(encoding='UTF8');
 		hdlr_cookie=urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar())
 		self.opener=urllib.request.build_opener(hdlr_cookie)
@@ -95,8 +109,8 @@ class download:
 			else:
 				return m.group(1),'success'
 
-	def download_hdlr(self,pageStyle,renrenId='285060168',uppage=100):
-		"""pageStyle download handler.
+	def process(self,pageStyle,renrenId='285060168',uppage=100):
+		"""pageStyle browser handler.
 		call _iter_page to request pages and detect items,
 		parse record from items by parse module.runtime is logged."""
 		runtime_start=time.time()
@@ -107,7 +121,7 @@ class download:
 		runtime=time.time()-runtime_start
 		return record,format_time(runtime,req_time)
 
-	def _one_page(self,url,request_time=None):
+	def _download(self,url,request_time=None):
 		"""onePage(url) --> 
 		return html_content if success
 		return None if timeout."""
@@ -115,6 +129,9 @@ class download:
 		try:
 			rsp=self.opener.open(url,timeout=timeout)
 			html_content=rsp.read().decode('UTF-8','ignore')
+			f=open(url2file(url),'w')
+			f.write(html_content)
+			f.close()
 			if request_time is not None:
 				request_time.append(time.time()-request_start)
 		except socket.timeout as e:
@@ -123,15 +140,15 @@ class download:
 			return None
 		else:
 			return html_content
-	def _iter_page(self,pageStyle,renrenId,toDo=range(0,100),req_time=None):
-		"""iterPage(pageStyle,renrenId)  --> 
-		return itemsAll if success,return None if timeout after resend 3 times.
-		raise exception if error or meet safety page"""
+
+	def _iter_page(self,pageStyle,renrenId,pages=range(0,100),req_time=None):
+		"""_iter_page(pageStyle,renrenId)  --> (record:dict(),timecost)
+		return (None,error_info) if error"""
 		itemsAll=set()
 		timeout_seq=list()
 		#request pages until no more items detected
-		for curpage in toDo:
-			html_content=self._one_page(urls[pageStyle].format(curpage,renrenId),req_time)
+		for curpage in pages:
+			html_content=self._download(urls[pageStyle].format(curpage,renrenId),req_time)
 			if html_content is None:#add to timeout_seq to resend later.
 				timeout_seq.append(curpage)
 			else:
@@ -146,11 +163,10 @@ class download:
 		#_empty_check if empty
 		return itemsAll
 
-
 	#@depraced
 	def homepage(self,renrenId):
 		pageStyle='homepage'
-		html_content=self._one_page(urls[pageStyle].format(renrenId))
+		html_content=self._download(urls[pageStyle].format(renrenId))
 		if html_content is None:
 			return set()
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
@@ -165,4 +181,5 @@ class download:
 			return True,'not forbidden'
 		else:
 			return False,pageStyle
+
 
