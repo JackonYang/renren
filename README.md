@@ -1,22 +1,47 @@
-renren
-======
+design of renrenSpider
+====================
 
-人人网信息抓取与社交信息挖掘
+抓取并在本地存储社交网络数据 [www.renren.com](www.renren.com)
 
-单线程后台运行。
+core framework
+---------------------
 
-spider
-  |--download
-  |    |--parse
-  |
-  |--database
+renren spider 直接依赖于 browser 和 database 两个类。<br>
+前者负责抓取页面并解析出信息字段 record。database 封装数据库读写操作。
 
-spider 直接依赖于 download 和 database 两个 class。
+download 为每一个页面类型 (pageStyle) 提供一个下载接口:<br>
+`pageStyle(renrenId)-->(items,timecost,pageStyle)`
 
-download 为每一个页面类型(pageStyle)提供一个下载接口:
-pageStyle(renrenId)-->(items,timecost,pageStyle)
+database 为每一个页面类型提供一个存储接口：<br>
+`pageStyle(item,renrenId=None) --> nItemsSave`
 
-database 为每一个页面类型提供一个存储接口：
-pageStyle(item,renrenId=None) --> nItemsSave
 
-download 获取页面，并调用 parse module 中封装的方法解析出 items 。
+####  browser 核心实现：
+
+1. download<br>
+简单的根据 url 获取 html_content 并返回给上层调用，便于性能统计。
+
+2. detect_item<br>
+页面类型分为可以迭代的多页面，如 friendList, status; 单页面，如 profile,homepage。<br>
+detect_item 根据页面类型抓取特定字段并返回字段的集合 items。
+
+3. parse <br>
+解析 detect 得到的 items, 获得信息字段 record。返回 dict()。<br>
+迭代页面包含多个 item，通常，每个item会有自己的id。以此作为 dict 的 key。<br>
+单页面一般包含多个字段，可以处理为 tag=value 格式。以此作为 dict 的 key 和 value。
+
+####  database 核心实现：
+
+1. save_pageStyle
+2. getSearched_pageStyle
+3. getRecord
+
+** 接口规范 **
+
+1. `download(url:str) --> html_content:str`
+1. `detect_hdlr.pageStyle(html_content:str)  --> (items:set, pageStyle:str)`
+2. `parse.pageStyle(items:set) --> record:dict() `
+3. `browser.pageStyle(rid:str) --> (record:dict(),timecost:str)`
+3. `database.save(rid:str,record) --> number_of_items_saved:int`
+
+_parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
