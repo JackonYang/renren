@@ -10,6 +10,7 @@ import time
 
 import parse
 
+run_level='info'
 timeout=3
 urls={
 	'login':"http://www.renren.com/PLogin.do",
@@ -107,7 +108,7 @@ class browser:
 			if m is None:
 				return None,'login failed,rsp={}'.format(url)
 			else:
-				return m.group(1),'success'
+				return m.group(1),'login success'
 
 	def process(self,pageStyle,renrenId='285060168',uppage=100):
 		"""pageStyle browser handler.
@@ -122,18 +123,19 @@ class browser:
 		return record,format_time(runtime,req_time)
 
 	def _download(self,url,request_time=None):
-		"""onePage(url) --> 
-		return html_content if success
+		"""onePage(url) --> html_content:str
 		return None if timeout."""
 		request_start=time.time()
 		try:
+			print(url)
 			rsp=self.opener.open(url,timeout=timeout)
 			html_content=rsp.read().decode('UTF-8','ignore')
-			f=open(url2file(url),'w')
-			f.write(html_content)
-			f.close()
 			if request_time is not None:
 				request_time.append(time.time()-request_start)
+			if run_level == 'debug':
+				f=open(url2file(url),'w')
+				f.write(html_content)
+				f.close()
 		except socket.timeout as e:
 			return None
 		except urllib.error.URLError as e:

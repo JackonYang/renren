@@ -84,6 +84,14 @@ class Test_browser(unittest.TestCase):
 			info=self.dl.homepage(rid)
 			print('{},{}'.format(rid,info))
 
+	def test_download(self):
+		dl=browser.browser()
+		dl.login('test','test')
+		url_normal="http://www.baidu.com"
+		self.assertTrue(isinstance(dl._download(url_normal),str))
+		url_timeout="http://1.1.1.1"
+		self.assertEquals(dl._download(url_timeout),None)
+
 	def test_login(self):
 		users=[
 				('jiekunyang@gmail.com','233330059'),
@@ -119,6 +127,7 @@ if __name__=='__main__':
 	#suite.addTest(Test_browser('test_homepage'))
 	#suite.addTest(Test_browser('test_newDownload'))
 
+	suite.addTest(Test_browser('test_download'))
 	#checked
 	#suite.addTest(Test_browser('test_login'))
 	
