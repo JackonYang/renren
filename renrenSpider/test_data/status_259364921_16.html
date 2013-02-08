@@ -1,0 +1,2482 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html ui-mode="rewrite" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="index"
+href="http://status.renren.com/status/?fromType=nomore" />
+<script type="text/javascript"
+src="http://s.xnimg.cn/a52970/jspro/xn.app.status.js">
+</script>
+<link
+href="http://s.xnimg.cn/a52967/n/apps/status/compatible/status-all-min.css"
+rel="stylesheet" type="text/css" media="all" />
+<title>人人网 - 状态</title>
+<script type="text/javascript">
+// <![CDATA[
+XN.namespace('user');
+XN.user.id = '233330059';
+XN.user.tinyPic = 'http://hdn.xnimg.cn/photos/hdn421/20130116/0025/h_tiny_Rlig_f35400000030113e.jpg';
+XN.user.name = "杨洁坤";
+XN.user.auth = '0';
+XN.user.doingcount = '3268';
+XN.user.canFwd = 'true';
+XN.user.viewType = 'someone';XN.user.hotData = null;
+XN.user.curpage = 16;
+XN.status_pageType = '';// ]]>
+</script>
+<script type="text/javascript"
+src="http://s.xnimg.cn/a30278/jspro/xn.ui.friendSelecotorMenu.js">
+</script>
+<script type="text/javascript"
+src="http://s.xnimg.cn/a22802/jspro/xn.ui.minieditor.js">
+</script>
+<script type="text/javascript"
+src="http://s.xnimg.cn/a13589/jspro/xn.ui.pager.js">
+</script>
+<script type="text/javascript"
+src="http://s.xnimg.cn/a49372/jspro/xn.app.statushow.js">
+</script>
+<script type="text/javascript"
+src="http://s.xnimg.cn/a27269/jspro/xn.app.pymk.js">
+</script>
+
+<script type="text/javascript"                                                                                      
+src="http://s.xnimg.cn/a52774/jspro/xn.app.ilike.js">                                               
+</script>
+
+<script type="text/javascript" src="http://s.xnimg.cn/a53034/n/apps/topic/compatible/xn.app.topic-hotlist.js"></script>
+
+<script>
+var status_isC = 'false';
+var status_num = '0';
+var status_ids = '4101337513,4100419302,4095277934,4095255562,4090099484,4085422712,4085206988,4083963107,4083862555,4082022895,4076095721,4076090735,4075350686,4074122180,4070681674,4070166414,4070129059,4066865220,4065016731,4064257097';
+status_num = parseInt(status_num);
+if (isNaN(status_num)) {
+status_num = 0;
+}
+</script>
+<script type="text/javascript">
+XN.mentionGroup = true;
+</script>
+
+<link rel="stylesheet" type="text/css"
+ href="http://s.xnimg.cn/a52454/n/apps/status/module/vocal/player-all-min.css"/>
+<script type="text/javascript"
+ src="http://s.xnimg.cn/a52627/n/apps/status/module/vocal/player.js"></script> 
+
+</head>
+<body ui-layout="home2cols">
+<div id="content">
+<div class="tabview">
+<h3 class="title">
+<img src="http://app.xnimg.cn/application/20090922/02/55/L937572594167SJS.gif"
+class="icon" />
+状态
+</h3>
+<div class="tabview-tabs">
+<a
+href="http://status.renren.com/status?fromType=nomore&from=homeleft"
+ui-async="async" onclick="return false;"
+class="a-tab">好友的状态</a>
+<a stats="V6Status_myStatus" 
+href="http://status.renren.com/status?id=233330059&from=homeleft"
+ui-async="async" onclick="return false;"
+class="a-tab">我的状态</a>
+<a stats="V6Status_focus" href="http://huati.renren.com?from=1200" class="a-tab">人人聚焦</a>
+
+
+</div>
+</div>
+<div class="status-main">
+<div class="status-main-content">
+<script type="text/javascript">
+XN.getFileVersion( [ 'http://s.xnimg.cn/a16298/csspro/module/status-pop.css' ]);
+</script>
+<div id="publisher_frame" class="publisher-new" style="display:none">
+<div class="status-publisher">
+<form method="post" autocomplete="off" action="#"
+id="publisher_upload_form" enctype="multipart/form-data"
+target="publisher_upload">
+<textarea style="" name="status" id="publisher_statusInput"></textarea>
+<div id="publisher_tools" class="publisher-footer clearfix">
+<span style="float: right;"><span class="status-count"
+id="statusCount">0</span>/240</span>
+<div class="legend" id="statusEmotionLegend">
+<a id="status_emotion_legend" href="javascript:;"><img
+src="http://a.xnimg.cn/imgpro/icons/statusface/1.gif" />表情</a>
+</div>
+<div id="publisher_err" class="err-msg"></div>
+<div id="publisher_msg" class="msg"></div>
+</div>
+<div id="status_emotion">
+<ul class="emotion clearfix" id="status_emotions"
+style="display: none;">
+<li
+>
+<a href="javascript:;"><img emotion="(谄笑)"
+alt="谄笑" title="谄笑"
+src="http://a.xnimg.cn/imgpro/emotions/tie/2.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(吃饭)"
+alt="吃饭" title="吃饭"
+src="http://a.xnimg.cn/imgpro/emotions/tie/3.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(调皮)"
+alt="调皮" title="调皮"
+src="http://a.xnimg.cn/imgpro/emotions/tie/4.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(尴尬)"
+alt="尴尬" title="尴尬"
+src="http://a.xnimg.cn/imgpro/emotions/tie/5.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(汗)"
+alt="汗" title="汗"
+src="http://a.xnimg.cn/imgpro/emotions/tie/6.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(惊恐)"
+alt="惊恐" title="惊恐"
+src="http://a.xnimg.cn/imgpro/emotions/tie/7.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(囧)"
+alt="囧-窘迫" title="囧-窘迫"
+src="http://a.xnimg.cn/imgpro/emotions/tie/8.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(可爱)"
+alt="可爱" title="可爱"
+src="http://a.xnimg.cn/imgpro/emotions/tie/9.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(酷)"
+alt="酷" title="酷"
+src="http://a.xnimg.cn/imgpro/emotions/tie/10.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(流口水)"
+alt="流口水" title="流口水"
+src="http://a.xnimg.cn/imgpro/emotions/tie/11.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(生病)"
+alt="生病" title="生病"
+src="http://a.xnimg.cn/imgpro/emotions/tie/14.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(叹气)"
+alt="叹气" title="叹气"
+src="http://a.xnimg.cn/imgpro/emotions/tie/15.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(淘气)"
+alt="淘气" title="淘气"
+src="http://a.xnimg.cn/imgpro/emotions/tie/16.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(舔)"
+alt="舔" title="舔"
+src="http://a.xnimg.cn/imgpro/emotions/tie/17.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(偷笑)"
+alt="偷笑" title="偷笑"
+src="http://a.xnimg.cn/imgpro/emotions/tie/18.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(吐)"
+alt="呕吐" title="呕吐"
+src="http://a.xnimg.cn/imgpro/emotions/tie/19.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(吻)"
+alt="吻" title="吻"
+src="http://a.xnimg.cn/imgpro/emotions/tie/20.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(晕)"
+alt="晕" title="晕"
+src="http://a.xnimg.cn/imgpro/emotions/tie/21.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(住嘴)"
+alt="住嘴" title="住嘴"
+src="http://a.xnimg.cn/imgpro/emotions/tie/23.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(大笑)"
+alt="大笑" title="大笑"
+src="http://a.xnimg.cn/imgpro/icons/statusface/16.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(害羞)"
+alt="害羞" title="害羞"
+src="http://a.xnimg.cn/imgpro/icons/statusface/shy.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(口罩)"
+alt="防流感" title="防流感"
+src="http://a.xnimg.cn/imgpro/icons/statusface/17.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(哭)"
+alt="哭" title="哭"
+src="http://a.xnimg.cn/imgpro/icons/statusface/cry.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(困)"
+alt="困" title="困"
+src="http://a.xnimg.cn/imgpro/icons/statusface/sleepy.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(难过)"
+alt="难过" title="难过"
+src="http://a.xnimg.cn/imgpro/icons/statusface/sad.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(生气)"
+alt="生气" title="生气"
+src="http://a.xnimg.cn/imgpro/icons/statusface/5.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(书呆子)"
+alt="书呆子" title="书呆子"
+src="http://a.xnimg.cn/imgpro/icons/statusface/13.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(微笑)"
+alt="微笑" title="微笑"
+src="http://a.xnimg.cn/imgpro/icons/statusface/1.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(不)"
+alt="不" title="不"
+src="http://a.xnimg.cn/imgpro/emotions/tie/1.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(惊讶)"
+alt="惊讶" title="惊讶"
+src="http://a.xnimg.cn/imgpro/icons/statusface/surprise.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(kb)"
+alt="抠鼻" title="抠鼻"
+src="http://a.xnimg.cn/imgpro/icons/statusface/kbz2.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(sx)"
+alt="烧香" title="烧香"
+src="http://a.xnimg.cn/imgpro/icons/statusface/shaoxiang.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(ju)"
+alt="人人聚焦" title="人人聚焦"
+src="http://a.xnimg.cn/imgpro/icons/statusface/jj.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(gl)"
+alt="给力" title="给力"
+src="http://a.xnimg.cn/imgpro/icons/statusface/geili.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(yl)"
+alt="鸭梨" title="鸭梨"
+src="http://a.xnimg.cn/imgpro/icons/statusface/yali.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(hold1)"
+alt="Hold住" title="Hold住"
+src="http://a.xnimg.cn/imgpro/icons/statusface/holdzhu.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(cold)"
+alt="降温" title="降温"
+src="http://a.xnimg.cn/imgpro/icons/statusface/cold.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(nuomi)"
+alt="糯米" title="糯米"
+src="http://a.xnimg.cn/imgpro/icons/statusface/nuomi2.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(石化)"
+alt="石化" title="石化"
+src="http://a.xnimg.cn/imgpro/icons/statusface/sh.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(rs)"
+alt="玫瑰花" title="玫瑰花"
+src="http://a.xnimg.cn/imgpro/icons/statusface/rose0314.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(sbq)"
+alt="伤不起" title="伤不起"
+src="http://a.xnimg.cn/imgpro/icons/statusface/shangbuqi.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(th)"
+alt="惊叹号" title="惊叹号"
+src="http://a.xnimg.cn/imgpro/icons/statusface/exclamation.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(mb)"
+alt="膜拜" title="膜拜"
+src="http://a.xnimg.cn/imgpro/icons/statusface/guibai.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(tucao)"
+alt="吐槽" title="吐槽"
+src="http://a.xnimg.cn/imgpro/icons/statusface/tuc.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(禅师)"
+alt="禅师" title="禅师"
+src="http://a.xnimg.cn/imgpro/icons/statusface/chsh.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(zy)"
+alt="最右" title="最右"
+src="http://a.xnimg.cn/imgpro/icons/statusface/zy.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(by)"
+alt="下雨" title="下雨"
+src="http://a.xnimg.cn/imgpro/icons/statusface/rain.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(twg)"
+alt="style" title="style"
+src="http://a.xnimg.cn/imgpro/icons/statusface/style.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(hz)"
+alt="传递爱心" title="传递爱心"
+src="http://a.xnimg.cn/imgpro/icons/statusface/cdax.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(good)"
+alt="赞" title="赞"
+src="http://a.xnimg.cn/img/ems/good.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(sn)"
+alt="雪花" title="雪花"
+src="http://a.xnimg.cn/imgpro/icons/statusface/snow.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(dx)"
+alt="雪人" title="雪人"
+src="http://a.xnimg.cn/imgpro/icons/statusface/snowman.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(走你)"
+alt="走你" title="走你"
+src="http://a.xnimg.cn/imgpro/icons/statusface/zn.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(小黄鸡)"
+alt="小黄鸡" title="小黄鸡"
+src="http://a.xnimg.cn/imgpro/icons/statusface/xhj.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(tic)"
+alt="车票" title="车票"
+src="http://a.xnimg.cn/imgpro/icons/statusface/ticket.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(fu)"
+alt="福" title="福"
+src="http://a.xnimg.cn/imgpro/icons/statusface/fu.gif" />
+</a>
+</li></ul>
+</div>
+<input type="submit" value="发布" class="submit"
+id="publisher_statusSubmit" autoComplete="false" />
+<input type="hidden" value="996120557" class="submit"
+id="publisher_form_ticket" />
+					<script type="text/javascript">
+										XN.config.status.params="from=20030&fromFwd=20031";
+									</script>
+</form>
+</div>
+</div>
+<ul class="emotion clearfix" id="mini_emotions"
+style="display: none;">
+<li
+>
+<a href="javascript:;"><img emotion="(谄笑)"
+alt="谄笑" title="谄笑"
+src="http://a.xnimg.cn/imgpro/emotions/tie/2.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(吃饭)"
+alt="吃饭" title="吃饭"
+src="http://a.xnimg.cn/imgpro/emotions/tie/3.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(调皮)"
+alt="调皮" title="调皮"
+src="http://a.xnimg.cn/imgpro/emotions/tie/4.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(尴尬)"
+alt="尴尬" title="尴尬"
+src="http://a.xnimg.cn/imgpro/emotions/tie/5.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(汗)"
+alt="汗" title="汗"
+src="http://a.xnimg.cn/imgpro/emotions/tie/6.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(惊恐)"
+alt="惊恐" title="惊恐"
+src="http://a.xnimg.cn/imgpro/emotions/tie/7.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(囧)"
+alt="囧-窘迫" title="囧-窘迫"
+src="http://a.xnimg.cn/imgpro/emotions/tie/8.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(可爱)"
+alt="可爱" title="可爱"
+src="http://a.xnimg.cn/imgpro/emotions/tie/9.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(酷)"
+alt="酷" title="酷"
+src="http://a.xnimg.cn/imgpro/emotions/tie/10.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(流口水)"
+alt="流口水" title="流口水"
+src="http://a.xnimg.cn/imgpro/emotions/tie/11.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(生病)"
+alt="生病" title="生病"
+src="http://a.xnimg.cn/imgpro/emotions/tie/14.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(叹气)"
+alt="叹气" title="叹气"
+src="http://a.xnimg.cn/imgpro/emotions/tie/15.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(淘气)"
+alt="淘气" title="淘气"
+src="http://a.xnimg.cn/imgpro/emotions/tie/16.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(舔)"
+alt="舔" title="舔"
+src="http://a.xnimg.cn/imgpro/emotions/tie/17.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(偷笑)"
+alt="偷笑" title="偷笑"
+src="http://a.xnimg.cn/imgpro/emotions/tie/18.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(吐)"
+alt="呕吐" title="呕吐"
+src="http://a.xnimg.cn/imgpro/emotions/tie/19.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(吻)"
+alt="吻" title="吻"
+src="http://a.xnimg.cn/imgpro/emotions/tie/20.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(晕)"
+alt="晕" title="晕"
+src="http://a.xnimg.cn/imgpro/emotions/tie/21.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(住嘴)"
+alt="住嘴" title="住嘴"
+src="http://a.xnimg.cn/imgpro/emotions/tie/23.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(大笑)"
+alt="大笑" title="大笑"
+src="http://a.xnimg.cn/imgpro/icons/statusface/16.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(害羞)"
+alt="害羞" title="害羞"
+src="http://a.xnimg.cn/imgpro/icons/statusface/shy.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(口罩)"
+alt="防流感" title="防流感"
+src="http://a.xnimg.cn/imgpro/icons/statusface/17.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(哭)"
+alt="哭" title="哭"
+src="http://a.xnimg.cn/imgpro/icons/statusface/cry.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(困)"
+alt="困" title="困"
+src="http://a.xnimg.cn/imgpro/icons/statusface/sleepy.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(难过)"
+alt="难过" title="难过"
+src="http://a.xnimg.cn/imgpro/icons/statusface/sad.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(生气)"
+alt="生气" title="生气"
+src="http://a.xnimg.cn/imgpro/icons/statusface/5.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(书呆子)"
+alt="书呆子" title="书呆子"
+src="http://a.xnimg.cn/imgpro/icons/statusface/13.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(微笑)"
+alt="微笑" title="微笑"
+src="http://a.xnimg.cn/imgpro/icons/statusface/1.gif?ver=1" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(不)"
+alt="不" title="不"
+src="http://a.xnimg.cn/imgpro/emotions/tie/1.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(惊讶)"
+alt="惊讶" title="惊讶"
+src="http://a.xnimg.cn/imgpro/icons/statusface/surprise.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(kb)"
+alt="抠鼻" title="抠鼻"
+src="http://a.xnimg.cn/imgpro/icons/statusface/kbz2.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(sx)"
+alt="烧香" title="烧香"
+src="http://a.xnimg.cn/imgpro/icons/statusface/shaoxiang.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(ju)"
+alt="人人聚焦" title="人人聚焦"
+src="http://a.xnimg.cn/imgpro/icons/statusface/jj.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(gl)"
+alt="给力" title="给力"
+src="http://a.xnimg.cn/imgpro/icons/statusface/geili.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(yl)"
+alt="鸭梨" title="鸭梨"
+src="http://a.xnimg.cn/imgpro/icons/statusface/yali.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(hold1)"
+alt="Hold住" title="Hold住"
+src="http://a.xnimg.cn/imgpro/icons/statusface/holdzhu.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(cold)"
+alt="降温" title="降温"
+src="http://a.xnimg.cn/imgpro/icons/statusface/cold.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(nuomi)"
+alt="糯米" title="糯米"
+src="http://a.xnimg.cn/imgpro/icons/statusface/nuomi2.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(石化)"
+alt="石化" title="石化"
+src="http://a.xnimg.cn/imgpro/icons/statusface/sh.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(rs)"
+alt="玫瑰花" title="玫瑰花"
+src="http://a.xnimg.cn/imgpro/icons/statusface/rose0314.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(sbq)"
+alt="伤不起" title="伤不起"
+src="http://a.xnimg.cn/imgpro/icons/statusface/shangbuqi.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(th)"
+alt="惊叹号" title="惊叹号"
+src="http://a.xnimg.cn/imgpro/icons/statusface/exclamation.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(mb)"
+alt="膜拜" title="膜拜"
+src="http://a.xnimg.cn/imgpro/icons/statusface/guibai.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(tucao)"
+alt="吐槽" title="吐槽"
+src="http://a.xnimg.cn/imgpro/icons/statusface/tuc.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(禅师)"
+alt="禅师" title="禅师"
+src="http://a.xnimg.cn/imgpro/icons/statusface/chsh.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(zy)"
+alt="最右" title="最右"
+src="http://a.xnimg.cn/imgpro/icons/statusface/zy.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(by)"
+alt="下雨" title="下雨"
+src="http://a.xnimg.cn/imgpro/icons/statusface/rain.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(twg)"
+alt="style" title="style"
+src="http://a.xnimg.cn/imgpro/icons/statusface/style.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(hz)"
+alt="传递爱心" title="传递爱心"
+src="http://a.xnimg.cn/imgpro/icons/statusface/cdax.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(good)"
+alt="赞" title="赞"
+src="http://a.xnimg.cn/img/ems/good.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(sn)"
+alt="雪花" title="雪花"
+src="http://a.xnimg.cn/imgpro/icons/statusface/snow.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(dx)"
+alt="雪人" title="雪人"
+src="http://a.xnimg.cn/imgpro/icons/statusface/snowman.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(走你)"
+alt="走你" title="走你"
+src="http://a.xnimg.cn/imgpro/icons/statusface/zn.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(小黄鸡)"
+alt="小黄鸡" title="小黄鸡"
+src="http://a.xnimg.cn/imgpro/icons/statusface/xhj.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(tic)"
+alt="车票" title="车票"
+src="http://a.xnimg.cn/imgpro/icons/statusface/ticket.gif" />
+</a>
+</li>
+<li
+>
+<a href="javascript:;"><img emotion="(fu)"
+alt="福" title="福"
+src="http://a.xnimg.cn/imgpro/icons/statusface/fu.gif" />
+</a>
+</li></ul><div id="load_span"></div>
+<input id="pageStatus" type="hidden" />
+<div class="status clearfix">
+<div id="pager_top" class="toolbar clearfix">
+<div class="left">
+<div id="allFriends_btn" class="all-fri" style="display: none;">
+<a id="allFriends" href="javascript:;"><span>全部好友</span>
+</a>
+</div>
+<div id="search_tip" class="cur-status" style="display: none;">
+以下是有关
+<strong id="keyWord"></strong>的全站状态搜索结果
+</div>
+<div id="your_fri_tip" class="cur-status" style="display: none;">
+以下是您所有好友的最新状态
+</div>
+<div id="your_tip" class="cur-status" style="display: none;">
+以下是您所发布过的所有状态
+</div><div id="status_pager" class="cur-status">
+</div>
+</div>
+<div class="right">
+<div class="side-search clearfix">
+<div class="search-input">
+<input id="sideSearchInput" class="input-text"
+autocomplete="off" size="25" maxlength="100"
+name="filterFriends" type="text" />
+</div>
+<div class="search-submit">
+<a id="sideSearchSubmit" href="javascript:;"><span
+class="search-mag-glass">搜索</span>
+</a>
+</div>
+</div>
+</div>
+</div><div id="new_hot_tip"></div><div id="my_panel_wrap">
+<ul id="my_panel" class="status-list"><li data-wiki = "" id="status-4101337513"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:媳妇今天问了我一个好严肃的问题，怎么设置电脑的开机密码……<img src='http://a.xnimg.cn/imgpro/emotions/tie/7.gif?ver=1' alt='惊恐'  /><img src='http://a.xnimg.cn/imgpro/icons/statusface/16.gif?ver=1' alt='大笑'  /><img src='http://a.xnimg.cn/imgpro/icons/statusface/16.gif?ver=1' alt='大笑'  />
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-23 11:50
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4101337513','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4101337513">回复
+<span id="replyCount4101337513">(5)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4101337513','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4101337513" onclick="ILike_toggleUserLike('status','4101337513','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4101337513">
+</div><div style="display: none;" id="replyfordoing4101337513"></div>
+<script>
+getReplyOfTheDoing('4101337513', '259364921', '233330059', '',
+true, 3);</script>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4101337513" style="display:none;">
+<div id="reply-params-4101337513" style="display:none;">
+{
+  "cid": "4101337513",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4100419302"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:明天求爆发
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-23 00:20
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4100419302','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4100419302">回复
+<span id="replyCount4100419302">(6)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4100419302','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4100419302" onclick="ILike_toggleUserLike('status','4100419302','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4100419302">
+</div><div style="display: none;" id="replyfordoing4100419302"></div>
+<script>
+getReplyOfTheDoing('4100419302', '259364921', '233330059', '',
+true, 3);</script>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4100419302" style="display:none;">
+<div id="reply-params-4100419302" style="display:none;">
+{
+  "cid": "4100419302",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4095277934"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:又封校，学校是想咋
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-21 15:34
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4095277934','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4095277934">回复
+<span id="replyCount4095277934">(3)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4095277934','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4095277934" onclick="ILike_toggleUserLike('status','4095277934','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4095277934">
+</div><div style="display: none;" id="replyfordoing4095277934"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4095277934" style="display:none;">
+<div id="reply-params-4095277934" style="display:none;">
+{
+  "cid": "4095277934",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4095255562"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:每次告诉自己说除了这条底线，还有下一条
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-21 15:25
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4095255562','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4095255562">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4095255562','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4095255562" onclick="ILike_toggleUserLike('status','4095255562','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4095255562">
+</div><div style="display: none;" id="replyfordoing4095255562"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4095255562" style="display:none;">
+<div id="reply-params-4095255562" style="display:none;">
+{
+  "cid": "4095255562",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4090099484"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:班赛前一晚上一拳锤到桌子上，动不了了
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-19 23:42
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4090099484','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4090099484">回复
+<span id="replyCount4090099484">(8)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4090099484','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4090099484" onclick="ILike_toggleUserLike('status','4090099484','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4090099484">
+</div><div style="display: none;" id="replyfordoing4090099484"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4090099484" style="display:none;">
+<div id="reply-params-4090099484" style="display:none;">
+{
+  "cid": "4090099484",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4085422712"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:啧啧，没有热水也能抗
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-18 18:54
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4085422712','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4085422712">回复
+<span id="replyCount4085422712">(4)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4085422712','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4085422712" onclick="ILike_toggleUserLike('status','4085422712','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4085422712">
+</div><div style="display: none;" id="replyfordoing4085422712"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4085422712" style="display:none;">
+<div id="reply-params-4085422712" style="display:none;">
+{
+  "cid": "4085422712",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4085206988"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:早上吃了一个鸡蛋，今天一天的饭就过了
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-18 17:47
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4085206988','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4085206988">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4085206988','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4085206988" onclick="ILike_toggleUserLike('status','4085206988','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4085206988">
+</div><div style="display: none;" id="replyfordoing4085206988"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4085206988" style="display:none;">
+<div id="reply-params-4085206988" style="display:none;">
+{
+  "cid": "4085206988",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4083963107"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:11号楼几点？转自<a href="http://www.renren.com/profile.do?id=329963930" namecard="329963930" target="_blank">汪嘉晨J-essica</a>:转自<a href="http://www.renren.com/profile.do?id=365044968" namecard="365044968" target="_blank">西大之声</a>
+</h3>
+<div class="content">
+<div class="original-stauts">
+<a
+href="http://www.renren.com/profile.do?id=365044968"
+target="_blank" class="orginal-status-author">西大之声</a>
+:亲们，今晚要进新生宿舍喽！木有选修的童鞋辛苦一点，8点在7、8楼宿舍门口集合，先行进宿舍；有选修的童鞋更要辛苦一点了，9点10分集合，地点一样，然后寻找组织，参与到战斗中去～希望大家能够多多参与，纳新非儿戏，会影响未来一年广播的质量，望诸位重视，不要辜负台里前辈们对我辈之期望！</div>
+</div><div class="details">
+<div class="legend">
+<span class="duration">2012-09-18 10:35
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4083963107','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4083963107">回复
+<span id="replyCount4083963107">(1)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4083963107','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4083963107" onclick="ILike_toggleUserLike('status','4083963107','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4083963107">
+</div><div style="display: none;" id="replyfordoing4083963107"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4083963107" style="display:none;">
+<div id="reply-params-4083963107" style="display:none;">
+{
+  "cid": "4083963107",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4083862555"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:918，警报响起
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-18 10:07
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4083862555','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4083862555">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4083862555','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4083862555" onclick="ILike_toggleUserLike('status','4083862555','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4083862555">
+</div><div style="display: none;" id="replyfordoing4083862555"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4083862555" style="display:none;">
+<div id="reply-params-4083862555" style="display:none;">
+{
+  "cid": "4083862555",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4082022895"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:心疼转自<a href="http://page.renren.com/601199994" namecard="601199994" target="_blank">脑子进了地沟油</a>
+</h3>
+<div class="content">
+<div class="original-stauts">
+<a
+href="http://www.renren.com/profile.do?id=601199994"
+target="_blank" class="orginal-status-author">脑子进了地沟油</a>
+:下午两点多，咱的武警特警们还在钟楼邮局院里待命呢。早上饭都没吃，我坐那儿跟他们聊，两个新兵问我商店在哪儿，他俩偷偷跑过去买了两包方便面，回来蹲在角落啃，边啃边抬头看看他们领导过来没。我说:“你们放心吃，我帮你们看着”他们感激的看着我，呢方便面干巴巴的，连口水都喝不上。我问他们昨天在哪儿睡得，他们说在卡车上，卡车上啊，都是十七八岁的孩子，都是父母心头的肉，凭什么被你们当出气筒来发泄？那些参与打砸抢的，能长点儿心不？ 对着人民解放军撒什么气？ 跪求明天9.18没有暴力，同意的转via王普庆</div>
+</div><div class="details">
+<div class="legend">
+<span class="duration">2012-09-17 20:15
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4082022895','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4082022895">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4082022895','259364921');return false;"
+href="javascript:;">分享(1)</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4082022895" onclick="ILike_toggleUserLike('status','4082022895','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4082022895">
+</div><div style="display: none;" id="replyfordoing4082022895"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4082022895" style="display:none;">
+<div id="reply-params-4082022895" style="display:none;">
+{
+  "cid": "4082022895",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4076095721"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:皇马又输了，作为巴萨球迷我都想问一句，对手你怎么了
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-16 07:28
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4076095721','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4076095721">回复
+<span id="replyCount4076095721">(4)</span></a>
+<span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4076095721','259364921');return false;"
+href="javascript:;">分享(1)</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4076095721" onclick="ILike_toggleUserLike('status','4076095721','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4076095721">
+</div><div style="display: none;" id="replyfordoing4076095721"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4076095721" style="display:none;">
+<div id="reply-params-4076095721" style="display:none;">
+{
+  "cid": "4076095721",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4076090735"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:你去现场了？
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-16 07:25
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4076090735','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4076090735">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4076090735','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4076090735" onclick="ILike_toggleUserLike('status','4076090735','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4076090735">
+</div><div style="display: none;" id="replyfordoing4076090735"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4076090735" style="display:none;">
+<div id="reply-params-4076090735" style="display:none;">
+{
+  "cid": "4076090735",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4075350686"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:不要打着大学生的口号，真正的大学生游行是会通过正确的方式，而不是打砸转自<a href="http://www.renren.com/profile.do?id=279540550" namecard="279540550" target="_blank">刘俊slimshady</a>:转自<a href="http://www.renren.com/profile.do?id=463944566" namecard="463944566" target="_blank">郭甜歌</a>: 转自<a href="http://www.renren.com/profile.do?id=284207100" namecard="284207100" target="_blank">田兆林</a>:西安数名爱国青年因为行为过激被传唤至派出所，核实身份后发现均有寻衅滋事、猥亵女性的案底转自<a href="http://www.renren.com/profile.do?id=270805951" namecard="270805951" target="_blank">张立</a>: 触目惊心！这群傻逼已经无法用脑残来形容了！转自<a href="http://www.renren.com/profile.do?id=264222833" namecard="264222833" target="_blank">刘瑛</a>:转自<a href="http://www.renren.com/profile.do?id=267234457" namecard="267234457" target="_blank">李旭Bourbon</a>:妈的！都是一群瓜皮！请用理性去爱国干得漂亮！把市政府也砸了吧一群没治了的傻逼！！！！转自<a href="http://www.renren.com/profile.do?id=365095892" namecard="365095892" target="_blank">常峻纲</a>:转自<a href="http://www.renren.com/profile.do?id=339216293" namecard="339216293" target="_blank">寇笛</a>: 都是他妈傻逼！转自孟杨 zoey:转自<a href="http://www.renren.com/profile.do?id=412020134" namecard="412020134" target="_blank">汤甜甜</a>
+</h3>
+<div class="content">
+<div class="original-stauts">
+<a
+href="http://www.renren.com/profile.do?id=412020134"
+target="_blank" class="orginal-status-author">汤甜甜</a>
+:截止到9月15日晚，全国各地爱国青年游行共计打砸日系车辆1900余辆；砸抢“疑似”日系企业开办商店70余家，烧毁3家；爱国青年们热情踊跃，奔放的击伤国内“亲日分子”50余人，有2名“亲日孕妇”被打流产，长沙1名17岁“亲日”女孩被三名爱国青年轮奸；西安数名爱国青年因为行为过激被传唤至派出所，核实身份后发现均有寻衅滋事、猥亵女性的案底。据不完全统计，本次游行示威给爱国青年们所“爱”的国家造成约29.5亿元人民币的损失，取得了阶段性胜利，日本国内右翼论坛对我国爱国青年的行为表示高度赞同和认可。</div>
+</div><div class="details">
+<div class="legend">
+<span class="duration">2012-09-15 23:13
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4075350686','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4075350686">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4075350686','259364921');return false;"
+href="javascript:;">分享(2)</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4075350686" onclick="ILike_toggleUserLike('status','4075350686','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4075350686">
+</div><div style="display: none;" id="replyfordoing4075350686"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4075350686" style="display:none;">
+<div id="reply-params-4075350686" style="display:none;">
+{
+  "cid": "4075350686",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4074122180"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:转自<a href="http://www.renren.com/profile.do?id=401175667" namecard="401175667" target="_blank">蒋佳俊</a>: 转自<a href="http://www.renren.com/profile.do?id=323930840" namecard="323930840" target="_blank">李远鹏</a>: 转自<a href="http://www.renren.com/profile.do?id=280134056" namecard="280134056" target="_blank">杨航</a>: 转自<a href="http://www.renren.com/profile.do?id=403888670" namecard="403888670" target="_blank">齐玉娇</a>: 转自<a href="http://www.renren.com/profile.do?id=270117559" namecard="270117559" target="_blank">武心丹zeta</a>:只有历史没有沉淀，看到好难过~: 抱歉。转自<a href="http://www.renren.com/profile.do?id=330669404" namecard="330669404" target="_blank">杨杨</a>
+</h3>
+<div class="content">
+<div class="original-stauts">
+<a
+href="http://www.renren.com/profile.do?id=282328215"
+target="_blank" class="orginal-status-author">陈思荣</a>
+:对于抗x游x早有耳闻，但当我亲身目睹…当我看到几百人追赶一辆加速逃脱的尼桑的时候，当我听到无数辆日系车被掀翻在地时全场雷鸣的掌声，当我看到黑眼睛黄皮肤的同胞满身鲜血从废墟中爬出来，当我看到他们在店面前道貌岸然唱完国歌后拥入打杂，当我看到老店主被好心人从玻璃碎片中扶出来，当我看到满街人脸上的喜悦，更当我看到他们都是年轻的一代有的还校服着装的时候。我在街头没忍住的哭了。西安，我背着登山包从火车上兴奋地下来领略你的五千年，至此我才知道只有历史却没有沉淀的国度站不起来。再见了，古都。</div>
+</div><div class="details">
+<div class="legend">
+<span class="duration">2012-09-15 19:11
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4074122180','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4074122180">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4074122180','259364921');return false;"
+href="javascript:;">分享(2)</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4074122180" onclick="ILike_toggleUserLike('status','4074122180','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4074122180">
+</div><div style="display: none;" id="replyfordoing4074122180"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4074122180" style="display:none;">
+<div id="reply-params-4074122180" style="display:none;">
+{
+  "cid": "4074122180",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4070681674"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:给学生会一把贼，同样作为学生，你有什么资格高人一等，凭什么就可以用慰问一词，出了学校，你啥都不是，放低姿态，好好做事，才是根本
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-14 20:57
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4070681674','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4070681674">回复
+<span id="replyCount4070681674">(13)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4070681674','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4070681674" onclick="ILike_toggleUserLike('status','4070681674','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4070681674">
+</div><div style="display: none;" id="replyfordoing4070681674"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4070681674" style="display:none;">
+<div id="reply-params-4070681674" style="display:none;">
+{
+  "cid": "4070681674",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4070166414"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:保持微笑，就算路上独我
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-14 18:34
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4070166414','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4070166414">回复
+<span id="replyCount4070166414">(3)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4070166414','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4070166414" onclick="ILike_toggleUserLike('status','4070166414','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4070166414">
+</div><div style="display: none;" id="replyfordoing4070166414"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4070166414" style="display:none;">
+<div id="reply-params-4070166414" style="display:none;">
+{
+  "cid": "4070166414",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4070129059"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:擦
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-14 18:23
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4070129059','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4070129059">回复</a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4070129059','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4070129059" onclick="ILike_toggleUserLike('status','4070129059','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4070129059">
+</div><div style="display: none;" id="replyfordoing4070129059"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4070129059" style="display:none;">
+<div id="reply-params-4070129059" style="display:none;">
+{
+  "cid": "4070129059",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4066865220"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:停尼玛的电，差点把面吃到鼻子里
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-13 19:53
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4066865220','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4066865220">回复
+<span id="replyCount4066865220">(19)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4066865220','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4066865220" onclick="ILike_toggleUserLike('status','4066865220','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4066865220">
+</div><div style="display: none;" id="replyfordoing4066865220"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4066865220" style="display:none;">
+<div id="reply-params-4066865220" style="display:none;">
+{
+  "cid": "4066865220",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4065016731"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:“每个人都有属于自己的一片森林，迷失的人迷失了，相逢的人会再相逢。”  我在陌陌，你在哪里？<a href='http://rrurl.cn/a7tdpS' target='_blank' title='http://immomo.com/invite/14589817?t=0dc436a2'>http://rrurl.cn/a7tdpS </a>
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-13 09:33
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4065016731','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4065016731">回复
+<span id="replyCount4065016731">(3)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4065016731','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4065016731" onclick="ILike_toggleUserLike('status','4065016731','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+<div style="display: none;" id="replyfordoing4065016731"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4065016731" style="display:none;">
+<div id="reply-params-4065016731" style="display:none;">
+{
+  "cid": "4065016731",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li><li data-wiki = "" id="status-4064257097"><div class="figure">
+<a class="avatar" namecard="259364921" 
+href="http://www.renren.com/profile.do?id=259364921"><img
+height="50" width="50" alt="靳源♥JR"
+src="http://hdn.xnimg.cn/photos/hdn521/20130118/1125/tiny_xQhL_cbfa0000009d113e.jpg" onload="clipImage(this);" />
+</a>
+</div>
+<h3>
+<a
+href="http://www.renren.com/profile.do?id=259364921"
+namecard="259364921" target="_blank">靳源♥JR</a>
+<a href="http://i.renren.com/icon"><img
+src="http://a.xnimg.cn/n/core/feed/cssimg/feed-vip-14-05.png" /> </a>:iphone5买不起，但新的nano还是买得起的
+</h3><div class="details">
+<div class="legend">
+<span class="duration">2012-09-12 23:50
+</span>
+<span class="rep_font12"> <a
+onclick="getReplyOfTheDoing('4064257097','259364921','233330059','', false, 3);"
+href="javascript:;" id="replyKey4064257097">回复
+<span id="replyCount4064257097">(1)</span></a><span class="seperator">|</span>
+<a
+onclick="a_fowardDoing('4064257097','259364921');return false;"
+href="javascript:;">分享</a>
+
+
+
+
+<span class="seperator">|</span>
+<a href="#nogo" class="ilike_icon" id="ILike4064257097" onclick="ILike_toggleUserLike('status','4064257097','233330059','259364921','杨洁坤')">喜欢</a>
+
+</span>
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+<div id="feed4064257097">
+</div><div style="display: none;" id="replyfordoing4064257097"></div>
+
+
+
+
+
+</div>
+
+<div id="get-params-for-ilike-4064257097" style="display:none;">
+<div id="reply-params-4064257097" style="display:none;">
+{
+  "cid": "4064257097",
+  "oid": "259364921",
+  "type": "status",
+  "userDigged":false,
+  "digged":"0"
+
+}
+</div>
+</div>
+
+
+
+
+
+</li></ul>
+</div><div id="personal_panel_wrap" style="display: none;">
+<ul id="personal_panel" class="status-list">
+</ul>
+</div>
+<div id="allFri_panel_wrap">
+<ul id="allFri_panel" class="status-list">
+</ul>
+</div><div id="hot_panel_wrap">
+<ul id="hot_panel" class="status-list">
+</ul>
+</div>
+<div id="hot_panel_personal_wrap" style="display: none;">
+<div class="all-fri">
+<a id="back_btn" href="javascript:;"><span>返回</span>
+</a>
+</div>
+<ul id="hot_panel_personal" class="status-list">
+</ul>
+</div>
+<div id="pager_buttom" class="pager-bottom">
+</div>
+</div>
+<div class="isay">
+<a id="letmesay" href="javascript:;"
+onclick="letMeSay();return false;" style="display: none;">我要说说</a>
+</div>
+<div id="status_none" class="status-none" style="display: none;">
+<p>
+您还没有发布过状态。
+<br />
+发个状态让好友知道你正在干什么，想什么吧！
+</p>
+<p>
+<a href="#" onclick="letMeSay();return false;">马上发条状态</a>
+</p>
+</div>
+</div>
+<div class="status-main-sidebar2">
+<style type="text/css">
+.pymk-header {
+padding: 5px 0 !important;
+}
+</style>
+<div class="side-item pymk " style="display:none" id="pymk">
+<div class="side-item-header pymk-header clearfix">
+<h4>推荐</h4>
+<div class="option">
+<a href="javascript:;" class="pager-back pager-back-disable" onclick="XN.app.pymk.pagerBack();" title="上一页"></a>
+<a href="javascript:;" class="pager-forward pager-forward-disable" onclick="XN.app.pymk.pagerForward();" title="下一页"></a>
+<a href="http://friend.renren.com/myfriendlistx.do?portal=4#item_1" class="more"></a>
+</div>
+</div>
+<div class="side-item-body pymk-body clearfix">
+<ul class="recognize" id="commonFriends">
+</ul>
+</div>
+</div>
+
+<div id="topic-hot-el" data-count="9"></div>
+<input type="hidden" id="curWord" value="" />
+<ul style="display:none;" class="hot-cat catalog-list" id="hot_cat"
+style="border-bottom: 0 none;">
+<li id="hot_0" title="雪姨晋升宿舍门神"
+class="">
+<a
+href="http://status.renren.com/status/hot/list?word=%E9%9B%AA%E5%A7%A8%E6%99%8B%E5%8D%87%E5%AE%BF%E8%88%8D%E9%97%A8%E7%A5%9E"
+ui-async="async"><span class="i-hot"></span>雪姨晋升宿舍门神</a>
+</li></ul>
+<div class="Widget">
+<div id="sponsorsWidget"></div>
+</div>
+<ul id="menu" class="main-cat catalog-list" style="display: none">
+<li id="fri_status" class="">
+<a href="javascript:;"><span class="i-fri"></span>好友的状态</a>
+</li>
+<li id="my_status" class="">
+<a href="javascript:;"><span class="i-mine"></span>我的状态</a>
+</li>
+</ul>
+<div class="Widget">
+
+<div id="ad1000000065"></div>
+<div class="attachceilwrap" data-fix="40" style="width:240px;"><div id="ad1000000093"></div></div>
+</div>
+
+</div>
+</div>
+</div>
+<div id="sidebar2"></div><div style="display:none">pageview_candidate</div>
+</body>
+</html>
