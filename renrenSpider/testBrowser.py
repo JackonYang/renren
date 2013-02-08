@@ -4,9 +4,11 @@ import browser
 class new_browser(browser.browser):
 	def __init__(self):
 		browser.browser.__init__(self)#no auto login
-		self.dl=None
+		self.dl=None#used by get_test_data() to download data from renren.com
+		self.sent_times=dict()#used to test for timeout and resend
 	def _download(self,url,request_time=None):
-		filename=browser.url2file(url)
+		filename='{}{}'.format(browser.url2file(url),self.sent_times.get(url,''))
+		self.sent_times[url] = self.sent_times.get(url,0)+1
 		try:
 			html_content=''.join([line for line in open(filename)])
 		except IOError as e:#simulate timeout
@@ -22,6 +24,9 @@ class new_browser(browser.browser):
 		browser.run_level='debug'
 		meth(self.dl,rid,uppage)
 		browser.run_level='info'
+	def flush_test_data(self):#used to test timeout and resend
+		self.sent_times=dict()
+		print('data flushed')
 
 class Test_browser(unittest.TestCase):
 	def setUp(self):
@@ -56,18 +61,53 @@ class Test_browser(unittest.TestCase):
 		"""focus on page sequence"""
 		dl=new_browser()
 		dl.login('test','test')
-		#page sequence 2pages/1page/0page
-		#items in end page, 1/2/20
+		#page sequence 2pages/1page/0page,items in end page, 1/2/20
 		friendList={'240303471':0,'446766202':1,'500275848':2,'444024948':20,'384065413':21,'397529849':22,'739807017':40}
 		status={'446766202':0,'500275848':1,'104062077':2,'232877604':20,'242641331':21,'256137627':22,'411984911':40}
 		for rid,expt in friendList.items():
 			self.assertEquals(len(dl._iter_page('friendList',rid)),expt)
-		#page more than expt
+		for rid,expt in status.items():
+			self.assertEquals(len(dl._iter_page('status',rid)),expt)
+		#more page than expt
 		over={'287286312':'friendList','259364921':'status'}
 		uppage=105
 		for rid,pageStyle in over.items():
 			self.assertEquals(len(dl._iter_page(pageStyle,rid,None,range(0,uppage))),2100)
-		#timeout:1page/2page/all pages timeout
+
+	def test_iter_page_timeout(self):
+		"""timeout:1page/2page/all pages timeout"""
+		dl=new_browser()
+		dl.login('test','test')
+		dl.flush_test_data()
+		pageStyle='friendList'
+		#all timeout
+		rid='99999999'
+		print('99999999 all timeout,resend')
+		self.assertEquals(dl._iter_page(pageStyle,rid),None)
+		dl.flush_test_data()
+		#one page timeout and resend ok
+		rid='99990001'
+		browser.resend_n=0#close resend
+		print('99990001 1 timeout,no resend')
+		self.assertEquals(dl._iter_page(pageStyle,rid),None)
+		dl.flush_test_data()
+		browser.resend_n=1#resend once
+		print('99990001 1 timeout,resend,success,meet but no check in main function. but check in sub function because some loop get no item')
+		self.assertEquals(len(dl._iter_page(pageStyle,rid)),20)
+		dl.flush_test_data()
+		#more timeout than normal,stop immediately and return None .
+		rid='119815062'
+		browser.max_timeout=5
+		print('119815602 to much timeout,return')
+		self.assertEquals(dl._iter_page(pageStyle,rid),None)
+		dl.flush_test_data()
+		browser.max_timeout=10
+		browser.resend_n=3#resend 3 times
+		print('119815602 resend,meet, no check')
+		self.assertEquals(len(dl._iter_page(pageStyle,rid)),170)
+		
+
+		#7pages timeout.1 resend,4get. 2resend, 1more,3resend,1more,4resend,1more.
 		#1+ pages which is not filled with items
 
 	def test_status(self):
@@ -129,6 +169,8 @@ class Test_browser(unittest.TestCase):
 		self.assertEquals(len(request_time),1)
 		self.assertTrue(isinstance(dl._iter_page('friendList','287286312',request_time,range(0,10)),set))#10 more timecost info
 		self.assertEquals(len(request_time),11)
+		self.assertEquals(dl._download('http://1.1.1.1'),None)
+		self.assertTrue(isinstance(dl._download('http://1.1.1.1'),str))
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
@@ -137,12 +179,13 @@ if __name__=='__main__':
 	#suite.addTest(Test_browser('test_profile'))
 	#suite.addTest(Test_browser('test_homepage'))
 
-	suite.addTest(Test_browser('test_iter_page'))
 
 	#checked
 	#suite.addTest(Test_browser('test_login'))
 	#suite.addTest(Test_browser('test_download'))
 	#suite.addTest(Test_browser('test_new_browser'))
+	#suite.addTest(Test_browser('test_iter_page'))
+	suite.addTest(Test_browser('test_iter_page_timeout'))
 	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)

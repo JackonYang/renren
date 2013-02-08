@@ -12,6 +12,8 @@ import parse
 
 run_level='info'
 timeout=3
+max_timeout=5
+resend_n=3
 urls={
 	'login':"http://www.renren.com/PLogin.do",
 	'friendList':"http://friend.renren.com/GetFriendList.do?curpage={}&id={}",
@@ -43,7 +45,7 @@ def url2file(url):
 		_url2fileprog=re.compile(r'http://(\w+).renren.com/(?:\D+)?(\d+)\D+(\d+)?')
 	m=_url2fileprog.search(url)
 	if m is None:
-		return 'test_data/test.html'
+		return 'test_data/timeout.html'
 	else:
 		if m.group(3) is None:
 			return 'test_data/{}_{}_profile.html'.format(m.group(1),m.group(2))
@@ -143,9 +145,11 @@ class browser:
 		else:
 			return html_content
 
-	def _iter_page(self,pageStyle,rid,req_time=None,pages=range(0,100),resend=3):
+	def _iter_page(self,pageStyle,rid,req_time=None,pages=range(0,100),resend=None):
 		"""_iter_page(pageStyle,rid)  --> items:set()
 		return None if error"""
+		if resend is None:
+			resend=resend_n
 		if resend<0:
 			return None
 		itemsAll=set()
@@ -155,6 +159,9 @@ class browser:
 			html_content=self._download(urls[pageStyle].format(curpage,rid),req_time)
 			if html_content is None:#add to timeout_seq to resend later.
 				timeout_seq.append(curpage)
+				#break when much more timeout than normal 
+				if len(timeout_seq) > max_timeout:
+					return None
 			else:
 				items_curpage=itemReg[pageStyle].findall(html_content)#detect items
 				if len(items_curpage) > 0:
@@ -162,16 +169,33 @@ class browser:
 				else:#privacy/all pages requested/safety page
 					break
 		#deal with timeout_seq
+		print('timeout list:{}'.format(timeout_seq))
 		if timeout_seq:#resend
 			item_re=self._iter_page(pageStyle,rid,req_time,timeout_seq,resend-1)
+			print('pages: {}'.format(pages))
 			if item_re is None:
 				return None
 			else:
 				itemsAll.update(item_re)
 		#_safety page check, if empty.
+		print('{},{},{},resend={}'.format(len(itemsAll),rid,pageStyle,resend)) 
 		if (len(itemsAll) ==0) and self._is_safety_page(html_content):
-			return None
+				return None
 		return itemsAll
+
+	def _is_safety_page(self,html_content):
+		print('checked')
+		if html_content is None:
+			print('None html_content')
+			return False
+		pageStyle='safety'
+		m=itemReg[pageStyle].search(html_content)
+		if m is None:
+			return False
+		else:
+			return True
+
+
 
 	#@depraced
 	def homepage(self,renrenId):
@@ -184,12 +208,3 @@ class browser:
 		else:
 			return parse.homepage_basic(itemReg[pageStyle+'_basic'].findall(html_content))
 	#@depraced
-	def _is_safety_page(self,html_content):
-		pageStyle='safety'
-		m=itemReg[pageStyle].search(html_content)
-		if m is None:
-			return False
-		else:
-			return True
-
-
