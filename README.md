@@ -40,9 +40,9 @@ database 为每一个页面类型提供一个存储接口：<br>
 #### 接口规范 
 
 1. `download(url:str) --> html_content:str`
-1. `_iter_page(pageStyle,rid)  --> (items:set)`
+1. `_iter_page(pageStyle,rid)  --> (items:set,'success'/error_info:str)` info is success or error info
 2. `parse.pageStyle(items:set) --> record:dict() `
-3. `browser.pageStyle(rid:str) --> (record:dict(),timecost:str)`
+3. `browser.pageStyle(rid:str) --> (record:dict(),timecost/error_info:str)`
 3. `database.save(rid:str,record) --> number_of_items_saved:int`
 
 _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_

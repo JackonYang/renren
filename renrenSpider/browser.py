@@ -58,14 +58,11 @@ class browser:
 		self.passwd=passwd
 
 	def friendList(self,renrenId='285060168',uppage=100):
-		"""friendList(renrenId:str) --> (record:dict(),timecost:str)
-		return (None,info) if error occurs, such as timeout or safetyPage"""
-		#generate request list
-		return self._iter_page('friendList',renrenId,None,range(0,uppage))
+		"""friendList(renrenId:str) --> (record:dict(),timecost:str),return (None,info) if error"""
+		return self.process('friendList',renrenId,uppage)
 	def status(self,renrenId='285060168',uppage=100):
-		"""status('285060168') --> 
-		(statusId,cur_content,orig_content,timestamp)"""
-		return self._iter_page('status',renrenId,None,range(0,uppage))
+		"""status('285060168') --> (record:dict(),timecost:str),return (None,info) if error"""
+		return self.process('status',renrenId,uppage)
 
 	def profile(self,renrenId):
 		"""profile('234234') -->
@@ -113,12 +110,13 @@ class browser:
 				return m.group(1),'login success'
 
 	def process(self,pageStyle,renrenId='285060168',uppage=100):
-		"""pageStyle browser handler.
-		call _iter_page to request pages and detect items,
-		parse record from items by parse module.runtime is logged."""
+		"""return (record:items,timecost:str) if success,
+		return (error,error_info) if error"""
 		runtime_start=time.time()
 		req_time=[]
-		items=self._iter_page(pageStyle,renrenId,range(0,uppage),req_time)
+		items,info=self._iter_page(pageStyle,renrenId,req_time,range(0,uppage))
+		if items is None:
+			return None,info
 		meth_parse=getattr(parse,pageStyle)
 		record=meth_parse(items)
 		runtime=time.time()-runtime_start
@@ -146,12 +144,12 @@ class browser:
 			return html_content
 
 	def _iter_page(self,pageStyle,rid,req_time=None,pages=range(0,100),resend=None):
-		"""_iter_page(pageStyle,rid)  --> items:set()
-		return None if error"""
+		"""_iter_page(pageStyle,rid)  --> (items:set(),'success')
+		return (None,error_info) if error"""
 		if resend is None:
 			resend=resend_n
 		if resend<0:
-			return None
+			return None,'timeout'
 		itemsAll=set()
 		timeout_seq=list()
 		#request pages until no more items detected
@@ -161,7 +159,7 @@ class browser:
 				timeout_seq.append(curpage)
 				#break when much more timeout than normal 
 				if len(timeout_seq) > max_timeout:
-					return None
+					return None,'more timeout than max_timeout'
 			else:
 				items_curpage=itemReg[pageStyle].findall(html_content)#detect items
 				if len(items_curpage) > 0:
@@ -169,24 +167,19 @@ class browser:
 				else:#privacy/all pages requested/safety page
 					break
 		#deal with timeout_seq
-		print('timeout list:{}'.format(timeout_seq))
 		if timeout_seq:#resend
-			item_re=self._iter_page(pageStyle,rid,req_time,timeout_seq,resend-1)
-			print('pages: {}'.format(pages))
+			item_re,info=self._iter_page(pageStyle,rid,req_time,timeout_seq,resend-1)
 			if item_re is None:
-				return None
+				return None,info
 			else:
 				itemsAll.update(item_re)
-		#_safety page check, if empty.
-		print('{},{},{},resend={}'.format(len(itemsAll),rid,pageStyle,resend)) 
+		#_safety page check, if itemsAll empty.
 		if (len(itemsAll) ==0) and self._is_safety_page(html_content):
-				return None
-		return itemsAll
+				return None,'account forbidden by safety policy'
+		return itemsAll,'success'
 
 	def _is_safety_page(self,html_content):
-		print('checked')
 		if html_content is None:
-			print('None html_content')
 			return False
 		pageStyle='safety'
 		m=itemReg[pageStyle].search(html_content)
@@ -194,8 +187,6 @@ class browser:
 			return False
 		else:
 			return True
-
-
 
 	#@depraced
 	def homepage(self,renrenId):

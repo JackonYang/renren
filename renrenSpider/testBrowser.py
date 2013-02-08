@@ -26,7 +26,7 @@ class new_browser(browser.browser):
 		browser.run_level='info'
 	def flush_test_data(self):#used to test timeout and resend
 		self.sent_times=dict()
-		print('data flushed')
+		#print('data flushed')
 
 class Test_browser(unittest.TestCase):
 	def setUp(self):
@@ -42,20 +42,36 @@ class Test_browser(unittest.TestCase):
 			print('{},{},{}'.format(rid,pfStyle,details))
 
 	def test_friendList(self):
-		#page sequence 3+pages/2pages/1page
-		correct_seq={'410941086':178,'267654044':29,'285060168':5}
-		for rid,expt in correct_seq.items():
-			fl,timecost=self.dl.friendList(rid)
-			self.assertEquals(len(fl),expt)
+		#normal seq, privacy
+		dl=new_browser()
+		dl.login('test','test')
+		test_data={'240303471':0,'446766202':1,'500275848':2,'444024948':20,'384065413':21,'397529849':22,'739807017':40}
+		for rid,expt in test_data.items():
+			record,timecost=dl.friendList(rid)
+			self.assertEquals(len(record),expt)
+			self.assertTrue(isinstance(record,dict))
 			self.assertTrue(timecost.find('max/min/ave')>-1)
-		#privacy
-		rid='240303471'
-		expt=0
-		fl,timecost=self.dl.friendList(rid)
-		self.assertEquals(len(fl),0)
-		self.assertTrue(timecost.find('max/min/ave')>-1)
-		#timeout:1page/2page/all pages timeout
-		#content/some items parse error
+		#error info test
+		error_data={'99999999':'more timeout than max_timeout','9999998':'timeout'}
+		for rid,expt in error_data.items():
+			record,info=dl.friendList(rid)
+			self.assertEquals(record,None)
+			self.assertTrue(info,expt)
+
+	def test_status(self):
+		dl=new_browser()
+		dl.login('test','test')
+		test_data={'446766202':0,'500275848':1,'104062077':2,'232877604':20,'242641331':21,'256137627':22,'411984911':40}
+		for rid,expt in test_data.items():
+			record,timecost=dl.status(rid)
+			self.assertEquals(len(record),expt)
+			self.assertTrue(isinstance(record,dict))
+			self.assertTrue(timecost.find('max/min/ave')>-1)
+		#error info test
+		error_data={'99999999':'more timeout than max_timeout','9999998':'timeout'}
+		for rid,expt in error_data.items():
+			record,info=dl.status(rid)
+			self.assertEquals(record,None)
 
 	def test_iter_page(self):
 		"""focus on page sequence"""
@@ -65,58 +81,69 @@ class Test_browser(unittest.TestCase):
 		friendList={'240303471':0,'446766202':1,'500275848':2,'444024948':20,'384065413':21,'397529849':22,'739807017':40}
 		status={'446766202':0,'500275848':1,'104062077':2,'232877604':20,'242641331':21,'256137627':22,'411984911':40}
 		for rid,expt in friendList.items():
-			self.assertEquals(len(dl._iter_page('friendList',rid)),expt)
+			items,info=dl._iter_page('friendList',rid)
+			self.assertEquals(len(items),expt)
+			self.assertEquals(info,'success')
 		for rid,expt in status.items():
-			self.assertEquals(len(dl._iter_page('status',rid)),expt)
+			items,info=dl._iter_page('status',rid)
+			self.assertEquals(len(items),expt)
+			self.assertEquals(info,'success')
 		#more page than expt
 		over={'287286312':'friendList','259364921':'status'}
 		uppage=105
 		for rid,pageStyle in over.items():
-			self.assertEquals(len(dl._iter_page(pageStyle,rid,None,range(0,uppage))),2100)
+			items,info=dl._iter_page(pageStyle,rid,None,range(0,uppage))
+			self.assertEquals(len(items),2100)
+			self.assertEquals(info,'success')
 
 	def test_iter_page_timeout(self):
-		"""timeout:1page/2page/all pages timeout"""
+		"""timeout:1page/several page but less than max_timeout/more than normal/all pages"""
 		dl=new_browser()
 		dl.login('test','test')
 		dl.flush_test_data()
 		pageStyle='friendList'
 		#all timeout
 		rid='99999999'
-		print('99999999 all timeout,resend')
-		self.assertEquals(dl._iter_page(pageStyle,rid),None)
+		items,info=dl._iter_page(pageStyle,rid)
+		self.assertEquals(items,None)
+		self.assertEquals(info,'more timeout than max_timeout')
 		dl.flush_test_data()
 		#one page timeout and resend ok
 		rid='99990001'
 		browser.resend_n=0#close resend
-		print('99990001 1 timeout,no resend')
-		self.assertEquals(dl._iter_page(pageStyle,rid),None)
+		items,info=dl._iter_page(pageStyle,rid)
+		self.assertEquals(items,None)
+		self.assertEquals(info,'timeout')
 		dl.flush_test_data()
 		browser.resend_n=1#resend once
-		print('99990001 1 timeout,resend,success,meet but no check in main function. but check in sub function because some loop get no item')
-		self.assertEquals(len(dl._iter_page(pageStyle,rid)),20)
+		items,info=dl._iter_page(pageStyle,rid)
+		self.assertEquals(len(items),20)
+		self.assertEquals(info,'success')
 		dl.flush_test_data()
 		#more timeout than normal,stop immediately and return None .
 		rid='119815062'
 		browser.max_timeout=5
-		print('119815602 to much timeout,return')
-		self.assertEquals(dl._iter_page(pageStyle,rid),None)
+		items,info=dl._iter_page(pageStyle,rid)
+		self.assertEquals(items,None)
+		self.assertEquals(info,'more timeout than max_timeout')
 		dl.flush_test_data()
+		#several timeout but less than max_timeout,resend ok
 		browser.max_timeout=10
 		browser.resend_n=3#resend 3 times
-		print('119815602 resend,meet, no check')
-		self.assertEquals(len(dl._iter_page(pageStyle,rid)),170)
-		
+		items,info=dl._iter_page(pageStyle,rid)
+		self.assertEquals(len(items),170)
+		self.assertEquals(info,'success')
 
-		#7pages timeout.1 resend,4get. 2resend, 1more,3resend,1more,4resend,1more.
-		#1+ pages which is not filled with items
+	def test_iter_page_safety(self):
+		#fist page,middle page
+		#TODO:need safety page
+		rids=[99991001,99991002]
+		dl=new_browser()
+		dl.login('test','test')
+		pageStyle='friendList'
+		for rid in rids:
+			self.assertEquals(dl._iter_page(pageStyle,rid),None)
 
-	def test_status(self):
-		#renrenIds={'233330059','410941086','267654044','285060168','240303471'}
-		renrenIds={'410941086','284874220'}
-		for rid in renrenIds:
-			stat,timecost=self.dl.status(rid)
-			#print('{},{},{}'.format(rid,len(stat),timecost))
-			print('{},{},{}'.format(rid,stat,timecost))
 
 	def test_homepage(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
@@ -167,25 +194,30 @@ class Test_browser(unittest.TestCase):
 		self.assertEquals(len(request_time),1)
 		self.assertTrue(isinstance(dl._download('http://friend.renren.com/GetFriendList.do?curpage=0&id=240303471'),str))
 		self.assertEquals(len(request_time),1)
-		self.assertTrue(isinstance(dl._iter_page('friendList','287286312',request_time,range(0,10)),set))#10 more timecost info
+		items,info=dl._iter_page('friendList','287286312',request_time,range(0,10))#10 more timecost info
+		self.assertTrue(isinstance(items,set))#10 more timecost info
+		self.assertEquals(info,'success')#10 more timecost info
 		self.assertEquals(len(request_time),11)
 		self.assertEquals(dl._download('http://1.1.1.1'),None)
 		self.assertTrue(isinstance(dl._download('http://1.1.1.1'),str))
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(Test_browser('test_friendList'))
-	#suite.addTest(Test_browser('test_status'))
 	#suite.addTest(Test_browser('test_profile'))
 	#suite.addTest(Test_browser('test_homepage'))
 
 
+	suite.addTest(Test_browser('test_status'))
+	#TODO:no test data file
+	#suite.addTest(Test_browser('test_is_safety_page'))
+
 	#checked
 	#suite.addTest(Test_browser('test_login'))
 	#suite.addTest(Test_browser('test_download'))
-	#suite.addTest(Test_browser('test_new_browser'))
-	#suite.addTest(Test_browser('test_iter_page'))
+	suite.addTest(Test_browser('test_new_browser'))
+	suite.addTest(Test_browser('test_iter_page'))
 	suite.addTest(Test_browser('test_iter_page_timeout'))
+	suite.addTest(Test_browser('test_friendList'))
 	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
