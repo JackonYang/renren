@@ -4,6 +4,7 @@ import browser
 class new_browser(browser.browser):
 	def __init__(self):
 		browser.browser.__init__(self)#no auto login
+		self.dl=None
 	def _download(self,url,request_time=None):
 		filename=browser.url2file(url)
 		try:
@@ -13,22 +14,20 @@ class new_browser(browser.browser):
 		if request_time is not None:
 			request_time.append(1.11)#random time
 		return html_content
+	def get_test_data(self,pageStyle,rid):
+		if self.dl is None:
+			self.dl=browser.browser('jiekunyang@gmail.com')
+			self.dl.login()
+		meth=getattr(browser.browser,pageStyle)
+		browser.run_level='debug'
+		meth(self.dl,rid)
+		browser.run_level='info'
 
 class Test_browser(unittest.TestCase):
 	def setUp(self):
 		pass
 	def tearDown(self):
 		pass
-
-	def test_new_browser(self):
-		dl=new_browser()
-		request_time=[]
-		self.assertEquals(dl._download('http://1.1.1.1',request_time),None)
-		self.assertEquals(len(request_time),1)
-		self.assertTrue(isinstance(dl._download('http://friend.renren.com/GetFriendList.do?curpage=0&id=240303471'),str))
-		self.assertEquals(len(request_time),1)
-		self.assertTrue(isinstance(dl._iter_page('friendList','287286312',request_time,range(0,10)),set))#10 more timecost info
-		self.assertEquals(len(request_time),11)
 
 	def test_profile(self):
 		renrenIds={'233330059','230760442','223981104','410941086','285060168'}
@@ -55,12 +54,8 @@ class Test_browser(unittest.TestCase):
 
 	def test_iter_page(self):
 		"""focus on page sequence"""
-		#dl=browser.browser('jiekunyang@gmail.com')
-		#browser.run_level='debug'
-		#dl.login()
 		dl=new_browser()
 		dl.login('test','test')
-
 		#page sequence 2pages/1page/0page
 		#items in end page, 1/2/20
 		friendList={'240303471':0,'446766202':1,'500275848':2,'444024948':20,'384065413':21,'397529849':22,'739807017':40}
@@ -126,6 +121,16 @@ class Test_browser(unittest.TestCase):
 		rid,info=dl.login(user)
 		self.assertEquals(rid,expt)
 
+	def test_new_browser(self):
+		dl=new_browser()
+		request_time=[]
+		self.assertEquals(dl._download('http://1.1.1.1',request_time),None)
+		self.assertEquals(len(request_time),1)
+		self.assertTrue(isinstance(dl._download('http://friend.renren.com/GetFriendList.do?curpage=0&id=240303471'),str))
+		self.assertEquals(len(request_time),1)
+		self.assertTrue(isinstance(dl._iter_page('friendList','287286312',request_time,range(0,10)),set))#10 more timecost info
+		self.assertEquals(len(request_time),11)
+
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(Test_browser('test_friendList'))
@@ -138,7 +143,7 @@ if __name__=='__main__':
 	#checked
 	#suite.addTest(Test_browser('test_login'))
 	#suite.addTest(Test_browser('test_download'))
-	suite.addTest(Test_browser('test_new_browser'))
+	#suite.addTest(Test_browser('test_new_browser'))
 	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
