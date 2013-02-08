@@ -64,8 +64,9 @@ class Test_browser(unittest.TestCase):
 			self.assertEquals(len(dl._iter_page('friendList',rid)),expt)
 		#page more than expt
 		over={'287286312':'friendList','259364921':'status'}
+		uppage=105
 		for rid,pageStyle in over.items():
-			self.assertEquals(len(dl._iter_page(pageStyle,rid),105),2100)
+			self.assertEquals(len(dl._iter_page(pageStyle,rid,None,range(0,uppage))),2100)
 		#timeout:1page/2page/all pages timeout
 		#1+ pages which is not filled with items
 
@@ -136,7 +137,7 @@ if __name__=='__main__':
 	#suite.addTest(Test_browser('test_profile'))
 	#suite.addTest(Test_browser('test_homepage'))
 
-	#suite.addTest(Test_browser('test_iter_page'))
+	suite.addTest(Test_browser('test_iter_page'))
 
 	#checked
 	#suite.addTest(Test_browser('test_login'))

@@ -43,12 +43,12 @@ def url2file(url):
 		_url2fileprog=re.compile(r'http://(\w+).renren.com/(?:\D+)?(\d+)\D+(\d+)?')
 	m=_url2fileprog.search(url)
 	if m is None:
-		return None
+		return 'test_data/test.html'
 	else:
 		if m.group(3) is None:
 			return 'test_data/{}_{}_profile.html'.format(m.group(1),m.group(2))
 		else:
-			return 'test_data/{}_{}_{}.html'.format(m.group(1),m.group(2),m.group(3))
+			return 'test_data/{}_{}_{}.html'.format(m.group(1),m.group(3),m.group(2))
 
 class browser:
 	def __init__(self,user='yyttrr3242342@163.com',passwd=None):
@@ -59,11 +59,11 @@ class browser:
 		"""friendList(renrenId:str) --> (record:dict(),timecost:str)
 		return (None,info) if error occurs, such as timeout or safetyPage"""
 		#generate request list
-		return self.download_hdlr('friendList',renrenId,uppage)
+		return self._iter_page('friendList',renrenId,None,range(0,uppage))
 	def status(self,renrenId='285060168',uppage=100):
 		"""status('285060168') --> 
 		(statusId,cur_content,orig_content,timestamp)"""
-		return self.download_hdlr('status',renrenId,uppage)
+		return self._iter_page('status',renrenId,None,range(0,uppage))
 
 	def profile(self,renrenId):
 		"""profile('234234') -->
@@ -127,12 +127,12 @@ class browser:
 		return None if timeout."""
 		request_start=time.time()
 		try:
-			print(url)
 			rsp=self.opener.open(url,timeout=timeout)
 			html_content=rsp.read().decode('UTF-8','ignore')
 			if request_time is not None:
 				request_time.append(time.time()-request_start)
 			if run_level == 'debug':
+				print('debug.saved:{}'.format(url))
 				f=open(url2file(url),'w')
 				f.write(html_content)
 				f.close()
@@ -143,26 +143,34 @@ class browser:
 		else:
 			return html_content
 
-	def _iter_page(self,pageStyle,renrenId,pages=range(0,100),req_time=None):
-		"""_iter_page(pageStyle,renrenId)  --> (record:dict(),timecost)
-		return (None,error_info) if error"""
+	def _iter_page(self,pageStyle,rid,req_time=None,pages=range(0,100),resend=3):
+		"""_iter_page(pageStyle,rid)  --> items:set()
+		return None if error"""
+		if resend<0:
+			return None
 		itemsAll=set()
 		timeout_seq=list()
 		#request pages until no more items detected
 		for curpage in pages:
-			html_content=self._download(urls[pageStyle].format(curpage,renrenId),req_time)
+			html_content=self._download(urls[pageStyle].format(curpage,rid),req_time)
 			if html_content is None:#add to timeout_seq to resend later.
 				timeout_seq.append(curpage)
 			else:
 				items_curpage=itemReg[pageStyle].findall(html_content)#detect items
 				if len(items_curpage) > 0:
-					itemsAll |=  set(items_curpage)
+					itemsAll.update(items_curpage)
 				else:#privacy/all pages requested/safety page
 					break
-		#TODO:
-		#resend if timeout_seq is not None and resend>0
-		#self._iter_page(pageStyle,renrenId,timeout_seq,req_time,resend-1)
-		#_empty_check if empty
+		#deal with timeout_seq
+		if timeout_seq:#resend
+			item_re=self._iter_page(pageStyle,rid,req_time,timeout_seq,resend-1)
+			if item_re is None:
+				return None
+			else:
+				itemsAll.update(item_re)
+		#_safety page check, if empty.
+		if (len(itemsAll) ==0) and self._is_safety_page(html_content):
+			return None
 		return itemsAll
 
 	#@depraced
@@ -176,12 +184,12 @@ class browser:
 		else:
 			return parse.homepage_basic(itemReg[pageStyle+'_basic'].findall(html_content))
 	#@depraced
-	def _emtpy_check(self,html_content):
+	def _is_safety_page(self,html_content):
 		pageStyle='safety'
 		m=itemReg[pageStyle].search(html_content)
 		if m is None:
-			return True,'not forbidden'
+			return False
 		else:
-			return False,pageStyle
+			return True
 
 
