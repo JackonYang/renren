@@ -14,13 +14,13 @@ class new_browser(browser.browser):
 		if request_time is not None:
 			request_time.append(1.11)#random time
 		return html_content
-	def get_test_data(self,pageStyle,rid):
+	def get_test_data(self,pageStyle,rid,uppage=110):
 		if self.dl is None:
 			self.dl=browser.browser('jiekunyang@gmail.com')
 			self.dl.login()
 		meth=getattr(browser.browser,pageStyle)
 		browser.run_level='debug'
-		meth(self.dl,rid)
+		meth(self.dl,rid,uppage)
 		browser.run_level='info'
 
 class Test_browser(unittest.TestCase):
@@ -59,15 +59,13 @@ class Test_browser(unittest.TestCase):
 		#page sequence 2pages/1page/0page
 		#items in end page, 1/2/20
 		friendList={'240303471':0,'446766202':1,'500275848':2,'444024948':20,'384065413':21,'397529849':22,'739807017':40}
-		#status={'446766202':0,'500275848':2
+		status={'446766202':0,'500275848':1,'104062077':2,'232877604':20,'242641331':21,'256137627':22,'411984911':40}
 		for rid,expt in friendList.items():
 			self.assertEquals(len(dl._iter_page('friendList',rid)),expt)
 		#page more than expt
-		over={'287286312','friendList'}
-		self.assertEquals(len(dl._iter_page('friendList',rid)),2000)
-
-		#self.assertEquals(len(fl),0)
-		#self.assertTrue(timecost.find('max/min/ave')>-1)
+		over={'287286312':'friendList','259364921':'status'}
+		for rid,pageStyle in over.items():
+			self.assertEquals(len(dl._iter_page(pageStyle,rid),105),2100)
 		#timeout:1page/2page/all pages timeout
 		#1+ pages which is not filled with items
 
