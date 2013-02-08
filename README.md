@@ -1,7 +1,7 @@
 design of renrenSpider
 ====================
 
-抓取并在本地存储社交网络数据 [www.renren.com](www.renren.com)
+抓取并在本地存储社交网络数据，数据源：[www.renren.com](www.renren.com)
 
 core framework
 ---------------------
@@ -18,12 +18,13 @@ database 为每一个页面类型提供一个存储接口：<br>
 
 ####  browser 核心实现：
 
-1. download<br>
-简单的根据 url 获取 html_content 并返回给上层调用，便于性能统计。
+1. `_download`<br>
+简单的根据 url 获取 `html_content` 并返回给上层调用，便于性能统计。
 
-2. detect_item<br>
+2. `_iter_page`<br>
 页面类型分为可以迭代的多页面，如 friendList, status; 单页面，如 profile,homepage。<br>
-detect_item 根据页面类型抓取特定字段并返回字段的集合 items。
+实际抓取以迭代页面为主，对方出于性能考虑，通常鉴权较少，安全策略低。<br>
+`_iter_page` 迭代调用`_download`获取`html_content`并识别出其中的 items。
 
 3. parse <br>
 解析 detect 得到的 items, 获得信息字段 record。返回 dict()。<br>
@@ -32,14 +33,14 @@ detect_item 根据页面类型抓取特定字段并返回字段的集合 items�
 
 ####  database 核心实现：
 
-1. save_pageStyle
-2. getSearched_pageStyle
-3. getRecord
+1. `save_pageStyle`
+2. `getSearched_pageStyle`
+3. `getRecord`
 
-** 接口规范 **
+#### 接口规范 
 
 1. `download(url:str) --> html_content:str`
-1. `detect_hdlr.pageStyle(html_content:str)  --> (items:set, pageStyle:str)`
+1. `_iter_page(pageStyle,rid)  --> (items:set)`
 2. `parse.pageStyle(items:set) --> record:dict() `
 3. `browser.pageStyle(rid:str) --> (record:dict(),timecost:str)`
 3. `database.save(rid:str,record) --> number_of_items_saved:int`
