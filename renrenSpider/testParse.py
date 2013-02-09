@@ -1,6 +1,6 @@
 import unittest
 import parse
-from download import download
+from browser import browser
 
 class Test_parse(unittest.TestCase):
 
@@ -17,12 +17,13 @@ class Test_parse(unittest.TestCase):
 			'<dd><a href="http://www.renren.com/profile.do?id=34134">～@%……</a>',
 			{},
 			{'error'},
-			None]
+			None
+			]
 		names=[
 			{'6754031':'王瑛','331442':'En.王哲'},
 			{'9439171':''},
 			{'34134':'～@%……'},
-			dict(),
+			{},
 			None,
 			None]
 		for pfHref,name in zip(pfHrefs,names):
@@ -103,9 +104,9 @@ class Test_parse(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	suite.addTest(Test_parse('test_friendList'))
-	suite.addTest(Test_parse('test_profile_detail'))
-	suite.addTest(Test_parse('test_homepage_tl'))
-	suite.addTest(Test_parse('test_homepage_basic_privacy'))
+	#suite.addTest(Test_parse('test_profile_detail'))
+	#suite.addTest(Test_parse('test_homepage_tl'))
+	#suite.addTest(Test_parse('test_homepage_basic_privacy'))
 	#private method
 	suite.addTest(Test_parse('test_split_tlbirth'))
 	suite.addTest(Test_parse('test_drop_href'))

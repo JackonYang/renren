@@ -1,24 +1,19 @@
-_nameprog=None
-def friendList(pfHrefs):
+_href_pf_prog=None
+def friendList(href_pfs):
 	"""friendList({'<a href="..?id=1">name1</a>','<a href="..?id=3">name2</a>'}) 
-	--> 
-	return {id1:name1,id2:name2} if success
-	return dict() if pfHrefs is set()
-	return None if no group searched in one element of pfHrefs
-	return None if pfHrefs is None
-	"""
-	if pfHrefs is None:
+	--> return {id1:name1,id2:name2} if success,return None if error"""
+	if href_pfs is None:
 		return None
-	elif isinstance(pfHrefs,str):
-		pfHrefs={pfHrefs}
-	global _nameprog
-	if _nameprog is None:
+	elif isinstance(href_pfs,str):
+		href_pfs={href_pfs}
+	global _href_pf_prog
+	if _href_pf_prog is None:
 		import re
-		_nameprog=re.compile(r'id=(\d+)">([^<]*?)</a>')
+		_href_pf_prog=re.compile(r'id=(\d+)">([^<]*?)</a>')
 
 	name=dict()
-	for pfHref in pfHrefs:
-		m=_nameprog.search(pfHref)
+	for href_pf in href_pfs:
+		m=_href_pf_prog.search(href_pf)
 		if m is None:
 			return None
 		name[m.group(1)]=m.group(2)
@@ -26,7 +21,7 @@ def friendList(pfHrefs):
 
 _statprog=None
 def status(stats):
-	"""return {statusId:dict_of_details,statusId2:dict2}"""
+	"""return {statusId:dict_of_details,statusId2:dict2} if success, return None if error"""
 	if stats is None:
 		return None
 	elif isinstance(stats,str):
@@ -35,6 +30,7 @@ def status(stats):
 	if _statprog is None:
 		import re
 		_statprog=re.compile(r'<li[^>]+id="status-(?P<id>\d+)">.+?<h3>\s*(?P<content>.+?)</h3>\s*?(?:<div class="content">\s*<div[^>]+>(?P<orig>.*?)</div>\s*</div>)?\s*<div class="details">.+?<span class="duration">(?P<timestamp>[^<]+?)</span>',re.DOTALL)
+
 	res=dict()
 	for stat in stats:
 		m=_statprog.search(stat)

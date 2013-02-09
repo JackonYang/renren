@@ -13,11 +13,11 @@ class TestRenrenDb(unittest.TestCase):
 		self.db.close()
 		self.db=None
 
-	def test_friendList(self):
-		names=[{'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'},dict(),None,set()]
-		for name in names:
-			print(name)
-			print(self.db.friendList('11111',name))
+	def test_save_friendList(self):
+		names=[({'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'},6),(dict(),0),(None,None),({'3','4'},None)]
+		for name,expt in names:
+			self.assertEquals(self.db.save_friendList(name,'11111'),expt)
+
 	def test_profile(self):
 		pfs={'profile_detail':{'大学': '西北大学- 2011年- 物理学系<br>', '高中': '阳光中学- 2008年', '初中': '西安交通大学阳光中学- 2005年'},'profile_detail':{'小学': '烟台市芝罘区新海阳小学- 1995年', '家乡': '山东 烟台市', '生日': ' 1989 年3 月 11 日双鱼座', '高中': '烟台二中- 2004年', '初中': '烟台二中- 2000年', '个性域名': 'wangzhongzhe.renren.com', '性别': '男', '大学': '西北大学- 2007年- 物理学系<br>山东大学- 2012年- 电气工程学院<br>'},'profile_mini':{'gender': '女生', 'location': '烟台市'}}
 		rids=['111','222','333']
@@ -67,9 +67,9 @@ class TestRenrenDb(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(TestRenrenDb('test_friendList'))
+	suite.addTest(TestRenrenDb('test_save_friendList'))
 	#suite.addTest(TestRenrenDb('test_profile'))
-	suite.addTest(TestRenrenDb('test_status'))
+	#suite.addTest(TestRenrenDb('test_status'))
 	#suite.addTest(TestRenrenDb('testTableManage'))
 	#suite.addTest(TestRenrenDb('test_getFriendList'))
 	#suite.addTest(TestRenrenDb('testGetRenrenId'))

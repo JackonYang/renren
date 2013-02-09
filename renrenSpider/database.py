@@ -36,8 +36,10 @@ class database:
 		self.cur.close()
 		self.conn.close()
 
-	def friendList(self,names,renrenId):
-		"""insert into db, and return rows affected.return None if input error"""
+	def save_friendList(self,names,renrenId):
+		"""insert into db, and return rows affected.
+		save nothing and return 0 if empty.
+		return None if input error"""
 		if names is None:
 			return None
 		elif not isinstance(names,dict):
@@ -60,6 +62,50 @@ class database:
 		else:
 			self.conn.commit()
 			return n
+	def save_status(self,stats,renrenId=None):
+		if stats is None:
+			return None
+		elif not isinstance(stats,dict):
+			return None
+		elif stats == {}:
+			return 0
+		saved=0
+		for statusId,stat in stats.items():
+			valStat="statusId='{}'".format(statusId)
+			for tag,value in stat.items():
+				if value is not None:
+					value=value.replace("'","\\'").rstrip('\\')#format , and \ 
+				valStat += ",{}='{}'".format(tag,value)
+			sqlStat='insert into {} set {}'.format(self.tempTable['status'],valStat)
+			try:
+				saved += self.cur.execute(sqlStat)
+				#print('database.status()')
+			except Exception as e:
+				print(sqlStat)
+				return 0
+		self.conn.commit()
+		return saved
+
+	def friendList_searched(self,pageStyle='friendList'):
+		tables={self.mainTable[pageStyle],self.tempTable[pageStyle]}
+		res=set()
+		for table in tables:
+			self.cur.execute("SELECT renrenId1 FROM {} group by renrenId1".format(table))
+			for item in self.cur.fetchall():
+				res.add(item[0])
+		return res
+
+	def getSearched(self,pageStyle):
+		if pageStyle=='profile':
+			tables={self.mainTable['profile_detail'],self.tempTable['profile_detail'],self.mainTable['profile_mini'],self.tempTable['profile_mini'],self.mainTable['profile_empty'],self.tempTable['profile_empty']}
+		else:
+			tables={self.mainTable[pageStyle],self.tempTable[pageStyle]}
+		res=set()
+		for table in tables:
+			self.cur.execute("SELECT renrenId1 FROM {} group by renrenId1".format(table))
+			for item in self.cur.fetchall():
+				res.add(item[0])
+		return res
 
 	def profile(self,renrenId,pf,pfStyle):
 		"""insert into db, and return rows affected.return None if input error"""
@@ -88,30 +134,6 @@ class database:
 			self.conn.commit()
 			return n
 
-	def status(self,stats,renrenId=None):
-		if stats is None:
-			return None
-		elif not isinstance(stats,dict):
-			return None
-		elif stats == {}:
-			return 0
-		saved=0
-		for statusId,stat in stats.items():
-			valStat="statusId='{}'".format(statusId)
-			for tag,value in stat.items():
-				if value is not None:
-					value=value.replace("'","\\'").rstrip('\\')
-				valStat += ",{}='{}'".format(tag,value)
-			sqlStat='insert into {} set {}'.format(self.tempTable['status'],valStat)
-			try:
-				saved += self.cur.execute(sqlStat)
-				#print('database.status()')
-			except Exception as e:
-				print(sqlStat)
-				return 0
-		self.conn.commit()
-		return saved
-
 	def profile_empty(self,renrenId,pfStyle):
 		sqlPf="insert into {} set renrenId1='{}',pfStyle='{}'".format(self.tempTable['profile_empty'],renrenId,pfStyle)
 		try:
@@ -132,17 +154,6 @@ class database:
 		res=set()
 		for table in [self.mainTable['friendList'],self.tempTable['friendList']]:
 			self.cur.execute("SELECT renrenId{} FROM {} where renrenId{}={}".format(target,table,where,renrenId))
-			for item in self.cur.fetchall():
-				res.add(item[0])
-		return res
-	def getSearched(self,pageStyle):
-		if pageStyle=='profile':
-			tables={self.mainTable['profile_detail'],self.tempTable['profile_detail'],self.mainTable['profile_mini'],self.tempTable['profile_mini'],self.mainTable['profile_empty'],self.tempTable['profile_empty']}
-		else:
-			tables={self.mainTable[pageStyle],self.tempTable[pageStyle]}
-		res=set()
-		for table in tables:
-			self.cur.execute("SELECT renrenId1 FROM {} group by renrenId1".format(table))
 			for item in self.cur.fetchall():
 				res.add(item[0])
 		return res
