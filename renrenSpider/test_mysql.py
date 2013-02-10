@@ -1,5 +1,11 @@
 import unittest
-from database import *
+import database
+
+class new_database(database.database):
+	def dropTable(self):
+		for table in self.tempTable.values():
+			self.cur.execute('drop table if exists {}'.format(table))
+		for table in self.mainTable.values()mainself.cur.execute('drop table if exists {}'.format(table))
 
 class TestRenrenDb(unittest.TestCase):
 

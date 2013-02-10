@@ -23,15 +23,8 @@ class database:
 	primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','profile_empty':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)','status':',PRIMARY KEY (statusId)'}
 
 	def __init__(self,namePre='test'):
-		self.conn=pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Kunth123',db='data_bang',charset='utf8')
+		self.mainTable,self.tempTable=self._init_table_name(namePre)
 		self.cur=self.conn.cursor()
-		self.mainTable=dict()
-		self.tempTable=dict()
-		for table in self.sqls.keys(): 
-			self.mainTable[table]='{}_main_{}'.format(namePre,table)
-			self.tempTable[table]='{}_temp_{}'.format(namePre,table)
-		self.createTempTable()
-		self.createMainTable()
 	def close(self):
 		self.cur.close()
 		self.conn.close()
@@ -158,13 +151,19 @@ class database:
 				res.add(item[0])
 		return res
 
-	def createTempTable(self):
+	def _createTable(self):
+
+	def _init_table(self,pageStyle,namePre='test'):
+		mainTable=dict()
+		tempTable=dict()
+		for table in self.sqls.keys(): 
+			mainTable[table]='{}_main_{}'.format(namePre,table)
+			tempTable[table]='{}_temp_{}'.format(namePre,table)
 		for attr in self.sqls.keys():
 			self.cur.execute(self.sqls[attr].format(self.tempTable[attr],self.key[attr]))
-			#print(self.sqls[attr].format(self.tempTable[attr],self.key[attr]))
-	def createMainTable(self):
-		for attr in self.sqls.keys():
-			self.cur.execute(self.sqls[attr].format(self.mainTable[attr],self.primary[attr]))
-	def dropTempTable(self):
-		for table in self.tempTable.values():
-			self.cur.execute('drop table if exists {}'.format(table))
+			self.cur.execute(self.sqls[attr].format(self.mainTable[attr],self.key[attr]))
+		return mainTable,tempTable
+
+	def _getConn(self,usr='root',passwd='Kunth123',db='data_bang'):
+		return conn=pymysql.connect(host='127.0.0.1',port=3306,user=usr,passwd=passwd,db=db,charset='utf8')
+
