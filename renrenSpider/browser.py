@@ -1,4 +1,4 @@
-"""provide interface to browser data of a certain pageStyle of someone from www.renren.com"""
+"""provide interface to download record in a certain pageStyle of someone from www.renren.com"""
 import urllib.request
 from urllib.parse import urlencode
 import http.cookiejar
@@ -29,13 +29,15 @@ itemReg={
 	'safety':re.compile(r'<title>.*?安全.*?</title>'),
 	'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
 
-def format_time(runtime,req_time):
-	if isinstance(req_time,list):
+def format_time(runtime,req_time=None):
+	if req_time is None:
+		return '%.2f'%(runtime)
+	elif isinstance(req_time,list):
 		import numpy as np
 		tm=np.float32(req_time)
 		return '%.2f,max/min/ave:%.2f/%.2f/%.2f'%(runtime,tm.max(),tm.min(),tm.mean())
 	else:
-		return 'timecost should be list'
+		return 'timecost format error'
 
 _url2fileprog=None
 def url2file(url):
@@ -66,20 +68,26 @@ class browser:
 
 	def profile(self,renrenId):
 		"""profile('234234') -->
-		return {tag1:value1,...,tagn:valuen} in detail page if available
-		return {tag1:value1,...,tagn:valuen} in homepage if detail page unavailable
-		return None if timeout"""
+		return ({tag1:value1,...,tagn:valuen},res_pageStyle)
+		return (None,error_info) if error"""
+		runtime_start=time.time()
 		pageStyle='profile_detail'
 		html_content=self._download(urls[pageStyle].format(renrenId))
 		if html_content is None:
-			return None,'profile'
+			return None,'timout'
 		elif html_content[0:30].find('<div class="col-left">') > -1:
-			return parse.profile_detail(itemReg[pageStyle].findall(html_content)),'pf_detail'
+			pageStyle='profile_detail'
+			pf=parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
 			#TODO:check whether account safety
-			return parse.homepage_tl(itemReg['profile_tl'].findall(html_content)),'mini_tl'
+			pageStyle='profile_tl'
+			pf=parse.homepage_tl(itemReg[pageStyle].findall(html_content))
 		else:
-			return parse.homepage_basic_privacy(itemReg['profile_basic'].findall(html_content)),'mini_basic'
+			pageStyle='profile_basic'
+			pf=parse.homepage_basic_privacy(itemReg[pageStyle].findall(html_content))
+		runtime=time.time()-runtime_start
+		pf['pageStyle']=pageStyle
+		return pf,format_time(runtime)
 
 	def login(self,user=None,passwd=None):
 		"""return (renrenId,'success') if login successfully.
@@ -198,4 +206,3 @@ class browser:
 			return parse.homepage_tl(itemReg[pageStyle+'_tl'].findall(html_content))
 		else:
 			return parse.homepage_basic(itemReg[pageStyle+'_basic'].findall(html_content))
-	#@depraced
