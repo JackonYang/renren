@@ -206,8 +206,6 @@ if __name__=='__main__':
 	#suite.addTest(Test_browser('test_profile'))
 	#suite.addTest(Test_browser('test_homepage'))
 
-
-	suite.addTest(Test_browser('test_status'))
 	#TODO:no test data file
 	#suite.addTest(Test_browser('test_is_safety_page'))
 
@@ -218,6 +216,7 @@ if __name__=='__main__':
 	suite.addTest(Test_browser('test_iter_page'))
 	suite.addTest(Test_browser('test_iter_page_timeout'))
 	suite.addTest(Test_browser('test_friendList'))
+	suite.addTest(Test_browser('test_status'))
 	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
