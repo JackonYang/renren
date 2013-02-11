@@ -14,13 +14,13 @@ class repo_mysql:
 	def save_friendList(self,record,rid,run_info=None):
 		"""save record and return rows affected.save nothing if empty.
 		return None if input error"""
-		if record is None:
+		if not isinstance(record,dict):
 			return None
-		elif not isinstance(record,dict):
-			return None
-		elif record == {}:
-			return 0
 		pageStyle='friendList'
+		if run_info is not None:
+			self.save_history(rid,pageStyle,run_info,len(record))
+		if record == {}:
+			return 0
 		if pageStyle not in self.table:
 			self._init_table(pageStyle)
 		if 'name' not in self.table:
@@ -39,18 +39,16 @@ class repo_mysql:
 			return None
 		else:
 			self.conn.commit()
-			if run_info is not None:
-				self.save_history(rid,pageStyle,run_info,len(record))
 			return n
 
 	def save_status(self,record,rid=None,run_info=None):
-		if record is None:
+		if not isinstance(record,dict):
 			return None
-		elif not isinstance(record,dict):
-			return None
-		elif record == {}:
-			return 0
 		pageStyle='status'
+		if run_info is not None:
+			self.save_history(rid,pageStyle,run_info,len(record))
+		if record == {}:
+			return 0
 		if pageStyle not in self.table:
 			self._init_table(pageStyle)
 		saved=0
@@ -67,17 +65,13 @@ class repo_mysql:
 				print(sqlStat)
 				return None
 		self.conn.commit()
-		if run_info is not None:
-			self.save_history(rid,pageStyle,run_info,len(record))
 		return saved
 
 	def save_profile(self,record,rid):
 		"""save profile and return rows affected.return None if input error"""
-		if record is None:
+		if not isinstance(record,dict):
 			return None
-		elif not isinstance(record,dict):
-			return None
-		elif record == {}:
+		if record == {}:
 			return 0
 		pageStyle='profile'
 		val_pf="renrenId1='{}'".format(rid)
@@ -100,15 +94,11 @@ class repo_mysql:
 		return n
 
 	def getSearched(self,pageStyle):
-		if pageStyle=='profile':
-			tables={self.mainTable['profile_detail'],self.tempTable['profile_detail'],self.mainTable['profile_mini'],self.tempTable['profile_mini'],self.mainTable['profile_empty'],self.tempTable['profile_empty']}
-		else:
-			tables={self.mainTable[pageStyle],self.tempTable[pageStyle]}
+		#only success download is logged
 		res=set()
-		for table in tables:
-			self.cur.execute("SELECT renrenId1 FROM {} group by renrenId1".format(table))
-			for item in self.cur.fetchall():
-				res.add(item[0])
+		self.cur.execute("SELECT rid FROM {} where page_style='{}'".format(self.table['history'],pageStyle))
+		for item in self.cur.fetchall():
+			res.add(item[0])
 		return res
 
 	def getFriendList(self,renrenId):

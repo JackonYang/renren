@@ -33,8 +33,8 @@ class test_repo_mysql(unittest.TestCase):
 		log_info=('1111','profile','success','123')
 		stat={'2956159738': {'cur_name': '張曉旭', 'timestamp': '2012-01-08 00:58', 'cur_content': "'蛋舍k歌中'", 'orig_content': None, 'orig_name': None, 'orig_owner': None, 'renrenId1': '410941086'}}
 		self.assertEquals(self.db.save_history(*log_info),1)
-		self.assertEquals(self.db.save_friendList({'1':'name1'},'11','success'),1)
-		self.assertEquals(self.db.save_status(stat,'22','timeout'),1)
+		self.assertEquals(self.db.save_friendList({'11':'name1'},'01','success'),1)
+		self.assertEquals(self.db.save_status(stat,'02','timeout'),1)
 
 	def test_save_profile(self):
 		pfs={'profile_detail':{'大学': '西北大学- 2011年- 物理学系<br>', '高中': '阳光中学- 2008年', '初中': '西安交通大学阳光中学- 2005年'},'profile_detail':{'小学': '烟台市芝罘区新海阳小学- 1995年', '家乡': '山东 烟台市', '生日': ' 1989 年3 月 11 日双鱼座', '高中': '烟台二中- 2004年', '初中': '烟台二中- 2000年', '个性域名': 'wangzhongzhe.renren.com', '性别': '男', '大学': '西北大学- 2007年- 物理学系<br>山东大学- 2012年- 电气工程学院<br>'},'profile_mini':{'gender': '女生', 'location': '烟台市'}}
@@ -42,13 +42,23 @@ class test_repo_mysql(unittest.TestCase):
 		for rid,pf in zip(rids,pfs.items()):
 			print('{},{}'.format(rid,self.db.profile(rid,pf[1],pf[0])))
 
-	def testGetSearched(self):
-		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
-		renrenId='11111'
-		maindb_rid1='101'
-		self.db.friendList(renrenId,name)
+	def test_getSearched(self):
+		stat1={'81': {'cur_name': 'name1', 'timestamp': '2012-01-08 00:58', 'cur_content': "'蛋舍k歌中'", 'orig_content': None, 'orig_name': None, 'orig_owner': None, 'renrenId1': '71'}}
+		stat2={'82': {'cur_name': 'name1', 'timestamp': '2012-02-08 00:58', 'cur_content': "'蛋舍k歌中'", 'orig_content': None, 'orig_name': None, 'orig_owner': None, 'renrenId1': '72'}}
+		self.db.save_friendList({'91':'name1'},'11','success')
+		self.db.save_friendList({'92':'name2'},'12','timecost_info')
+		self.db.save_friendList({},'13','timecost_info')
+		self.db.save_friendList(None,'14','timeout')
+		expt_friendList={'11','12','13'}
+		self.db.save_status(stat1,'21','success')
+		self.db.save_status(stat2,'22','timecost_info')
+		self.db.save_status({},'23','timecost_info')
+		self.db.save_status(None,'24','timeout')
+		expt_status={'21','22','23'}
 
-		self.assertEquals(self.db.getSearched('friendList'),{renrenId,maindb_rid1})
+		self.assertEquals(self.db.getSearched('friendList'),expt_friendList)
+		self.assertEquals(self.db.getSearched('status'),expt_status)
+
 	def testGetRenrenId(self):
 		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
 		name2={'231':'王瑛','2442':'Ethan.王哲','241':'刘洋English','2171':'','439171':'eeee','324134134':'～！@#￥%……&*（）'}
@@ -82,13 +92,13 @@ if __name__=='__main__':
 	#suite.addTest(test_repo_mysql('test_profile'))
 	#suite.addTest(test_repo_mysql('test_getFriendList'))
 	#suite.addTest(test_repo_mysql('testGetRenrenId'))
-	#suite.addTest(test_repo_mysql('testGetSearched'))
 
 	#checked
 	suite.addTest(test_repo_mysql('test_save_status'))
 	suite.addTest(test_repo_mysql('test_save_friendList'))
 	suite.addTest(test_repo_mysql('test_tableManage'))
 	suite.addTest(test_repo_mysql('test_save_history'))
+	suite.addTest(test_repo_mysql('test_getSearched'))
 
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
