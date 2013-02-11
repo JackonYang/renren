@@ -16,8 +16,11 @@ INTERFACE
 * `login(user,passwd) --> (renrenId,info)` 社交网站登录
 
 #### repo-database
-* `save_pageStyle(item,renrenId,run_info) --> nItemSave` 保存 record 和 history
+* `save_pageStyle(record,rid,run_info) --> nItemSave` 保存 record 和 history
 * `save_history(rid,pageStyle,run_info,n_record) --> nItemsSave` 保存 history
+* `getSearched(pageStyle) --> rids:set`
+* `getFriendList(rid) --> friendsId:set`
+
 
 design of class
 --------------------
