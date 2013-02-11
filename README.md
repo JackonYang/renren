@@ -12,11 +12,12 @@ INTERFACE
 ---------
 
 #### browse 
-* `pageStyle(renrenId) --> (items,timecost)` 下载 pageStyle 页面的信息字段。
+* `pageStyle(renrenId) --> (record:dict,timecost:str)` 下载 pageStyle 页面的信息字段。
 * `login(user,passwd) --> (renrenId,info)` 社交网站登录
 
 #### repo-database
-* `save-pageStyle(item,renrenId=None) --> nItemsSave` 保存 record
+* `save_pageStyle(item,renrenId,run_info) --> nItemSave` 保存 record 和 history
+* `save_history(rid,pageStyle,run_info,n_record) --> nItemsSave` 保存 history
 
 design of class
 --------------------
@@ -48,9 +49,15 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 
 以 mysql 作为本地存储介质。
 
-1. `save_pageStyle`
-2. `getSearched_pageStyle`
-3. `getRecord`
+每一类 record 一个接口，另有一个 history 存储接口。
+
+1. `save_pageStyle` 存储 record 和 history
+2. `save_history` 内部方法，存储 history. `save_pageStyle` 默认调用。
+3. `self.table` 内部属性，已经确认创建的表空间及表名。
+4. `_init_table` 根据 pageStyle 创建表空间并初始化 `self.table`
+5. `_getConn` 获取 mysql conn。
+2. `getSearched` 查询 history 表，获取已查询集合。
+3. `get_friendList`
 
 **内部接口规范**
 
