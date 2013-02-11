@@ -62,20 +62,25 @@ class test_repo_mysql(unittest.TestCase):
 	def testGetRenrenId(self):
 		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
 		name2={'231':'王瑛','2442':'Ethan.王哲','241':'刘洋English','2171':'','439171':'eeee','324134134':'～！@#￥%……&*（）'}
-		a='324134134'#last key of name2
 		renrenId='100032076'
 		renrenId2='103076'
-		self.db.insertFriendList(renrenId,name)
-		self.db.insertFriendList(renrenId2,name2)
+		self.db.save_friendList(renrenId,name)
+		self.db.save_friendList(renrenId2,name2)
+
 		self.assertEquals(self.db.getRenrenId(2,renrenId),set(name.keys()))
 		self.assertEquals(self.db.getRenrenId(2,renrenId2),set(name2.keys()))
 		self.assertEquals(self.db.getRenrenId(1,renrenId2),set())
-		self.assertEquals(self.db.getRenrenId(1,'101'),{'101'})
-		#self.assertEquals(self.db.getRenrenId(1,a),{renrenId2})
+
 	def test_getFriendList(self):
-		self.save=database('renren_orig')
-		print(len(self.save.getFriendList('410941086')))
-		print(len(self.save.getFriendList('233330059')))
+		name={'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'}
+		name2={'231':'王瑛','2442':'Ethan.王哲','241':'刘洋English','2171':'','439171':'eeee','324134134':'～！@#￥%……&*（）'}
+		renrenId='100032076'
+		renrenId2='103076'
+		self.db.save_friendList(name,renrenId)
+		self.db.save_friendList(name2,renrenId2)
+
+		self.assertEquals(self.db.getFriendList(renrenId),set(name.keys()))
+		self.assertEquals(self.db.getFriendList(renrenId2),set(name2.keys()))
 
 	def test_tableManage(self):
 		self.db.clearTable()
@@ -90,7 +95,6 @@ class test_repo_mysql(unittest.TestCase):
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 	#suite.addTest(test_repo_mysql('test_profile'))
-	#suite.addTest(test_repo_mysql('test_getFriendList'))
 	#suite.addTest(test_repo_mysql('testGetRenrenId'))
 
 	#checked
@@ -99,6 +103,7 @@ if __name__=='__main__':
 	suite.addTest(test_repo_mysql('test_tableManage'))
 	suite.addTest(test_repo_mysql('test_save_history'))
 	suite.addTest(test_repo_mysql('test_getSearched'))
+	suite.addTest(test_repo_mysql('test_getFriendList'))
 
 	runner=unittest.TextTestRunner()
 	runner.run(suite)

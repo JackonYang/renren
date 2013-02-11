@@ -105,13 +105,15 @@ class repo_mysql:
 		return self._getRenrenId(2,renrenId)
 
 	def _getRenrenId(self,col,renrenId):
+		pageStyle='friendList'
+		if pageStyle not in self.table:
+			self._init_table(pageStyle)
 		target=str(col)
 		where=str(col%2+1)
 		res=set()
-		for table in [self.mainTable['friendList'],self.tempTable['friendList']]:
-			self.cur.execute("SELECT renrenId{} FROM {} where renrenId{}={}".format(target,table,where,renrenId))
-			for item in self.cur.fetchall():
-				res.add(item[0])
+		self.cur.execute("SELECT renrenId{} FROM {} where renrenId{}={}".format(target,self.table[pageStyle],where,renrenId))
+		for item in self.cur.fetchall():
+			res.add(item[0])
 		return res
 
 	def _init_table(self,pageStyle):
