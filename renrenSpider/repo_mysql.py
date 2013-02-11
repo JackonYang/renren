@@ -6,11 +6,12 @@ class repo_mysql:
 		self.table=dict()
 		self.conn=self._getConn()
 		self.cur=self.conn.cursor()
+		self._init_table('history')
 	def __del__(self):
 		self.cur.close()
 		self.conn.close()
 
-	def save_friendList(self,record,rid):
+	def save_friendList(self,record,rid,run_info=None):
 		"""save record and return rows affected.save nothing if empty.
 		return None if input error"""
 		if record is None:
@@ -21,9 +22,9 @@ class repo_mysql:
 			return 0
 		pageStyle='friendList'
 		if pageStyle not in self.table:
-			self._createTable(pageStyle)
+			self._init_table(pageStyle)
 		if 'name' not in self.table:
-			self._createTable('name')
+			self._init_table('name')
 		val_relation='),({},'.format(rid).join(record.keys())
 		sql_relation='insert into {} (renrenId1,renrenId2) values ({},{})'.format(self.table[pageStyle],rid,val_relation)
 		val_name=str(set(record.items())).strip('{}')
@@ -38,9 +39,11 @@ class repo_mysql:
 			return None
 		else:
 			self.conn.commit()
+			if run_info is not None:
+				self.save_history(rid,pageStyle,run_info,len(record))
 			return n
 
-	def save_status(self,record,rid=None):
+	def save_status(self,record,rid=None,run_info=None):
 		if record is None:
 			return None
 		elif not isinstance(record,dict):
@@ -49,7 +52,7 @@ class repo_mysql:
 			return 0
 		pageStyle='status'
 		if pageStyle not in self.table:
-			self._createTable(pageStyle)
+			self._init_table(pageStyle)
 		saved=0
 		for statusId,stat in record.items():
 			val_stat="statusId='{}'".format(statusId)
@@ -64,6 +67,8 @@ class repo_mysql:
 				print(sqlStat)
 				return None
 		self.conn.commit()
+		if run_info is not None:
+			self.save_history(rid,pageStyle,run_info,len(record))
 		return saved
 
 	def save_profile(self,record,rid):
@@ -87,6 +92,12 @@ class repo_mysql:
 		else:
 			self.conn.commit()
 			return n
+
+	def save_history(self,rid,pageStyle,run_info,n_record):
+		sql_log="insert into {} (rid,page_style,run_info,n_record) values('{}','{}','{}','{}')".format(self.table['history'],rid,pageStyle,run_info,n_record)
+		n=self.cur.execute(sql_log)
+		self.conn.commit()
+		return n
 
 	def getSearched(self,pageStyle):
 		if pageStyle=='profile':
@@ -113,7 +124,7 @@ class repo_mysql:
 				res.add(item[0])
 		return res
 
-	def _createTable(self,pageStyle):
+	def _init_table(self,pageStyle):
 		self.table[pageStyle]='{}_{}'.format(self.namePre,pageStyle)
 		self.cur.execute(sqls[pageStyle].format(self.table[pageStyle],key[pageStyle]))
 		self.conn.commit()
@@ -139,5 +150,6 @@ sqls['profile_detail']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT
 sqls['profile_mini']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_mini.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
 sqls['profile_empty']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,pfStyle varchar(20),lastmodified TIMESTAMP DEFAULT NOW() {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
 sqls['status']='CREATE TABLE if not exists {} (statusId varchar(20) NOT NULL,renrenId1 varchar(20),timestamp varchar(20),cur_name varchar(50),cur_content varchar(500),orig_owner varchar(20),orig_name varchar(50),orig_content varchar(500),lastmodified TIMESTAMP DEFAULT NOW(),KEY cur_owner(renrenId1),KEY orig_owner(orig_owner) {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
-key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)','status':',key (statusId)','profile_mini':',KEY (renrenId1)','profile_empty':',KEY (renrenId1)'}
-primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','profile_empty':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)','status':',PRIMARY KEY (statusId)'}
+sqls['history']='CREATE TABLE if not exists {}(rid varchar(15), page_style varchar(15),n_record varchar(8),run_info varchar(50) {}) ENGINE  = InnoDB  DEFAULT CHARSET  = utf8;'
+key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)','status':',key (statusId)','profile_mini':',KEY (renrenId1)','profile_empty':',KEY (renrenId1)','history':''}
+#primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','profile_empty':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)','status':',PRIMARY KEY (statusId)'}
