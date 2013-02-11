@@ -21,15 +21,18 @@ class repo_mysql:
 			return 0
 		pageStyle='friendList'
 		if pageStyle not in self.table:
-			self.createTable(pageStyle)
+			self._createTable(pageStyle)
+		if 'name' not in self.table:
+			self._createTable('name')
 		val_relation='),({},'.format(rid).join(record.keys())
 		sql_relation='insert into {} (renrenId1,renrenId2) values ({},{})'.format(self.table[pageStyle],rid,val_relation)
 		val_name=str(set(record.items())).strip('{}')
 		sql_name='insert into {} (renrenId1,name) values {}'.format(self.table['name'],val_name)
 		try:
 			n=self.cur.execute(sql_relation)
-			self.cur.execute(sqr_name)
+			self.cur.execute(sql_name)
 		except Exception as e:
+			print(e)
 			print(sql_relation)
 			print(sql_name)
 			return None
@@ -46,7 +49,7 @@ class repo_mysql:
 			return 0
 		pageStyle='status'
 		if pageStyle not in self.table:
-			self.createTable(pageStyle)
+			self._createTable(pageStyle)
 		saved=0
 		for statusId,stat in record.items():
 			val_stat="statusId='{}'".format(statusId)
@@ -111,8 +114,9 @@ class repo_mysql:
 		return res
 
 	def _createTable(self,pageStyle):
-		self.table[pageStyle]='{}{}'.format(self.namePre,pageStyle)
-		self.cur.execute(self.sqls[pageStyle].format(self.table[pageStyle]))
+		self.table[pageStyle]='{}_{}'.format(self.namePre,pageStyle)
+		self.cur.execute(sqls[pageStyle].format(self.table[pageStyle],key[pageStyle]))
+		self.conn.commit()
 
 	def _getConn(self,usr='root',passwd='Kunth123',db='data_bang'):
 		return pymysql.connect(host='127.0.0.1',port=3306,user=usr,passwd=passwd,db=db,charset='utf8')
@@ -137,7 +141,3 @@ sqls['profile_empty']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT 
 sqls['status']='CREATE TABLE if not exists {} (statusId varchar(20) NOT NULL,renrenId1 varchar(20),timestamp varchar(20),cur_name varchar(50),cur_content varchar(500),orig_owner varchar(20),orig_name varchar(50),orig_content varchar(500),lastmodified TIMESTAMP DEFAULT NOW(),KEY cur_owner(renrenId1),KEY orig_owner(orig_owner) {})ENGINE=InnoDB DEFAULT CHARSET = utf8;'
 key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)','status':',key (statusId)','profile_mini':',KEY (renrenId1)','profile_empty':',KEY (renrenId1)'}
 primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','profile_empty':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)','status':',PRIMARY KEY (statusId)'}
-
-
-db=repo_mysql()
-print(db)
