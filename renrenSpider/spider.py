@@ -1,8 +1,8 @@
 import time
 import logging
 
-import download
-import database
+import browser 
+import repo_mysql 
 import parse
 
 
@@ -19,76 +19,59 @@ def runlog(tt='run'):
 pf_sleep=3
 
 class spider:
-	def __init__(self,user='yyttrr3242342@163.com',db='test'):
-		self.dl=download.download(user)
-		self.log=runlog('spider')
-		self.save=database.database(db)
+	def __init__(self,user='yyttrr3242342@163.com',repo_name='test'):
+		self.dl=browser.browser(user)
+		self.repo=repo_mysql.repo_mysql(repo_name)
 
-		self.fl_searched=self.save.getSearched('friendList')
-		self.pf_searched=self.save.getSearched('profile')
-		self.status_searched=self.save.getSearched('status')
+		self.log=runlog('spider')
+
+		self.searched=dict()
+		self.searched['friendList']=self.repo.getSearched('friendList')
+		self.searched['status']=self.repo.getSearched('status')
+		self.searched['profile']={}#self.repo.getSearched('profile')
+
+	def login(self):
+		return self.dl.login()
 
 	def getStatus_friend(self,rid='410941086'):
-		print('{} start to get status of {}\'s friends'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
-		total=self.save.getFriendList(rid)
-		if len(total) == 0:
-			tmp=self.dl.friendList(rid)
-			total=set(tmp[0].keys())
-		toSearch=set(total)-self.status_searched
-		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'status',rid,len(toSearch),len(total)))
-		self.req_seq(toSearch,'status')
+		self.log.info('start to get status of {}\'s friends'.format(rid))
+		if rid in self.fl_searched:
+			friends=self.repo.getFriendList(rid)
+		else:
+			fname,runinfo=self.dl.friendList(rid)
+			friends=set(fname.keys())
+		toSearch=friends-self.searched['status']
+		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',rid,len(toSearch),len(friends)))
+		self.seq_process(toSearch,'status')
 
-	def req_seq(self,toSearch,pageStyle,resend=3):
-		"""download and save data of toSearch in target pageStyle
-			write runlog"""
-		timeout_list=set()
+	def getNet2(self,orig_id='410941086'):
+		pageStyle='friendList'
+		if orig_id not in self.searched[pageStyle]:
+			self.seq_process(orig_id,pageStyle)
+		friends=self.repo.getFriendList(orig_id)
+		toSearch=friends-self.searched[pageStyle]
+		self.log.info('get net2 of {},toSearch/total:{}/{}'.format(orig_id,len(toSearch),len(friends)))
+		self.seq_process(toSearch,'friendList')
+
+	def seq_process(self,toSearch,pageStyle):
+		"""download and save record of `toSearch` in target pageStyle"""
+		if isinstance(toSearch,str):
+			toSearch={toSearch}
 		for i,rid in zip(range(1,len(toSearch)+1),toSearch):
-			meth_download=getattr(download.download,pageStyle)
-			toSave,info=meth_download(self.dl,rid)#None,empty,normal
-			if toSave is None:#add to timeout_list and request later
-				timeout_list.add(rid)
-			elif len(toSave) == 0:#empty, TODO
-				#if friendList and profile, not save.if status, save.
-				pass
-			else:#toSave is normal, save and write run log.
-				if pageStyle == 'profile':
-					meth_save=getattr(database.database,info)
-					info_name='pfStyle'
-				else:
-					meth_save=getattr(database.database,pageStyle)
-					info_name='time'
-				n=meth_save(self.save,toSave,rid)
-				log_text='{}/{},saved/download:{}/{},{} of {}, {}={}'.format(i,len(toSearch),n,len(toSave),pageStyle,rid,info_name,info)
-				if n<len(toSave):
+			meth_download=getattr(browser.browser,pageStyle)
+			record,run_info=meth_download(self.dl,rid)
+			if record is None:
+				self.log.error('{},{},error info:{}'.format(rid,pageStyle,run_info))
+			else:
+				meth_save=getattr(repo_mysql.repo_mysql,'save_{}'.format(pageStyle))
+				n=meth_save(self.repo,record,rid,run_info)
+				log_text='{}/{},saved/download:{}/{},{} of {}, time={}'.format(i,len(toSearch),n,len(record),pageStyle,rid,run_info)
+				if n<len(record):
 					self.log.error(log_text)
 				else:
 					self.log.info(log_text)
-	#t	imeout_list, resend 3 times
-		if (len(timeout_list)>0) and (resend > 0):
-			print('resend timeout_list,{} times left'.format(resend-1))
-			self.req_seq(timeout_list,pageStyle,resend-1)
-		else:#print error log
-			print('{} timeout list:{}'.format(pageStyle,timeout_list))
+					self.searched[pageStyle].add(rid)
 
-def getNet2(orig_id='410941086'):
-	print('start to search net2 of {}'.format(orig_id))
-	timeout_list=set()
-	fl,timecost=dl.friendList(orig_id)
-	save.friendList(fl,orig_id)
-	toSearch=set(fl.keys())-fl_searched
-	print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id,len(toSearch),len(fl)))
-	for i,rid in zip(range(1,len(toSearch)+1),toSearch):
-		friends,timecost=dl.friendList(rid)
-		if friends is None:
-			print('error.friendList None.renrenid={}'.format(rid))
-			timeout_list.add(rid)
-		else:
-			n=save.friendList(friends,rid)
-			info='{}/{},saved/download:{}/{},friendList of {}, time={}'.format(i,len(toSearch),len(friends),n,rid,timecost)
-			if n<len(friends):
-				self.log.error(info)
-			else:
-				self.log.info(info)
 
 def getProfile_friend(rid='410941086'):
 	print('{} start to get profile of {}\'s friends'.format(time.strftime('%H:%M:%S',time.localtime()),rid))
@@ -128,7 +111,7 @@ def getProfile():
 			else:
 				n=save.profile(rid,pf,'profile_mini')
 			if n == 0:
-				print('{}/{}, saved/download:{}/{} profile of {}'.format(i,len(toSearch),n,len(pf),rid))
+				print('{}/{}, saved/browser:{}/{} profile of {}'.format(i,len(toSearch),n,len(pf),rid))
 		if pfStyle == 'detail':
 			time.sleep(pf_sleep)
 		if i%50 == 0:
@@ -147,7 +130,7 @@ def getStatus():
 			timeout_list.add(rid)
 		else:
 			n=save.status(stat)
-			info='{}/{},saved/download:{}/{},status of {}, time={}'.format(i,len(toSearch),len(stat),n,rid,timecost)
+			info='{}/{},saved/browser:{}/{},status of {}, time={}'.format(i,len(toSearch),len(stat),n,rid,timecost)
 			if n<len(stat):
 				log.error(info)
 			else:
