@@ -8,6 +8,30 @@ renren spider 直接依赖于 browser 和 repo。repo 可以选择 database, fil
 * browser:抓取页面并返回 record 和 运行信息（timecost or error info)。<br>
 * repo: 本地保存 record 和 download history，提供读写接口。
 
+USAGE
+-----
+
+#### 用法: 
+
+运行命令 `python3 getMyNet.py` 来抓取
+
+1. 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
+2. 自己的人人网状态、好友的人人网状态。
+
+默认 info 级日志，记录各 renren id 的抓取细节（下载和保存的record数，抓取耗时）。
+日志输出在当前目录的  run.log 文件中。
+
+#### 环境要求：
+
+* ubuntu/windows
+* python3.2
+* mysql
+
+#### 参数配置：
+
+1. 在 `getMyNet.py` 文件开始处配置 人人网的登录帐号和密码。
+2. 在 `repo_mysql.py` 的 `_getConn` 中配置
+
 INTERFACE
 ---------
 
