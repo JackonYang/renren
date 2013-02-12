@@ -28,6 +28,7 @@ USAGE
 * mysql
 * pymysql<br>
 ubuntu 12.04 安装包:`petehunt-PyMySQL-pymysql-0.5-35-gf670d9a.zip`
+安装包 [https://github.com/JackonYang/ubuntu_config/tree/master/python#pymysql](https://github.com/JackonYang/ubuntu_config/tree/master/python#pymysql)
 
 
 #### 参数配置：
