@@ -19,8 +19,8 @@ def runlog(tt='run'):
 pf_sleep=3
 
 class spider:
-	def __init__(self,user='yyttrr3242342@163.com',repo_name='test'):
-		self.dl=browser.browser(user)
+	def __init__(self,repo_name='test',user='yyttrr3242342@163.com',passwd=None):
+		self.dl=browser.browser(user,passwd)
 		self.repo=repo_mysql.repo_mysql(repo_name)
 
 		self.log=runlog('spider')

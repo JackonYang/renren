@@ -1,9 +1,10 @@
 import spider
 
-user='jiekunyang@gmail.com'
-repo_name='my_net'
+repo_name='my_net' #table name prefix
+user='jiekunyang@gmail.com' #renren account
+passwd=None #renren passwd
 
-tt=spider.spider(user,repo_name)
+tt=spider.spider(repo_name,user,passwd)
 my_rid,login_info=tt.login()
 if my_rid is None:
 	print('spider login error.detail:{}'.format(login_info))
