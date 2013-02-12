@@ -13,7 +13,7 @@ USAGE
 
 #### 用法: 
 
-运行命令 `python3 getMyNet.py` 来抓取
+运行命令 `python3 getMyNet.py` 来抓取：
 
 1. 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
 2. 自己的人人网状态、好友的人人网状态。
@@ -26,11 +26,14 @@ USAGE
 * ubuntu/windows
 * python3.2
 * mysql
+* pymysql<br>
+ubuntu 12.04 安装包:`petehunt-PyMySQL-pymysql-0.5-35-gf670d9a.zip`
+
 
 #### 参数配置：
 
 1. 在 `getMyNet.py` 文件开始处配置 人人网的登录帐号和密码。
-2. 在 `repo_mysql.py` 的 `_getConn` 中配置
+2. 在 `repo_mysql.py` 的 `_getConn()` 方法中配置
 
 INTERFACE
 ---------
@@ -45,6 +48,10 @@ INTERFACE
 * `getSearched(pageStyle) --> rids:set`
 * `getFriendList(rid) --> friendsId:set`
 
+#### spider
+* `login() --> same as browser.login()` login [www.renren.com](www.renren.com)
+* `getStatus_friend(rid) --> None` get status of rid's friends
+* `getNet2(rid) --> None` get friendList of rid's friends
 
 design of class
 --------------------
@@ -88,5 +95,12 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 
 **内部接口规范**
 
-4. `repo.save_pageStyle(record:dict, rid:str) --> number_of_items_saved:int`
+1. `repo.save_pageStyle(record:dict, rid:str) --> number_of_items_saved:int`
 
+spider
+------
+
+各种功能方法中生成待抓取的 `rid` 序列，由 `seq_process` 抓取。
+
+#### 内部接口规范
+1. `seq_process(toSearch:str/set,pageStyle:str)` download and save record
