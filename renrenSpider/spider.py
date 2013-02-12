@@ -33,15 +33,13 @@ class spider:
 	def login(self):
 		return self.dl.login()
 
-	def getStatus_friend(self,rid='410941086'):
-		self.log.info('start to get status of {}\'s friends'.format(rid))
-		if rid in self.fl_searched:
-			friends=self.repo.getFriendList(rid)
-		else:
-			fname,runinfo=self.dl.friendList(rid)
-			friends=set(fname.keys())
-		toSearch=friends-self.searched['status']
-		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',rid,len(toSearch),len(friends)))
+	def getStatus_friend(self,orig_id='410941086'):
+		pageStyle='status'
+		if orig_id not in self.searched[pageStyle]:
+			self.seq_process(orig_id,pageStyle)
+		friends=self.repo.getFriendList(orig_id)
+		toSearch=friends-self.searched[pageStyle]
+		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',orig_id,len(toSearch),len(friends)))
 		self.seq_process(toSearch,'status')
 
 	def getNet2(self,orig_id='410941086'):
