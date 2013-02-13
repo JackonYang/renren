@@ -46,4 +46,7 @@ nosetests.xml
 # Database
 *.db
 
+# log
+*.log
+
 
