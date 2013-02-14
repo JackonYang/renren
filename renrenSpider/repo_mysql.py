@@ -56,9 +56,9 @@ class repo_mysql:
 			val_stat="statusId='{}'".format(statusId)
 			for tag,value in stat.items():
 				if value is not None:
-					value=value.replace("'","\\'").rstrip('\\')#format , and \ 
+					value=value.replace("\\","\\\\").replace("'","\\'").rstrip('\\')#format ' and \ 
 				val_stat += ",{}='{}'".format(tag,value)
-			sql_stat='insert into {} set {}'.format(self.table[pageStyle],val_stat)
+			sql_stat="insert into {} set {}".format(self.table[pageStyle],val_stat)
 			try:
 				saved += self.cur.execute(sql_stat)
 			except Exception as e:
