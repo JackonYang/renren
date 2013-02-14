@@ -62,7 +62,7 @@ class repo_mysql:
 			try:
 				saved += self.cur.execute(sql_stat)
 			except Exception as e:
-				print(sqlStat)
+				print(sql_stat)
 				return None
 		self.conn.commit()
 		return saved
