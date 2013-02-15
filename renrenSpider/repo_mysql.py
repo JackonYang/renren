@@ -90,8 +90,16 @@ class repo_mysql:
 		self.conn.commit()
 		self.table[pageStyle]='{}_{}'.format(self.table_pre,pageStyle)
 
-	def _getConn(self,usr='root',passwd='Kunth123',db='data_bang'):
-		return pymysql.connect(host='127.0.0.1',port=3306,user=usr,passwd=passwd,db=db,charset='utf8')
+	def _getConn(self):
+		import configparser
+		config=configparser.ConfigParser()
+		config.read(cfg_filename)
+		paras=['user','passwd','db','host','port','charset']
+		db_info={}
+		for key in paras:
+			db_info[key]=config.get('connect',key,fallback=None)
+		db_info['port']=int(db_info['port'])
+		return pymysql.connect(**db_info)
 
 	def sql_create_table(self,pageStyle):
 		import configparser
