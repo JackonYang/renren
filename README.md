@@ -27,14 +27,13 @@ USAGE
 * python3.2
 * mysql
 * pymysql<br>
-ubuntu 12.04 安装包:`petehunt-PyMySQL-pymysql-0.5-35-gf670d9a.zip`
-安装包 [https://github.com/JackonYang/ubuntu_config/tree/master/python#pymysql](https://github.com/JackonYang/ubuntu_config/tree/master/python#pymysql)
+[install package link](https://github.com/petehunt/PyMySQL)
 
 
 #### 参数配置：
 
 1. 在 `getMyNet.py` 文件开始处配置 人人网的登录帐号和密码。
-2. 在 `repo_mysql.py` 的 `_getConn()` 方法中配置
+2. 在 `db_renren.ini` 中配置数据库信息，通常只需修改 `host`,`user`,`passwd`
 
 INTERFACE
 ---------
@@ -84,22 +83,39 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 
 以 mysql 作为本地存储介质。
 
-每一类 record 一个接口，另有一个 history 存储接口。
+每一类 `pageStyle` 一个接口，若传递了 `run_info` 字段，则自动写 `history`
 
 1. `save_pageStyle` 存储 record 和 history
-2. `save_history` 内部方法，存储 history. `save_pageStyle` 默认调用。
 3. `self.table` 内部属性，已经确认创建的表空间及表名。
 4. `_init_table` 根据 pageStyle 创建表空间并初始化 `self.table`
-5. `_getConn` 获取 mysql conn。
+5. `_getConn` 获取 mysql conn。数据库连接参数在 `db_renren.ini` 中配置。
 2. `getSearched` 查询 history 表，获取已查询集合。
 3. `get_friendList`
 
 **内部接口规范**
 
-1. `repo.save_pageStyle(record:dict, rid:str) --> number_of_items_saved:int`
+1. `save_pageStyle(record:dict, rid:str) --> number_of_items_saved:int` call `_save_process` to save record and history
+2. `_save_process(pageStyle:str, record:dict, rid:str, run_info:str) --> number_of_items_saved:int`
+3. `_sql_pageStyle(record:dict,rid:str) --> sqls:list` called by `_save_process` to construct sqls
+4. `_sql_create_table(pageStyle:str) --> sql` call by `_init_table`, read table info from config file and return sql for create table.
 
-spider
-------
+#### profile
+
+请求 profile 页面，可能返回 2 种页面，分别包含以下字段。
+
+1. profile detail.
+
+	- basic: birthday, hometown, gender
+	- edu: college, senior, junior, primary, technology
+	- work: company, period
+	- contact: empty and no use. qq, msn,phone, domains, personal website
+
+2. profile brief.
+
+	- basic: gender, birthday, hometown
+	- present: location/address, work, school
+
+#### spider
 
 各种功能方法中生成待抓取的 `rid` 序列，由 `seq_process` 抓取。
 
