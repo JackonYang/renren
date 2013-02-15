@@ -13,11 +13,11 @@ USAGE
 
 #### 用法: 
 
-- 运行命令 `python3 getMyNet2.py` 来抓取：
-	1. 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
-	2. 自己的人人网状态、好友的人人网状态。
-- 运行命令 `python3 get_my_net3_status.py ` 抓取 3 级网络的状态。
-- 运行命令 `python3 get_my_net3_friendList.py` 抓取 3 级网络结构。
+1. 运行命令 `python3 getMyNet2.py` 来抓取：
+	- 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
+	- 自己的人人网状态、好友的人人网状态。
+2. 运行命令 `python3 get_my_net3_status.py ` 抓取 3 级网络的状态。
+3. 运行命令 `python3 get_my_net3_friendList.py` 抓取 3 级网络结构。
 
 默认 info 级日志，记录各 renren id 的抓取细节（下载和保存的record数，抓取耗时）。
 日志输出在当前目录的  run.log 文件中。
@@ -108,7 +108,6 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 	- work: company, period
 	- contact: empty and no use. qq, msn,phone, domains, personal website
 2. profile brief.
-
 	- basic: gender, birthday, hometown
 	- present: location/address, work, school
 
