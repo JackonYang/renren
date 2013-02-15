@@ -13,10 +13,13 @@ USAGE
 
 #### 用法: 
 
-运行命令 `python3 getMyNet.py` 来抓取：
+- 运行命令 `python3 getMyNet2.py` 来抓取：
 
-1. 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
-2. 自己的人人网状态、好友的人人网状态。
+	1. 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
+	2. 自己的人人网状态、好友的人人网状态。
+
+- 运行命令 `python3 get_my_net3_status.py ` 抓取 3 级网络的状态。
+- 运行命令 `python3 get_my_net3_friendList.py` 抓取 3 级网络结构。
 
 默认 info 级日志，记录各 renren id 的抓取细节（下载和保存的record数，抓取耗时）。
 日志输出在当前目录的  run.log 文件中。
@@ -26,13 +29,12 @@ USAGE
 * ubuntu/windows
 * python3.2
 * mysql
-* pymysql<br>
-[install package link](https://github.com/petehunt/PyMySQL)
+* pymysql: [install package link](https://github.com/petehunt/PyMySQL)
 
 
 #### 参数配置：
 
-1. 在 `getMyNet.py` 文件开始处配置 人人网的登录帐号和密码。
+1. 在 `getMyNetxxx.py` 文件开始处配置 人人网的登录帐号和密码。
 2. 在 `db_renren.ini` 中配置数据库信息，通常只需修改 `host`,`user`,`passwd`
 
 INTERFACE
@@ -44,7 +46,6 @@ INTERFACE
 
 #### repo-database
 * `save_pageStyle(record,rid,run_info) --> nItemSave` 保存 record 和 history
-* `save_history(rid,pageStyle,run_info,n_record) --> nItemsSave` 保存 history
 * `getSearched(pageStyle) --> rids:set`
 * `getFriendList(rid) --> friendsId:set`
 
@@ -109,7 +110,6 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 	- edu: college, senior, junior, primary, technology
 	- work: company, period
 	- contact: empty and no use. qq, msn,phone, domains, personal website
-
 2. profile brief.
 
 	- basic: gender, birthday, hometown
