@@ -49,5 +49,7 @@ nosetests.xml
 # log
 *.log
 
-# ropevim
+# vim
 .ropeproject/*
+*.swp
+
