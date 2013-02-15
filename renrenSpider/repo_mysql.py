@@ -1,9 +1,11 @@
 import pymysql
 
+cfg_filename='db_renren.ini'
+
 class repo_mysql:
-	def __init__(self,namePre='test'):
-		self.namePre=namePre
-		self.table=dict()
+	def __init__(self,table_pre='test'):
+		self.table={}
+		self.table_pre=table_pre
 		self.conn=self._getConn()
 		self.cur=self.conn.cursor()
 		self._init_table('history')
@@ -14,58 +16,11 @@ class repo_mysql:
 	def save_friendList(self,record,rid,run_info=None):
 		"""save record and return rows affected.save nothing if empty.
 		return None if input error"""
-		if not isinstance(record,dict):
-			return None
-		pageStyle='friendList'
-		if run_info is not None:
-			self.save_history(rid,pageStyle,run_info,len(record))
-		if record == {}:
-			return 0
-		if pageStyle not in self.table:
-			self._init_table(pageStyle)
-		if 'name' not in self.table:
-			self._init_table('name')
-		val_relation='),({},'.format(rid).join(record.keys())
-		sql_relation='insert into {} (renrenId1,renrenId2) values ({},{})'.format(self.table[pageStyle],rid,val_relation)
-		val_name=str(set(record.items())).strip('{}')
-		sql_name='insert into {} (renrenId1,name) values {}'.format(self.table['name'],val_name)
-		try:
-			n=self.cur.execute(sql_relation)
-			self.cur.execute(sql_name)
-		except Exception as e:
-			print(e)
-			print(sql_relation)
-			print(sql_name)
-			return None
-		else:
-			self.conn.commit()
-			return n
-
-	def save_status(self,record,rid=None,run_info=None):
-		if not isinstance(record,dict):
-			return None
-		pageStyle='status'
-		if run_info is not None:
-			self.save_history(rid,pageStyle,run_info,len(record))
-		if record == {}:
-			return 0
-		if pageStyle not in self.table:
-			self._init_table(pageStyle)
-		saved=0
-		for statusId,stat in record.items():
-			val_stat="statusId='{}'".format(statusId)
-			for tag,value in stat.items():
-				if value is not None:
-					value=value.replace("\\","\\\\").replace("'","\\'").rstrip('\\')#format ' and \ 
-				val_stat += ",{}='{}'".format(tag,value)
-			sql_stat="insert into {} set {}".format(self.table[pageStyle],val_stat)
-			try:
-				saved += self.cur.execute(sql_stat)
-			except Exception as e:
-				print(sql_stat)
-				return None
-		self.conn.commit()
-		return saved
+		return self._save_process('friendList',record,rid,run_info)
+	def save_status(self,record,rid,run_info=None):
+		"""save record and return rows affected.save nothing if empty.
+		return None if input error"""
+		return self._save_process('status',record,rid,run_info)
 
 	def save_profile(self,record,rid):
 		"""save profile and return rows affected.return None if input error"""
@@ -87,11 +42,25 @@ class repo_mysql:
 			self.conn.commit()
 			return n
 
-	def save_history(self,rid,pageStyle,run_info,n_record):
-		sql_log="insert into {} (rid,page_style,run_info,n_record) values('{}','{}','{}','{}')".format(self.table['history'],rid,pageStyle,run_info,n_record)
-		n=self.cur.execute(sql_log)
-		self.conn.commit()
-		return n
+	def _save_process(self,pageStyle,record,rid,run_info):
+		"""save record and return rows affected.save nothing if empty.
+		return None if input error"""
+		if not isinstance(record,dict):
+			return None
+		sql_meth=getattr(self,'_sql_{}'.format(pageStyle))
+		sqls=sql_meth(record,rid)
+		n=0
+		if run_info is not None:
+			n -= 1
+			sqls.append(self.sql_history(rid,pageStyle,run_info,len(record)))
+		try:
+			for sql in sqls:
+				n += self.cur.execute(sql)
+			self.conn.commit()
+		except Exception as e:
+			print(e)
+			print(sqls)
+		return self.count(n,pageStyle)
 
 	def getSearched(self,pageStyle):
 		#only success download is logged
@@ -117,32 +86,63 @@ class repo_mysql:
 		return res
 
 	def _init_table(self,pageStyle):
-		self.table[pageStyle]='{}_{}'.format(self.namePre,pageStyle)
-		self.cur.execute(sqls[pageStyle].format(self.table[pageStyle],key[pageStyle]))
+		self.cur.execute(self.sql_create_table(pageStyle))
 		self.conn.commit()
+		self.table[pageStyle]='{}_{}'.format(self.table_pre,pageStyle)
 
 	def _getConn(self,usr='root',passwd='Kunth123',db='data_bang'):
 		return pymysql.connect(host='127.0.0.1',port=3306,user=usr,passwd=passwd,db=db,charset='utf8')
 
-pf_cols={
-	#basic$
-	'生日':'birth','家乡':'hometown','性别':'gender',
-	#edu
-	'大学':'edu_college','高中':'edu_senior','中专技校':'edu_tech','初中':'edu_junior','小学':'edu_primary',
-	#work
-	'公司':'company','时间':'work_time',
-	#contact
-	'QQ':'qq','MSN':'msn','手机号':'phone','个人网站':'personal_website','我的域名':'domain1','个性域名':'domain2'
-}
-pf_mini={'location':'nowCity','address':'nowCity','work':'nowCompany','school':'nowSchool','birth':'birth','hometown':'hometown','gender':'gender'}
-charset='ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;'
-sqls=dict()
-sqls['name']='CREATE TABLE if not exists {} (renrenId1 varchar(15) NOT NULL,name varchar(20),lastmodified TIMESTAMP DEFAULT NOW() {})'+charset
-sqls['friendList']='CREATE TABLE if not exists {} (renrenId1 varchar(15) NOT NULL,renrenId2 varchar(15) NOT NULL,KEY one(renrenId1),KEY two(renrenId2),lastmodified TIMESTAMP DEFAULT NOW() {} )'+charset
-sqls['profile_detail']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_cols.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})'+charset
-sqls['profile_mini']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,'+' varchar(100),'.join(set(pf_mini.values()))+' varchar(100),lastmodified TIMESTAMP DEFAULT NOW() {})'+charset
-sqls['profile_empty']='CREATE TABLE if not exists {} (renrenId1 varchar(20) NOT NULL,pfStyle varchar(20),lastmodified TIMESTAMP DEFAULT NOW() {})'+charset
-sqls['status']='CREATE TABLE if not exists {} (statusId varchar(20) NOT NULL,renrenId1 varchar(20),timestamp varchar(20),cur_name varchar(50),cur_content varchar(500),orig_owner varchar(20),orig_name varchar(50),orig_content varchar(500),lastmodified TIMESTAMP DEFAULT NOW(),KEY cur_owner(renrenId1),KEY orig_owner(orig_owner) {})'+charset
-sqls['history']='CREATE TABLE if not exists {}(rid varchar(15), page_style varchar(15),n_record varchar(8),run_info varchar(50) {})'+charset
-key={'name':',KEY idx_temp(renrenId1)','friendList':',KEY idx_temp (renrenId1,renrenId2)','profile_detail':',KEY (renrenId1)','status':',key (statusId)','profile_mini':',KEY (renrenId1)','profile_empty':',KEY (renrenId1)','history':''}
-#primary={'name':',PRIMARY KEY (renrenId1)','profile_detail':',PRIMARY KEY (renrenId1)','profile_mini':',PRIMARY KEY (renrenId1)','profile_empty':',PRIMARY KEY (renrenId1)','friendList':',PRIMARY KEY (renrenId1,renrenId2)','status':',PRIMARY KEY (statusId)'}
+	def sql_create_table(self,pageStyle):
+		import configparser
+		config=configparser.ConfigParser()
+		config.read(cfg_filename)
+		if pageStyle in config.sections():
+			col=''
+			for key in config[pageStyle]:
+				col += '{} {},'.format(key,config[pageStyle][key])
+			col = col.rstrip(',')
+			return "CREATE TABLE if not exists {}_{} ({}) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;".format(self.table_pre,pageStyle,col)
+		else:
+			return None
+
+	def sql_history(self,rid,pageStyle,run_info,n_record):
+		return "insert into {} (rid,page_style,run_info,n_record) values('{}','{}','{}',{})".format(self.table['history'],rid,pageStyle,run_info,n_record)
+
+	def _sql_friendList(self,record,rid):
+		if record == {}:
+			return []
+		pageStyle='friendList'
+		if pageStyle not in self.table:
+			self._init_table(pageStyle)
+		if 'name' not in self.table:
+			self._init_table('name')
+		val_relation="'),('{}','".format(rid).join(record.keys())
+		sql_relation="insert into {} (renrenId1,renrenId2) values ('{}','{}')".format(self.table[pageStyle],rid,val_relation)
+		val_name=str(set(record.items())).strip('{}')
+		sql_name='insert into {} (renrenId1,name) values {}'.format(self.table['name'],val_name)
+		return [sql_relation,sql_name]
+
+	def _sql_status(self,record,rid=None):
+		pageStyle='status'
+		if record == {}:
+			return []
+		if pageStyle not in self.table:
+			self._init_table(pageStyle)
+		sqls=[]
+		for statusId,stat in record.items():
+			val_stat="statusId='{}'".format(statusId)
+			for tag,value in stat.items():
+				if value is not None:
+					value=value.replace("\\","\\\\").replace("'","\\'").rstrip('\\')#format ' and \ 
+				val_stat += ",{}='{}'".format(tag,value)
+			sqls.append("insert into {} set {}".format(self.table[pageStyle],val_stat))
+		return sqls
+
+	def count(self,n,pageStyle):
+		if pageStyle == 'friendList':
+			return int(n/2)
+		elif pageStyle == 'status':
+			return n
+		else:
+			return -1
