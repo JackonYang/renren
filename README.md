@@ -14,10 +14,8 @@ USAGE
 #### 用法: 
 
 - 运行命令 `python3 getMyNet2.py` 来抓取：
-
 	1. 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
 	2. 自己的人人网状态、好友的人人网状态。
-
 - 运行命令 `python3 get_my_net3_status.py ` 抓取 3 级网络的状态。
 - 运行命令 `python3 get_my_net3_friendList.py` 抓取 3 级网络结构。
 
@@ -105,7 +103,6 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 请求 profile 页面，可能返回 2 种页面，分别包含以下字段。
 
 1. profile detail.
-
 	- basic: birthday, hometown, gender
 	- edu: college, senior, junior, primary, technology
 	- work: company, period
