@@ -57,7 +57,7 @@ def profile_detail(content):
 	global _pf_prog
 	if _pf_prog is None:
 		import re
-		_pf_prog=re.compile(r'<dt>([^:：]+)[:：]?</dt>\s*<dd>(.*?)</dd>',re.DOTALL)
+		_pf_prog=re.compile(r'<dt>([^:：]+)[:：]?\s*</dt>\s*<dd>(.*?)</dd>',re.DOTALL)
 	#orig tag=value saved in orig_pf
 	orig_pf=dict()
 	for item in content:
@@ -118,14 +118,14 @@ def homepage_basic_privacy(content):
 _birthprog=None
 def _get_birth(content):
 	if content is None:
-		return None
+		return {'birth_year':None,'birth_month':None,'birth_day':None}
 	global _birthprog
 	if _birthprog is None:
 		import re
 		_birthprog=re.compile(r'(?:(\d+)[年后-])?(\d+)[月-](\d+)[日]?')
 	m=_birthprog.search(_drop_pf_extra(content,r''))
 	if m is None:
-		return None
+		return {'birth_year':None,'birth_month':None,'birth_day':None}
 	return {'birth_year':m.group(1),'birth_month':m.group(2),'birth_day':m.group(3)}
 def _get_gender(content):
 	if content is None:
@@ -145,7 +145,7 @@ def _split_low_edu(content):
 def _split_edu(content,separator='<br>'):
 	if content is None:
 		return None
-	content=_drop_space(_drop_link(content),r' ').strip(separator)
+	content=_drop_pf_extra(content,r' ').strip(separator)
 	schools=content.split(separator)
 	res=set()
 	for school in schools:
