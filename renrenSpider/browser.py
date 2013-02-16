@@ -60,15 +60,16 @@ class browser:
 		self.passwd=passwd
 
 	def friendList(self,renrenId='285060168',uppage=100):
-		"""friendList(renrenId:str) --> (record:dict(),timecost:str),return (None,info) if error"""
+		"""friendList(renrenId:str) --> (record:dict(),timecost:str),
+		return (None,error_info) if error"""
 		return self.process('friendList',renrenId,uppage)
 	def status(self,renrenId='285060168',uppage=100):
-		"""status('285060168') --> (record:dict(),timecost:str),return (None,info) if error"""
+		"""status('285060168') --> (record:dict(),timecost:str),
+		return (None,error_info) if error"""
 		return self.process('status',renrenId,uppage)
 
 	def profile(self,renrenId):
-		"""profile('234234') -->
-		return ({tag1:value1,...,tagn:valuen},res_pageStyle)
+		"""profile('234234') --> (record:dict(),timecost:str)
 		return (None,error_info) if error"""
 		runtime_start=time.time()
 		pageStyle='profile_detail'
@@ -76,17 +77,16 @@ class browser:
 		if html_content is None:
 			return None,'timout'
 		elif html_content[0:30].find('<div class="col-left">') > -1:
-			pageStyle='profile_detail'
+			#pageStyle='profile_detail'
 			pf=parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
 			#TODO:check whether account safety
-			pageStyle='profile_tl'
+			#pageStyle='profile_tl'
 			pf=parse.homepage_tl(itemReg[pageStyle].findall(html_content))
 		else:
-			pageStyle='profile_basic'
+			#pageStyle='profile_basic'
 			pf=parse.homepage_basic_privacy(itemReg[pageStyle].findall(html_content))
 		runtime=time.time()-runtime_start
-		pf['pageStyle']=pageStyle
 		return pf,format_time(runtime)
 
 	def login(self,user=None,passwd=None):
