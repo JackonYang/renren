@@ -16,5 +16,4 @@ else:
 	#start to search
 	friends=mytools.getFriend()
 	for rid in friends.keys():
-		print('net2 status of {}'.format(rid))
 		tt.getStatus_friend(rid)
