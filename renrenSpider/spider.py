@@ -40,6 +40,7 @@ class spider:
 		friends=self.repo.getFriendList(orig_id)
 		toSearch=friends-self.searched[pageStyle]
 		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',orig_id,len(toSearch),len(friends)))
+		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' status',orig_id,len(toSearch),len(friends)))
 		self.seq_process(toSearch,'status')
 
 	def getNet2(self,orig_id='410941086'):
@@ -49,6 +50,7 @@ class spider:
 		friends=self.repo.getFriendList(orig_id)
 		toSearch=friends-self.searched[pageStyle]
 		self.log.info('get net2 of {},toSearch/total:{}/{}'.format(orig_id,len(toSearch),len(friends)))
+		print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id,len(toSearch),len(friends)))
 		self.seq_process(toSearch,'friendList')
 
 	def seq_process(self,toSearch,pageStyle):
