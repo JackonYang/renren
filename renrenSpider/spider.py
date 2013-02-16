@@ -35,10 +35,10 @@ class spider:
 
 	def getStatus_friend(self,orig_id='410941086'):
 		pageStyle='status'
-		if orig_id not in self.searched[pageStyle]:
+		if orig_id not in self.searched['friendList']:
 			self.seq_process(orig_id,pageStyle)
 		friends=self.repo.getFriendList(orig_id)
-		toSearch=friends-self.searched[pageStyle]
+		toSearch=(friends|{orig_id})-self.searched[pageStyle]
 		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',orig_id,len(toSearch),len(friends)))
 		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' status',orig_id,len(toSearch),len(friends)))
 		self.seq_process(toSearch,'status')
