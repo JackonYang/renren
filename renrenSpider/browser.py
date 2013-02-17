@@ -25,9 +25,10 @@ itemReg={
 	'status':re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>',re.DOTALL),
 	'friendList':re.compile(r'<dd><a\s+href="http://www.renren.com/profile.do\?id=\d+">[^<]*</a>'),
 	'profile_detail':re.compile(r'<dt>[^<]*?</dt>[^<]*?<dd>.*?</dd>',re.DOTALL),
-	'profile_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
-	'safety':re.compile(r'<title>.*?安全.*?</title>'),
-	'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
+	'profile_mini':re.compile(r'<ul class="(information-ul)?(user-info clearfix)?".*?</ul>',re.DOTALL),
+	#'profile_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
+	#'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
+	'safety':re.compile(r'<title>.*?安全.*?</title>')}
 
 def format_time(runtime,req_time=None):
 	if req_time is None:
@@ -68,7 +69,7 @@ class browser:
 		return (None,error_info) if error"""
 		return self.process('status',renrenId,uppage)
 
-	def profile(self,renrenId):
+	def profile(self,renrenId,no_use=None):
 		"""profile('234234') --> (record:dict(),timecost:str)
 		return (None,error_info) if error"""
 		runtime_start=time.time()
@@ -77,15 +78,10 @@ class browser:
 		if html_content is None:
 			return None,'timout'
 		elif html_content[0:30].find('<div class="col-left">') > -1:
-			#pageStyle='profile_detail'
 			pf=parse.profile_detail(itemReg[pageStyle].findall(html_content))
-		elif html_content[0:30].find('<!doctype html><html>') > -1:#tl
-			#TODO:check whether account safety
-			#pageStyle='profile_tl'
-			pf=parse.homepage_tl(itemReg[pageStyle].findall(html_content))
 		else:
-			#pageStyle='profile_basic'
-			pf=parse.homepage_basic_privacy(itemReg[pageStyle].findall(html_content))
+			#TODO:check whether account safety
+			pf=parse.profile_mini(itemReg[pageStyle].findall(html_content))
 		runtime=time.time()-runtime_start
 		return pf,format_time(runtime)
 
