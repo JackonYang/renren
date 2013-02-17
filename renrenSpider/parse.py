@@ -116,7 +116,7 @@ def homepage_basic_privacy(content):
 	mini_pf['edu_now']=_drop_span(tmp_pf.get('school',None))[1:-2]
 	return mini_pf
 
-#-----------------checked------------------
+#-----------------profile------------------
 #birth and gender
 _birthprog=None
 def _get_birth(content):
@@ -157,7 +157,7 @@ def _split_edu(content,separator='<br>'):
 
 #drop extra
 def _drop_pf_extra(content,target=r' '):
-	return _sub_space(drop_span((_drop_link(content))),target)
+	return _sub_space(_drop_span((_drop_link(content))),target)
 
 _linkprog=None
 def _drop_link(content):
@@ -168,6 +168,7 @@ def _drop_link(content):
 		import re
 		_linkprog=re.compile(r'<a\s[^>]+?>([^<]*?)</a>')
 	return _linkprog.sub(r'\1',content)
+
 _spanprog=None
 def _drop_span(content):
 	if content is None:
@@ -191,24 +192,13 @@ def _sub_space(content,target=r''):
 		_spaceprog=re.compile(r'\s+')
 	return _spaceprog.sub(target,_space_likeprog.sub(target,content)).strip(' ')
 
-#-----------------checked------------------
+#-----------------status------------------
 
 def _drop_status_urls(content):
 	if content is None:
 		return None
 	else:
 		return _sub_space(drop_rrurl(drop_img(drop_pf(drop_pubpf(drop_at(content))))),r' ')
-
-_spanprog=None
-def drop_span(content):
-	if content is None:
-		return None
-	global _spanprog
-	if _spanprog is None:
-		import re
-		_spanprog=re.compile(r'<span(?:\sclass="link")*?>([^<]*?)</span>')
-	return _spanprog.sub(r'\1',content)
-
 
 _pfprog=None
 def drop_pf(content):
