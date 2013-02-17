@@ -84,6 +84,7 @@ def profile_mini(content):
 	if _pf_miniprog is None:
 		import re
 		_pf_miniprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
+	content=_drop_pf_extra(''.join(content),' ')
 	orig_pf=dict()
 	for m in _pf_miniprog.finditer(content):
 		orig_pf[m.group(1)]=m.group(2)
@@ -208,7 +209,7 @@ def _sub_space(content,target=r''):
 	global _space_likeprog
 	if _spaceprog is None:
 		import re
-		_space_likeprog=re.compile(r'(?:\\n)|(?:\\t)|(?:\\u3000)|(?:\u3000)')
+		_space_likeprog=re.compile(r'(?:\\n)|(?:\\t)|(?:\\u3000)|(?:\u3000)|(?:&nbsp;)')
 		_spaceprog=re.compile(r'\s+')
 	return _spaceprog.sub(target,_space_likeprog.sub(target,content)).strip(' ')
 

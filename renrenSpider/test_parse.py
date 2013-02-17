@@ -124,7 +124,7 @@ class Test_parse(unittest.TestCase):
 	#drops
 	def test_sub_space(self):
 		#replace space, and no effect on other word
-		contents=['abcdefghijklmnopqrstuvwxyz0123456789 nntt003','\n\\n\t\\t \u3000\\u3000abcdefghijklmnopqrstuvwxyz0123456789\\n\n\\n\t\\u3000\u3000 nntt003']
+		contents=['abcdefghijklmnopqrstuvwxyz0123456789 nntt003','\n\\n\t\\t &nbsp;\u3000\\u3000abcdefghijklmnopqrstuvwxyz0123456789&nbsp;\\n\n\\n\t\\u3000\u3000 nntt003']
 		expt1='abcdefghijklmnopqrstuvwxyz0123456789 nntt003'
 		expt2='abcdefghijklmnopqrstuvwxyz0123456789nntt003'
 		for content in contents:
