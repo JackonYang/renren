@@ -43,6 +43,22 @@ class Test_parse(unittest.TestCase):
 				content=content.split(',')
 			self.assertEquals(parse.profile_detail(content),expt)
 
+	def test_profile_mini(self):
+		contents={"""<ul class="information-ul" id="information-ul" onclick href='http:'">\\n\n\t\\t<li class="school"> \n\\n\t\\t<span>\n就读于西北大学\n</span>\t\\t</li>\n\t<li class="birthday">\n\\n<span class="link">\t男生\n\\n</span>\\n\n<span>，2月13日\\n</span>\t\\t</li><li class="hometown">\n\\n来自内蒙古\n\\n<a stats="info_info">\n延安市\n</a>\n\\n</li>\n\\n<li class="address">\\n现居\\n山南地区</li></ul>""":{'birth_day': '13', 'gender': 'm', 'hometown': '内蒙古 延安市', 'birth_month': '2', 'edu_now': '西北大学', 'birth_year': None},#full items with space
+				"""<ul class="information-ul" id="information-ul" onclick href='http:'"><li class="school"><span>就读于西北大学</span></li><li class="birthday"><span class="link">男生</span><span>，2月13日</span></li><li class="hometown">来自内蒙古<a stats="info_info">延安市</a></li><li class="address">现居山南地区</li></ul>""":{'birth_day': '13', 'gender': 'm', 'hometown': '内蒙古延安市', 'birth_month': '2', 'edu_now': '西北大学', 'birth_year': None},#full items with no space
+				"""<ul class="information-ul" id="information-ul" onclick href='http:'"><li class="school"><span>就读于North west大学</span></li></ul>""":{'birth_day': None, 'gender': None, 'hometown': '', 'birth_month': None, 'edu_now': 'North west大学', 'birth_year': None},#edu now only
+				"""<ul class="information-ul" id="information-ul" onclick href='http:'"><li class="birthday"><span class="link">男生</span><span>，2月13日</span></li>""":{'birth_day':'13', 'gender':'m', 'hometown': '', 'birth_month':'2', 'edu_now': '', 'birth_year': None},#birth/gender only
+				"""<ul class="information-ul" id="information-ul"><li class="hometown">来自内蒙古<a stats="info_info">New York</a></li></ul>""":{'birth_day': None, 'gender': None, 'hometown': '内蒙古New York', 'birth_month': None, 'edu_now': '', 'birth_year': None},#hometown only
+				"""<ul class="user-info clearfix"><li class="gender">\n\t\\t<span class="link">\\n男生\t</span></li>\t\\t\n\\n<li class="hometown">\n\t\\n来自\\n<span>\\n\n山东\n\\t</span>\n\\n <a href="">烟台市\t\\t\n\\n</a></li><li class="school">\n\\n在\t\\t<span class="link">\t\\tFachhochschule Aachen\t\\t</span>\n\\t读书\\t</li></ul>""":{'hometown': '山东 烟台市','edu_now': 'Fachhochschule Aachen','gender':'m','birth_year':None,'birth_month':None,'birth_day':None},#full items with space. basic
+				"""<ul class="user-info clearfix"><li class="gender"><span class="link">男生</span></li><li class="hometown">来自<span>山东</span><a href="">烟台市</a></li><li class="school">在<span class="link">Fachhochschule Aachen</span>读书</li></ul>""":{'hometown': '山东烟台市','edu_now': 'Fachhochschule Aachen','gender':'m','birth_year':None,'birth_month':None,'birth_day':None},#full items without space
+				"""<ul class="user-info clearfix"><li class="gender"><span class="link">男生</span></li></ul>""":{'hometown': '','edu_now': '','gender':'m','birth_year':None,'birth_month':None,'birth_day':None},#gender only
+				"""<ul class="user-info clearfix"><li class="hometown">来自<span>山东</span><a href="">烟台市</a></li></ul>""":{'hometown': '山东烟台市','edu_now': '','gender':None,'birth_year':None,'birth_month':None,'birth_day':None},#hometown only
+				"""<ul class="user-info clearfix"><li class="school">在<span class="link">Fachhochschule Aachen</span>读书</li></ul>""":{'hometown': '','edu_now': 'Fachhochschule Aachen','gender':None,'birth_year':None,'birth_month':None,'birth_day':None},#edu_now only
+				"""<ul class="user-info clearfix"></ul>""":{'hometown': '', 'edu_now': '', 'gender':None,'birth_year':None,'birth_month':None,'birth_day':None},#no items
+				None:None}
+		for content,expt in contents.items():
+				self.assertEquals(parse.profile_mini(content),expt)
+
 	def test_homepage_tl(self):
 		contents={"""<ul class="information-ul" id="information-ul" onclick href='http:'">\\n\n\t\\t<li class="school"> \n\\n\t\\t<span>\n就读于西北大学\n</span>\t\\t</li>\n\t<li class="birthday">\n\\n<span class="link">\t男生\n\\n</span>\\n\n<span>，2月13日\\n</span>\t\\t</li><li class="hometown">\n\\n来自内蒙古\n\\n<a stats="info_info">\n延安市\n</a>\n\\n</li>\n\\n<li class="address">\\n现居\\n山南地区</li></ul>""":{'birth_day': '13', 'gender': 'm', 'hometown': '内蒙古 延安市', 'birth_month': '2', 'edu_now': '西北大学', 'birth_year': None},#full items with space
 				"""<ul class="information-ul" id="information-ul" onclick href='http:'"><li class="school"><span>就读于西北大学</span></li><li class="birthday"><span class="link">男生</span><span>，2月13日</span></li><li class="hometown">来自内蒙古<a stats="info_info">延安市</a></li><li class="address">现居山南地区</li></ul>""":{'birth_day': '13', 'gender': 'm', 'hometown': '内蒙古延安市', 'birth_month': '2', 'edu_now': '西北大学', 'birth_year': None},#full items with no space
@@ -157,10 +173,11 @@ class Test_parse(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(Test_parse('test_friendList'))
 
 	#checked
+	suite.addTest(Test_parse('test_friendList'))#full test
 	suite.addTest(Test_parse('test_profile_detail'))#full test
+	suite.addTest(Test_parse('test_profile_mini'))#full test
 	suite.addTest(Test_parse('test_homepage_tl'))#full test
 	suite.addTest(Test_parse('test_homepage_basic_privacy'))#full test
 	#private method
@@ -174,7 +191,5 @@ if __name__=='__main__':
 	#suite.addTest(Test_parse('test_drop_span'))
 	#suite.addTest(Test_parse('test_drop_rrurl'))
 	#suite.addTest(Test_parse('test_split_owner'))
-	#suite.addTest(Test_parse('test_drop_space'))
-	#suite.addTest(Test_parse('test_drop_extra'))
 	runner=unittest.TextTestRunner()
 	runner.run(suite)

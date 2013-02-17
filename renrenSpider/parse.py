@@ -76,6 +76,31 @@ def profile_detail(content):
 	pf.update(_get_birth(orig_pf.get('生日',None)))
 	return pf
 
+_pf_miniprog=None
+def profile_mini(content):
+	if content is None:
+		return None
+	global _pf_miniprog
+	if _pf_miniprog is None:
+		import re
+		_pf_miniprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
+	orig_pf=dict()
+	for m in _pf_miniprog.finditer(content):
+		orig_pf[m.group(1)]=m.group(2)
+	mini_pf=dict()
+	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:].strip(' ')
+	mini_pf.update(_get_birth(orig_pf.get('birthday',None)))
+	if 'birthday' in orig_pf:
+		mini_pf['gender']=_get_gender(orig_pf.get('birthday',None))
+	else:
+		mini_pf['gender']=_get_gender(orig_pf.get('gender',None))
+	edu_now=_drop_pf_extra(orig_pf.get('school',''))
+	if edu_now.find('就读于') > -1:
+		mini_pf['edu_now']=edu_now[3:].strip(' ')
+	else:
+		mini_pf['edu_now']=edu_now[1:-2].strip(' ')
+	return mini_pf
+
 _pf_tlprog=None
 def homepage_tl(content):
 	if content is None:
