@@ -111,6 +111,27 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 	- basic: gender, birthday, hometown
 	- present: location/address, work, school
 
+字段有效性分析：
+
+1. school
+	人人网自身实现不严格，导致大学、高中信息交叉重叠。<br>
+	处理方式：初始化全国高校列表，以消除中学与高校的混淆。
+2. 生日/星座
+	资料解析+状态/分享分析
+3. 年龄
+	资料解析+高中好友平均年龄估计区间
+4. 性别
+	资料解析，通常可信度较高。
+4. 家乡
+	资料解析+中学好友分布分析
+5. 现居信息--不处理
+	可信度较低，少有人维护。
+6. 工作信息--不处理
+	数据规模太少。
+
+**最终字段:**
+**edu_now/college/senior/junior/primary,birth_year/month/day,gender,hometown**
+
 #### spider
 
 各种功能方法中生成待抓取的 `rid` 序列，由 `seq_process` 抓取。
