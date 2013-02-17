@@ -57,12 +57,15 @@ def profile_detail(content):
 	global _pf_prog
 	if _pf_prog is None:
 		import re
-		_pf_prog=re.compile(r'<dt>([^:：]+)[:：]?\s*</dt>\s*<dd>(.*?)</dd>',re.DOTALL)
+		_pf_prog=re.compile(r'<dt>([^:：]+)[:：]?\s*</dt>[^<]*<dd>(.*?)</dd>',re.DOTALL)
+	content=_drop_pf_extra(''.join(content),' ')
 	#orig tag=value saved in orig_pf
 	orig_pf=dict()
-	for item in content:
-		m=_pf_prog.search(item)
+	#for item in content:
+	#m=_pf_prog.search(item)
+	for m in _pf_prog.finditer(content):
 		if m is None:
+			#print(item)
 			return None
 		orig_pf[m.group(1).strip(' ')]=m.group(2)
 	#useful info saved in pf
@@ -76,23 +79,23 @@ def profile_detail(content):
 	pf.update(_get_birth(orig_pf.get('生日',None)))
 	return pf
 
-_homepage_tlgprog=None
+_pf_tlprog=None
 def homepage_tl(content):
 	if content is None:
 		return None
-	global _homepage_tlgprog
+	global _pf_tlprog
 	if _homepage_tlprog is None:
 		import re
-		_homepage_tlgprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
+		_pf_tlprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
 	#content=drop_extra(str(content))
-	tmp_pf=dict()
-	for m in _homepage_tlgprog.finditer(content):
-		tmp_pf[m.group(1)]=m.group(2)
+	orig_pf=dict()
+	for m in _pf_tlprog.finditer(content):
+		orig_pf[m.group(1)]=m.group(2)
 	mini_pf=dict()
-	mini_pf['gender']=_get_gender(tmp_pf.get('birthday',None))
-	mini_pf['edu_now']=_drop_span(tmp_pf.get('school',None))[3:]
-	mini_pf['hometown']=_drop_link(tmp_pf.get('hometown',''))[2:]
-	mini_pf.update(_get_birth(tmp_pf.get('birthday',None)))
+	mini_pf['edu_now']=_drop_pf_extra(orig_pf.get('school',None))[3:]
+	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:]
+	mini_pf['gender']=_get_gender(orig_pf.get('birthday',None))
+	mini_pf.update(_get_birth(orig_pf.get('birthday',None)))
 	return mini_pf
 
 _homepage_basicgprog=None
@@ -154,7 +157,7 @@ def _split_edu(content,separator='<br>'):
 
 #drop extra
 def _drop_pf_extra(content,target=r' '):
-	return _drop_space(drop_span((_drop_link(content))),target)
+	return _sub_space(drop_span((_drop_link(content))),target)
 
 _linkprog=None
 def _drop_link(content):
@@ -176,14 +179,17 @@ def _drop_span(content):
 	return _spanprog.sub(r'\1',content)
 
 _spaceprog=None
-def _drop_space(content,target=r''):
-	if content is None:
+_space_likeprog=None
+def _sub_space(content,target=r''):
+	if not isinstance(content,str):
 		return None
 	global _spaceprog
+	global _space_likeprog
 	if _spaceprog is None:
 		import re
-		_spaceprog=re.compile(r'(?:\\n)|(?:\\t)|(?:\\u3000)|(?:\u3000)|\s+')
-	return _spaceprog.sub(target,str(content)).strip(' ')
+		_space_likeprog=re.compile(r'(?:\\n)|(?:\\t)|(?:\\u3000)|(?:\u3000)')
+		_spaceprog=re.compile(r'\s+')
+	return _spaceprog.sub(target,_space_likeprog.sub(target,content)).strip(' ')
 
 #-----------------checked------------------
 
@@ -191,7 +197,7 @@ def _drop_status_urls(content):
 	if content is None:
 		return None
 	else:
-		return _drop_space(drop_rrurl(drop_img(drop_pf(drop_pubpf(drop_at(content))))),r' ')
+		return _sub_space(drop_rrurl(drop_img(drop_pf(drop_pubpf(drop_at(content))))),r' ')
 
 _spanprog=None
 def drop_span(content):
