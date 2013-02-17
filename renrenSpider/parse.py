@@ -59,13 +59,10 @@ def profile_detail(content):
 		import re
 		_pf_prog=re.compile(r'<dt>([^:：]+)[:：]?\s*</dt>[^<]*<dd>(.*?)</dd>',re.DOTALL)
 	content=_drop_pf_extra(''.join(content),' ')
-	#orig tag=value saved in orig_pf
+	#orig tag/value saved in orig_pf
 	orig_pf=dict()
-	#for item in content:
-	#m=_pf_prog.search(item)
 	for m in _pf_prog.finditer(content):
 		if m is None:
-			#print(item)
 			return None
 		orig_pf[m.group(1).strip(' ')]=m.group(2)
 	#useful info saved in pf
@@ -84,36 +81,34 @@ def homepage_tl(content):
 	if content is None:
 		return None
 	global _pf_tlprog
-	if _homepage_tlprog is None:
+	if _pf_tlprog is None:
 		import re
 		_pf_tlprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
-	#content=drop_extra(str(content))
 	orig_pf=dict()
 	for m in _pf_tlprog.finditer(content):
 		orig_pf[m.group(1)]=m.group(2)
 	mini_pf=dict()
-	mini_pf['edu_now']=_drop_pf_extra(orig_pf.get('school',None))[3:]
-	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:]
+	mini_pf['edu_now']=_drop_pf_extra(orig_pf.get('school',''))[3:].strip(' ')
+	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:].strip(' ')
 	mini_pf['gender']=_get_gender(orig_pf.get('birthday',None))
 	mini_pf.update(_get_birth(orig_pf.get('birthday',None)))
 	return mini_pf
 
-_homepage_basicgprog=None
+_pf_basicprog=None
 def homepage_basic_privacy(content):
 	if content is None:
 		return None
-	global _homepage_basicgprog
-	if _homepage_basicprog is None:
+	global _pf_basicprog
+	if _pf_basicprog is None:
 		import re
-		_homepage_basicgprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
-
-	content=drop_extra(str(content))
-	tmp_pf=dict()
-	for m in _homepage_basicprog.finditer(content):
-		tmp_pf[m.group(1)]=m.group(2)
+		_pf_basicprog=re.compile(r'<li\sclass="(\w+?)">(.*?)</li>',re.DOTALL)
+	orig_pf=dict()
+	for m in _pf_basicprog.finditer(content):
+		orig_pf[m.group(1)]=m.group(2)
 	mini_pf=dict()
-	mini_pf['gender']=_get_gender(tmp_pf.get('birthday',None))
-	mini_pf['edu_now']=_drop_span(tmp_pf.get('school',None))[1:-2]
+	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:].strip(' ')
+	mini_pf['edu_now']=_drop_pf_extra(orig_pf.get('school',''))[1:-2].strip(' ')
+	mini_pf['gender']=_get_gender(orig_pf.get('gender',None))
 	return mini_pf
 
 #-----------------profile------------------
