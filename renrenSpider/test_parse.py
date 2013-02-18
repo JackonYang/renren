@@ -110,6 +110,7 @@ class Test_parse(unittest.TestCase):
 				'Birmingam City-2011年-其它院系<br>西北大学-2012年-其它院系<br>':{('Birmingam City', '2011', '其它院系'), ('西北大学', '2012', '其它院系')},#no space
 				'西北大学-2010年-物理学系<br>':{('西北大学', '2010', '物理学系')},
 				'Lincoln University - 1970年 <br>':{('Lincoln University', '1970')},
+				'no match':set(),
 				None:None
 				}
 		for content,expt in contents.items():
@@ -117,7 +118,9 @@ class Test_parse(unittest.TestCase):
 	def test_split_low_edu(self):
 		contents={' 万州上海中学 - 2009年 万州高级中学 - 2012年 ':{('万州高级中学', '2012'), ('万州上海中学', '2009')},#full space
 				'万州上海中学-2004年万州高级中学-2011年':{('万州高级中学', '2011'), ('万州上海中学', '2004')},#no space
-				'三原县南郊中学- 2005年':{('三原县南郊中学', '2005')}}#one item
+				'三原县南郊中学- 2005年':{('三原县南郊中学', '2005')},#one item
+				None:None
+				}
 		for content,expt in contents.items():
 			self.assertEquals(parse._split_low_edu(content),expt)
 
