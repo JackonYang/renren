@@ -25,7 +25,7 @@ itemReg={
 	'status':re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>',re.DOTALL),
 	'friendList':re.compile(r'<dd><a\s+href="http://www.renren.com/profile.do\?id=\d+">[^<]*</a>'),
 	'profile_detail':re.compile(r'<dt>[^<]*?</dt>[^<]*?<dd>.*?</dd>',re.DOTALL),
-	'profile_mini':re.compile(r'<ul class="(information-ul)?(user-info clearfix)?".*?</ul>',re.DOTALL),
+	'profile_mini':re.compile(r'<ul class="(?:information-ul)?(?:user-info clearfix)?".*?</ul>',re.DOTALL),
 	#'profile_tl':re.compile(r'<ul class="information-ul".*?</ul>',re.DOTALL),
 	#'profile_basic':re.compile(r'<ul class="user-info clearfix">.*?</ul>',re.DOTALL)}
 	'safety':re.compile(r'<title>.*?安全.*?</title>')}
@@ -81,6 +81,7 @@ class browser:
 			pf=parse.profile_detail(itemReg[pageStyle].findall(html_content))
 		else:
 			#TODO:check whether account safety
+			pageStyle='profile_mini'
 			pf=parse.profile_mini(itemReg[pageStyle].findall(html_content))
 		runtime=time.time()-runtime_start
 		return pf,format_time(runtime)

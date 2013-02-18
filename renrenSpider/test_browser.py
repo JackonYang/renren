@@ -35,11 +35,21 @@ class Test_browser(unittest.TestCase):
 		pass
 
 	def test_profile(self):
-		renrenIds={'233330059','230760442','223981104','410941086','285060168'}
-							#myself,timeline ok/unavailable,old style ok/unavailable
-		for rid in renrenIds:
-			pfStyle,details=self.dl.profile(rid)
-			print('{},{},{}'.format(rid,pfStyle,details))
+		dl=new_browser()
+		dl.login('test','test')
+		renrenIds={'233330051':{'edu_college': {('北京中医药大学', '2013', '东方学院')}, 'edu_primary': {('安仁县洋际乡d岗小学',)}, 'hometown': '内蒙古 包头市', 'birth_month': '2', 'edu_senior': {('北京二十一中', '2000')}, 'edu_junior': {('北京一六六中', '1995')}, 'gender': 'f', 'birth_day': '13', 'birth_year': '1970'},#one value for each item.
+				'233330052':{'edu_college': {('北京中医药大学', '2013', '东方学院'), ('北京理工大学', '2011', '生命科学与技术学院六院')}, 'edu_primary': {('桐乡市大麻镇大YFDSF小学', '1996'), ('字段非', '2000')}, 'hometown': '内蒙古 呼伦贝尔市', 'birth_month': '2', 'edu_senior': {('北京二十一中', '2000'), ('北京二十五中', '1997')}, 'edu_junior': {('北京二十二中', '1998'), ('北京一六六中', '1995')}, 'gender': 'm', 'birth_day': '13', 'birth_year': '1998'},#two value for each item
+				'233330055':{'edu_college': set(), 'edu_primary': set(), 'hometown': '内蒙古 包头市', 'birth_month': '2', 'edu_senior': set(), 'edu_junior': set(), 'gender': 'f', 'birth_day': '13', 'birth_year': '1970'},#detail. basic info only
+				'294126602':{'edu_college': None, 'edu_primary': None, 'hometown': '', 'birth_month': None, 'edu_senior': None, 'edu_junior': None, 'gender': None, 'birth_day': None, 'birth_year': None},#empty
+				'240303471':{'hometown': '山东 烟台市', 'birth_month': None, 'gender': 'f', 'birth_day': None, 'edu_now': 'Fachhochschule Aachen', 'birth_year': None},#basic, full info.
+				'223981104':{'hometown': '', 'birth_month': None, 'gender': None, 'birth_day': None, 'edu_now': '', 'birth_year': None},#tl,no item
+				'271600917':{'hometown': '陕西 西安市', 'birth_month': '5', 'gender': 'm', 'birth_day': '16', 'edu_now': '重庆邮电大学', 'birth_year': None}#tl, full
+				}
+		#1 item/2 item/0 edu and 0 work/all empty/not available(tl,basic)
+		for rid,expt in renrenIds.items():
+			details,run_info=dl.profile(rid)
+			self.assertEquals(details,expt)
+			self.assertTrue(len(run_info),4)
 
 	def test_friendList(self):
 		#normal seq, privacy
@@ -144,7 +154,6 @@ class Test_browser(unittest.TestCase):
 		for rid in rids:
 			self.assertEquals(dl._iter_page(pageStyle,rid),None)
 
-
 	def test_homepage(self):
 		renrenIds={'233330059','410941086','267654044','285060168','240303471'}
 		for rid in renrenIds:
@@ -203,20 +212,22 @@ class Test_browser(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(Test_browser('test_profile'))
-	#suite.addTest(Test_browser('test_homepage'))
 
 	#TODO:no test data file
 	#suite.addTest(Test_browser('test_is_safety_page'))
 
 	#checked
-	#suite.addTest(Test_browser('test_login'))
-	#suite.addTest(Test_browser('test_download'))
+	#suite.addTest(Test_browser('test_login'))#login
+	#suite.addTest(Test_browser('test_download'))#login and download
 	suite.addTest(Test_browser('test_new_browser'))
+
+	#private method
 	suite.addTest(Test_browser('test_iter_page'))
 	suite.addTest(Test_browser('test_iter_page_timeout'))
+	#interface
 	suite.addTest(Test_browser('test_friendList'))
 	suite.addTest(Test_browser('test_status'))
+	suite.addTest(Test_browser('test_profile'))
 	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
