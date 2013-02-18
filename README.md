@@ -55,7 +55,7 @@ INTERFACE
 design of class
 --------------------
 
-####  browser：
+### browser：
 
 1. `_download`<br>
 简单的根据 url 获取 `html_content` 并返回给上层调用，便于性能统计。
@@ -78,7 +78,7 @@ design of class
 
 _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 
-####  repo-mysql：
+###  repo-mysql：
 
 以 mysql 作为本地存储介质。
 
@@ -98,7 +98,12 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 3. `_sql_pageStyle(record:dict,rid:str) --> sqls:list` called by `_save_process` to construct sqls
 4. `_sql_create_table(pageStyle:str) --> sql` call by `_init_table`, read table info from config file and return sql for create table.
 
+### parse
+
 #### profile
+
+**最终字段:**
+**edu_now/college/senior/junior/primary,birth_year/month/day,gender,hometown**
 
 请求 profile 页面，可能返回 2 种页面，分别包含以下字段。
 
@@ -129,12 +134,11 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 6. 工作信息--不处理
 	数据规模太少。
 
-**最终字段:**
-**edu_now/college/senior/junior/primary,birth_year/month/day,gender,hometown**
 
-#### spider
+### spider
 
 各种功能方法中生成待抓取的 `rid` 序列，由 `seq_process` 抓取。
 
-#### 内部接口规范
+**内部接口规范**
+
 1. `seq_process(toSearch:str/set,pageStyle:str)` download and save record
