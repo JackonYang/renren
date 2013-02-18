@@ -178,8 +178,6 @@ if __name__=='__main__':
 	suite.addTest(Test_parse('test_friendList'))#full test
 	suite.addTest(Test_parse('test_profile_detail'))#full test
 	suite.addTest(Test_parse('test_profile_mini'))#full test
-	suite.addTest(Test_parse('test_homepage_tl'))#full test
-	suite.addTest(Test_parse('test_homepage_basic_privacy'))#full test
 	#private method
 	suite.addTest(Test_parse('test_get_birth'))#full test
 	suite.addTest(Test_parse('test_get_gender'))#full test
