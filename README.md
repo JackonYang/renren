@@ -27,7 +27,7 @@ USAGE
 * ubuntu/windows
 * python3.2
 * mysql
-* pymysql: [install package link](https://github.com/petehunt/PyMySQL)
+* pymysql: [installation package link](https://github.com/petehunt/PyMySQL)
 
 
 #### 参数配置：
@@ -118,6 +118,7 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 	- '': empty
 	- None: error
 4. edu: now/college/senior/junior/primary
+	- school_name:string: if only one school name contains, such as edu_now in pf_mini
 	- list with dict element, dict value is '' if empty
 		- name: '' if empty
 		- year: entrance year
