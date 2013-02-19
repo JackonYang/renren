@@ -72,8 +72,8 @@ def profile_detail(content):
 	pf['edu_junior']=_split_low_edu(orig_pf.get('初中',None))
 	pf['edu_primary']=_split_low_edu(orig_pf.get('小学',None))
 	pf['hometown']=_drop_pf_extra(orig_pf.get('家乡',''),r' ')
-	pf['gender']=_get_gender(orig_pf.get('性别',None))
-	pf.update(_get_birth(orig_pf.get('生日',None)))
+	pf['gender']=_get_gender(orig_pf.get('性别',''))
+	pf.update(_get_birth(orig_pf.get('生日','9999-99-99')))
 	return pf
 
 _pf_miniprog=None
@@ -90,11 +90,11 @@ def profile_mini(content):
 		orig_pf[m.group(1)]=m.group(2)
 	mini_pf=dict()
 	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:].strip(' ')
-	mini_pf.update(_get_birth(orig_pf.get('birthday',None)))
+	mini_pf.update(_get_birth(orig_pf.get('birthday','9999-99-99')))
 	if 'birthday' in orig_pf:
-		mini_pf['gender']=_get_gender(orig_pf.get('birthday',None))
+		mini_pf['gender']=_get_gender(orig_pf.get('birthday',''))
 	else:
-		mini_pf['gender']=_get_gender(orig_pf.get('gender',None))
+		mini_pf['gender']=_get_gender(orig_pf.get('gender',''))
 	edu_now=_drop_pf_extra(orig_pf.get('school',''))
 	if edu_now.find('就读于') > -1:
 		mini_pf['edu_now']=edu_now[3:].strip(' ')
@@ -111,11 +111,11 @@ def _get_birth(content):
 	global _birthprog
 	if _birthprog is None:
 		import re
-		_birthprog=re.compile(r'(?:(\d+)[年后-])?(\d+)[月-](\d+)[日]?')
+		_birthprog=re.compile(r'(?:(?P<birth_year>\d+)[年后-])?(?P<birth_month>\d+)[月-](?P<birth_day>\d+)[日]?')
 	m=_birthprog.search(_drop_pf_extra(content,r''))
 	if m is None:
-		return {'birth_year':None,'birth_month':None,'birth_day':None}
-	return {'birth_year':m.group(1),'birth_month':m.group(2),'birth_day':m.group(3)}
+		return {'birth_year':'9999','birth_month':'99','birth_day':'99'}
+	return m.groupdict('9999')
 def _get_gender(content):
 	if content is None:
 		return None
@@ -124,7 +124,7 @@ def _get_gender(content):
 	elif content.find('女')>-1:
 		return 'f'
 	else:
-		return None
+		return 'u'
 
 #edu info
 _edu_highprog=None

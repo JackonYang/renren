@@ -102,7 +102,21 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 
 #### profile
 
-**最终字段:**
+**内部字段规范:**
+
+1. gender:
+	- 'f': female
+	- 'm': male
+	- 'u': unknown
+	- None: error
+2. birth:
+	- `birth_year`: 4 digits, 9999 if empty. None if error
+	- `birth_month`: 2 digits, 99 if empty. None if error
+	- `birth_day`: 2 digits, 99 if empty. None if error
+3. hometown:
+	- string.
+	- '': empty
+	- None: error
 **edu_now/college/senior/junior/primary,birth_year/month/day,gender,hometown**
 
 请求 profile 页面，可能返回 2 种页面，分别包含以下字段。
