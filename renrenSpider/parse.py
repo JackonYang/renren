@@ -129,36 +129,29 @@ def _get_gender(content):
 #edu info
 _edu_highprog=None
 def _split_high_edu(content):
-	if content is None:
-		return None
 	global _edu_highprog
 	if _edu_highprog is None:
 		import re
-		_edu_highprog=re.compile(r'([^-<]+)-\s*(\d+)\s*年\s*(?:-([^-<]+))?<br>')
-	schools=set()
-	for m in _edu_highprog.finditer(_drop_pf_extra(content)):
-		school=[]
-		for x in m.group(1,2,3):
-			if x is not None and x.strip(' ') != '':
-				school.append(x.strip(' '))
-		schools.add(tuple(school))
-	return schools
+		_edu_highprog=re.compile(r'(?P<name>[^-<]+)-\s*(?P<year>\d+)\s*年\s*(?:-(?P<major>[^-<]+))?<br>')
+	return _split_edu(_edu_highprog,content)
 
 _edu_lowprog=None
 def _split_low_edu(content):
-	if content is None:
-		return None
 	global _edu_lowprog
 	if _edu_lowprog is None:
 		import re
-		_edu_lowprog=re.compile(r'([^-<]+)(?:-\s*(\d+)\s*年)?')
-	schools=set()
-	for m in _edu_lowprog.finditer(_drop_pf_extra(content)):
-		school=[]
-		for x in m.group(1,2):
-			if x is not None and x.strip(' ') != '':
-				school.append(x.strip(' '))
-		schools.add(tuple(school))
+		_edu_lowprog=re.compile(r'(?P<name>[^-<]+)(?:-\s*(?P<year>\d+)\s*年)?')
+	return _split_edu(_edu_lowprog,content)
+
+def _split_edu(prog,content):
+	if content is None:
+		return None
+	schools=[]
+	for m in prog.finditer(_drop_pf_extra(content)):
+		school={}
+		for key,value in m.groupdict('').items():
+			school[key]=value.strip(' ')
+		schools.append(school)
 	return schools
 
 #drop extra

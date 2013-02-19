@@ -33,45 +33,45 @@ class Test_parse(unittest.TestCase):
 		contents={
 				#full items with no space
 				"""<dt>性别:</dt><dd>女</dd>,<dt>生日 :</dt><dd><a st>1998</a>年<a st>2</a>月<a st>13</a>日<a st>水瓶座</a></dd>,<dt>家乡 :</dt><dd><a st>内蒙古</a><a st>呼伦贝尔市</a></dd>,<dt>大学 :</dt><dd><a st>北京中医药大学</a>-<a st>2013年</a>-<a st>东方学院</a><br><a st>北京理工大学</a>-<a st>2011年</a>-<a st>生命科学与技术学院六院</a><br></dd>,<dt>高中 :</dt><dd><a st>北京二十五中</a>-<a st>1997年</a><a st>烟台二中</a>-<a st>2004年</a></dd>,<dt>初中:</dt><dd><a st>一个初中</a>-<a st>1995年</a><a st>烟台二中</a>-<a st>2014年</a></dd>,<dt>小学:</dt><dd><a st>一个小学</a>-<a st>1991年</a><a st>青岛二小</a>-<a st>2001年</a></dd>"""
-				:{'edu_college': {('北京中医药大学', '2013', '东方学院'), ('北京理工大学', '2011', '生命科学与技术学院六院')},
-					'edu_senior': {('烟台二中', '2004'), ('北京二十五中', '1997')},
-					'edu_junior': {('烟台二中', '2014'), ('一个初中', '1995')},
-					'edu_primary': {('一个小学','1991'), ('青岛二小','2001')},
+				:{'edu_college': [{'北京中医药大学', '2013', '东方学院'},{'北京理工大学', '2011', '生命科学与技术学院六院'}],
+					'edu_senior': [{'烟台二中', '2004'},{'北京二十五中', '1997'}],
+					'edu_junior': [{'烟台二中', '2014'},{'一个初中', '1995'}],
+					'edu_primary': [{'一个小学','1991'},{'青岛二小','2001'}],
 					'hometown': '内蒙古呼伦贝尔市','gender': 'f',
 					'birth_year': '1998','birth_month': '2','birth_day': '13'
 					},
 			#full items with space and \n \t
 			"""<dt> 性别 : </dt> <dd> 女 </dd> , <dt> 生日 : </dt> <dd> <a st> 1998 </a> 年 <a st> 2 </a> 月 <a st> 13 </a> 日 <a st> 水瓶座 </a> </dd> , <dt> 家乡 :</dt>\n<dd>\n<a st>\n内蒙古\n</a>\n<a st>\n呼伦贝尔市\n</a>\n</dd>\n,\n\\n<dt> 大学 :</dt>\n\\n<dd>\n\\n<a st>\n\\n北京中医药大学\n</a>-<a st>\n 2013年\n </a>-<a st>东方学院</a><br><a st>北京理工大学\t\t</a>-<a st>2011年</a>-<a st>生命科学与技术学院六院</a><br></dd>,<dt>高中 :</dt><dd><a st>二十五中</a>-<a st>1997年</a><a st>烟台二中</a>-<a st>2004年</a></dd>,<dt>初中:</dt><dd><a st>一个初中</a>-<a st>1995年</a><a st>烟台二中</a>-<a st>2014年</a></dd>,<dt>小学:</dt><dd><a st>一个小学</a>-<a st>1991年</a><a st>青岛二小</a>-<a st>2001年</a></dd>"""
-			:{'edu_college': {('北京中医药大学', '2013', '东方学院'), ('北京理工大学', '2011', '生命科学与技术学院六院')},
-				'edu_senior': {('烟台二中', '2004'), ('二十五中', '1997')},
-				'edu_junior': {('烟台二中', '2014'), ('一个初中', '1995')},
-				'edu_primary': {('一个小学', '1991'), ('青岛二小', '2001')}, 
+			:{'edu_college':[{'北京中医药大学', '2013', '东方学院'}, {'北京理工大学', '2011', '生命科学与技术学院六院'}],
+				'edu_senior': [{'烟台二中', '2004'}, {'二十五中', '1997'}],
+				'edu_junior': [{'烟台二中', '2014'}, {'一个初中', '1995'}],
+				'edu_primary':[{'一个小学', '1991'}, {'青岛二小', '2001'}],
 				'hometown': '内蒙古 呼伦贝尔市','gender': 'f',
 				'birth_year': '1998','birth_month': '2','birth_day': '13'
 				},
 			#birth only
 			"""<dt>生日 :</dt><dd><a st>1998</a>年<a st>2</a>月<a st>13</a>日</dd>"""
 			:{'birth_year':'1998','birth_month':'2','birth_day':'13',
-				'edu_college': None,'edu_junior': None,'edu_primary': None,'edu_senior': None,
+				'edu_college': [],'edu_junior': [],'edu_primary': [],'edu_senior': [],
 				'gender': 'u','hometown':''},
 			#hometown only
 			"""<dt>家乡 :</dt><dd><a st>内蒙古</a><a st>New York</a></dd>"""
 			:{'hometown':'内蒙古New York','gender':'u',
 				'birth_day':'99','birth_month':'99','birth_year':'9999',
-				'edu_college': None,'edu_junior': None,'edu_primary': None,'edu_senior': None
+				'edu_college': [],'edu_junior': [],'edu_primary': [],'edu_senior': []
 				},
 			#edu info only
 			"""<dt>大学 :</dt><dd><a st>Beijing China医药大学</a>-<a st>2013年</a>-<a st>东方学院</a><br><a st>北京理工大学</a>-<a st>2011年</a>-<a st>生命科学与技术学院六院</a><br></dd>"""
 			:{'edu_college': {('Beijing China医药大学', '2013', '东方学院'), ('北京理工大学', '2011', '生命科学与技术学院六院')},
 				'birth_day':'99','birth_month':'99','birth_year':'9999',
 				'gender': 'u','hometown':'',
-				'edu_junior': None,'edu_primary': None,'edu_senior': None
+				'edu_junior': [],'edu_primary': [],'edu_senior': []
 				},
 			#no item/empty
 			"""no item"""
 			:{'birth_day':'99','birth_month':'99','birth_year':'9999',
 				'gender':'u','hometown':'',
-				'edu_junior': None,'edu_primary': None,'edu_senior': None,'edu_college':None
+				'edu_junior': [],'edu_primary': [],'edu_senior': [],'edu_college':[]
 				},
 			None:None
 			}
@@ -147,23 +147,38 @@ class Test_parse(unittest.TestCase):
 
 	#edu info
 	def test_split_high_edu(self):
-		contents={' Birmingam City - 2011 年 - 其它院系 <br> 西北大学 - 2012 年 - 其它院系 <br> ':{('Birmingam City', '2011', '其它院系'), ('西北大学', '2012', '其它院系')},#full space
-				'Birmingam City-2011年-其它院系<br>西北大学-2012年-其它院系<br>':{('Birmingam City', '2011', '其它院系'), ('西北大学', '2012', '其它院系')},#no space
-				'西北大学-2010年-物理学系<br>':{('西北大学', '2010', '物理学系')},
-				'Lincoln University - 1970年 <br>':{('Lincoln University', '1970')},
-				'no match':set(),
+		contents={
+				# two item, full space
+				' Birmingam City - 2011 年 - 其它院系 <br> 西北大学 - 2012 年 - 其它院系 <br> '
+				:[{'major': '其它院系', 'name': 'Birmingam City', 'year': '2011'}, {'major': '其它院系', 'name': '西北大学', 'year': '2012'}],
+				# two item, no space
+				'Birmingam City-2011年-其它院系<br>西北大学-2012年-其它院系<br>'
+				:[{'major': '其它院系', 'name': 'Birmingam City', 'year': '2011'}, {'major': '其它院系', 'name': '西北大学', 'year': '2012'}],
+				# one item, no space
+				'西北大学-2010年-物理学系<br>':[{'major': '物理学系', 'name': '西北大学', 'year': '2010'}],
+				# English with useful space. can't drop
+				'Lincoln University - 1970年 <br>':[{'major': '', 'name': 'Lincoln University', 'year': '1970'}],
+				'no match':[],
 				None:None
 				}
 		for content,expt in contents.items():
 			self.assertEquals(parse._split_high_edu(content),expt)
 	def test_split_low_edu(self):
-		contents={' 万州上海中学 - 2009年 万州高级中学 - 2012年 ':{('万州高级中学', '2012'), ('万州上海中学', '2009')},#full space
-				'万州上海中学-2004年万州高级中学-2011年':{('万州高级中学', '2011'), ('万州上海中学', '2004')},#no space
-				'三原县南郊中学- 2005年':{('三原县南郊中学', '2005')},#one item
+		contents={
+				# full space
+				' 万州上海中学 - 2009年 万州高级中学 - 2012年 '
+				:[{'name': '万州上海中学', 'year': '2009'}, {'name': '万州高级中学', 'year': '2012'}],
+				# no space
+				'万州上海中学-2004年万州高级中学-2011年'
+				:[{'name': '万州上海中学', 'year': '2004'}, {'name': '万州高级中学', 'year': '2011'}],
+				#one item
+				'三原县南郊中学- 2005年':
+				[{'name': '三原县南郊中学', 'year': '2005'}],
 				None:None
 				}
 		for content,expt in contents.items():
 			self.assertEquals(parse._split_low_edu(content),expt)
+			#print(parse._split_low_edu(content))
 
 	#drops
 	def test_sub_space(self):
@@ -220,13 +235,13 @@ if __name__=='__main__':
 
 	#checked
 	#suite.addTest(Test_parse('test_friendList'))#full test
-	suite.addTest(Test_parse('test_profile_detail'))#full test
-	suite.addTest(Test_parse('test_profile_mini'))#full test
+	#suite.addTest(Test_parse('test_profile_detail'))#full test
+	#suite.addTest(Test_parse('test_profile_mini'))#full test
 	#private method
 	suite.addTest(Test_parse('test_get_birth'))#full test
 	suite.addTest(Test_parse('test_get_gender'))#full test
-	#suite.addTest(Test_parse('test_split_high_edu'))#full test
-	#suite.addTest(Test_parse('test_split_low_edu'))#full test
+	suite.addTest(Test_parse('test_split_high_edu'))#full test
+	suite.addTest(Test_parse('test_split_low_edu'))#full test
 	#suite.addTest(Test_parse('test_sub_space'))#full test
 	#suite.addTest(Test_parse('test_drop_pf_extra'))
 	#suite.addTest(Test_parse('test_drop_href'))

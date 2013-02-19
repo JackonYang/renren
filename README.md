@@ -117,7 +117,13 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 	- string.
 	- '': empty
 	- None: error
-**edu_now/college/senior/junior/primary,birth_year/month/day,gender,hometown**
+4. edu: now/college/senior/junior/primary
+	- list with dict element, dict value is '' if empty
+		- name: '' if empty
+		- year: entrance year
+		- major
+	- []: empty
+	- None:error
 
 请求 profile 页面，可能返回 2 种页面，分别包含以下字段。
 
@@ -147,7 +153,6 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 	可信度较低，少有人维护。
 6. 工作信息--不处理
 	数据规模太少。
-
 
 ### spider
 
