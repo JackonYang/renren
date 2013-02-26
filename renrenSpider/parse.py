@@ -62,22 +62,12 @@ def profile_detail(content):
 	#orig tag/value saved in orig_pf
 	orig_pf=dict()
 	for m in _pf_prog.finditer(content):
-		if m is None:
-			return None
-		orig_pf[m.group(1).strip(' ')]=m.group(2)
-	#useful info saved in pf
-	pf=dict()
-	pf['edu_college']=_split_high_edu(orig_pf.get('大学',''))
-	pf['edu_senior']=_split_low_edu(orig_pf.get('高中',''))
-	pf['edu_junior']=_split_low_edu(orig_pf.get('初中',''))
-	pf['edu_primary']=_split_low_edu(orig_pf.get('小学',''))
-	pf['hometown']=_drop_pf_extra(orig_pf.get('家乡',''),r' ')
-	pf['gender']=_get_gender(orig_pf.get('性别',''))
-	pf.update(_get_birth(orig_pf.get('生日','9999-99-99')))
-	return pf
+		orig_pf[m.group(1).strip(' ')]=m.group(2).strip(' ')
+	return orig_pf
 
 _pf_miniprog=None
 def profile_mini(content):
+	#tl or basic mini
 	if content is None:
 		return None
 	global _pf_miniprog
@@ -87,22 +77,12 @@ def profile_mini(content):
 	content=_drop_pf_extra(''.join(content),' ')
 	orig_pf=dict()
 	for m in _pf_miniprog.finditer(content):
-		orig_pf[m.group(1)]=m.group(2)
-	mini_pf=dict()
-	mini_pf['hometown']=_drop_pf_extra(orig_pf.get('hometown',''))[2:].strip(' ')
-	mini_pf.update(_get_birth(orig_pf.get('birthday','9999-99-99')))
+		orig_pf[m.group(1)]=m.group(2).strip(' ')
 	if 'birthday' in orig_pf:
-		mini_pf['gender']=_get_gender(orig_pf.get('birthday',''))
-	else:
-		mini_pf['gender']=_get_gender(orig_pf.get('gender',''))
-	edu_now=_drop_pf_extra(orig_pf.get('school',''))
-	if edu_now.find('就读于') > -1:
-		mini_pf['edu_now']=edu_now[3:].strip(' ')
-	else:
-		mini_pf['edu_now']=edu_now[1:-2].strip(' ')
-	return mini_pf
+		orig_pf['gender'],orig_pf['birthday']=orig_pf.get('birthday',',').replace('，',',').split(',')
+	return orig_pf
 
-#-----------------profile------------------
+#---@depresed----profile deep parser-----------------
 #birth and gender
 _birthprog=None
 def _get_birth(content):
@@ -136,24 +116,29 @@ def _split_high_edu(content):
 	return _split_edu(_edu_highprog,content)
 
 _edu_lowprog=None
-def _split_low_edu(content):
+def _split_low_edu(content,level):
 	global _edu_lowprog
 	if _edu_lowprog is None:
 		import re
 		_edu_lowprog=re.compile(r'(?P<name>[^-<]+)(?:-\s*(?P<year>\d+)\s*年)?')
-	return _split_edu(_edu_lowprog,content)
+	return _split_edu(_edu_lowprog,content,level)
 
-def _split_edu(prog,content):
+def _split_edu(prog,content,level=None):
 	if content is None:
 		return None
+	if level is None:
+		school_default={}
+	else:
+		school_default={'level':level}
 	schools=[]
 	for m in prog.finditer(_drop_pf_extra(content)):
-		school={}
+		school=school_default
 		for key,value in m.groupdict('').items():
 			school[key]=value.strip(' ')
 		schools.append(school)
 	return schools
 
+#-----------------profile-----------------------
 #drop extra
 def _drop_pf_extra(content,target=r' '):
 	return _sub_space(_drop_span((_drop_link(content))),target)
