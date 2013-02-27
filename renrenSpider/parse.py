@@ -62,7 +62,7 @@ def profile_detail(content):
 	#orig tag/value saved in orig_pf
 	orig_pf=dict()
 	for m in _pf_prog.finditer(content):
-		orig_pf[m.group(1).strip(' ')]=m.group(2).strip(' ')
+		orig_pf[_sub_space(m.group(1),r'')]=m.group(2).strip(' ')
 	return orig_pf
 
 _pf_miniprog=None
