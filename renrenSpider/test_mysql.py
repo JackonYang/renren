@@ -6,6 +6,11 @@ class new_mysql(repo_mysql.repo_mysql):
 		for table in self.table_name.values():
 			self.cur.execute('drop table if exists {}'.format(table))
 		self.conn.commit()
+	exceed_seq=None
+	def tag_exceed(self,rid,k,v):
+		self.exceed_seq=(rid,k,v)
+	def flush(self):
+		self.exceed_seq=None
 
 class test_repo_mysql(unittest.TestCase):
 
@@ -13,7 +18,7 @@ class test_repo_mysql(unittest.TestCase):
 		self.db=new_mysql()
 
 	def tearDown(self):
-		#self.db.clearTable()
+		self.db.clearTable()
 		self.db=None
 
 	def test_save_friendList(self):
@@ -37,9 +42,15 @@ class test_repo_mysql(unittest.TestCase):
 		self.assertEquals(self.db.save_status(stat,'02','timeout'),1)
 
 	def test_save_profile(self):
-		contents={'111111':{'gender':'m','hometown':'shan dong','birth_year':'1999','birth_month':'2','birth_day':'3','edu_now':'nwu','edu_college':{'name':'nwu','year':'2009','major':'physics'},'edu_senior':{'name':'No.2 yantai','year':'2001'},'edu_primary':{'name':'wan xiao','year':'1999'}}}
-		for rid,pf in contents.items():
-			print(self.db.save_profile(pf,rid))
+		#tag in k, tag in v, tag in ignore
+		expt=1
+		pf={'gender': '女','大学': '北学-2013年-学院<br>理工大学-2011年-生命学院<br>','qq':'303923'}
+		self.assertEquals(self.db.save_profile(pf,'22222'),expt)
+		self.assertEquals(self.db.exceed_seq,None)
+		pf_exceed={'gender': '女','大学': '北学-2013年-学院<br>理工大学-2011年-生命学院<br>','qqq':'303923'}
+		self.db.flush()
+		self.assertEquals(self.db.save_profile(pf_exceed,'111'),expt)
+		self.assertEquals(self.db.exceed_seq,('111','qqq','303923'))
 
 	def test_read_cfg(self):
 		cfg_filename='db_renren.ini'
@@ -106,15 +117,15 @@ class test_repo_mysql(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(test_repo_mysql('test_save_profile'))
 	#suite.addTest(test_repo_mysql('testGetRenrenId'))
 
 	#checked
-	#suite.addTest(test_repo_mysql('test_save_status'))
-	#suite.addTest(test_repo_mysql('test_save_friendList'))
-	#suite.addTest(test_repo_mysql('test_save_history'))
-	#suite.addTest(test_repo_mysql('test_getSearched'))
-	#suite.addTest(test_repo_mysql('test_getFriendList'))
+	suite.addTest(test_repo_mysql('test_save_status'))
+	suite.addTest(test_repo_mysql('test_save_friendList'))
+	suite.addTest(test_repo_mysql('test_save_profile'))
+	suite.addTest(test_repo_mysql('test_save_history'))
+	suite.addTest(test_repo_mysql('test_getSearched'))
+	suite.addTest(test_repo_mysql('test_getFriendList'))
 	suite.addTest(test_repo_mysql('test_tableManage'))
 	suite.addTest(test_repo_mysql('test_read_cfg'))
 

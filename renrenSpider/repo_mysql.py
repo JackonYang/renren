@@ -48,12 +48,11 @@ class repo_mysql:
 		sql_meth=getattr(self,'_sql_{}'.format(pageStyle))
 		sqls=sql_meth(record,rid)
 		n=0
-		if run_info is not None:
-			n -= 1
-			sqls.append(self.sql_history(rid,pageStyle,run_info,len(record)))
 		try:
 			for sql in sqls:
 				n += self.cur.execute(sql)
+			if run_info is not None:#write log 
+				self.cur.execute(self.sql_history(rid,pageStyle,run_info,len(record)))
 			self.conn.commit()
 		except Exception as e:
 			print(e)
@@ -141,14 +140,22 @@ class repo_mysql:
 			return []
 		if pageStyle not in self.table_name:
 			self._init_table(pageStyle)
-		#sql_profile
-		key=['gender','hometown','birth_year','birth_month','birth_day','edu_now']
-		val_pf='renrenId1={}'.format(rid)
-		for k in key:
-			val_pf += ",{}='{}'".format(k,record.get(k,''))
-		sql_pf="insert into {} set {}".format(self.table_name[pageStyle],val_pf)
-		#sql_edu_high
-		return sql_pf
+		pf_map=get_cfg_dict('profile_map',has_default=False)
+		pf_ignore=pf_map.pop('ignore').split(',')
+		#construct sql 
+		pfs="renrenId1='{}'".format(rid)
+		for k,v in record.items():
+			if k in pf_map.keys():
+				pfs += ",{}='{}'".format(pf_map[k],v)
+			elif k in pf_map.values():
+				pfs += ",{}='{}'".format(k,v)
+			elif k in pf_ignore:
+				#print('ignore {}'.format(k))
+				pass
+			else:
+				self.tag_exceed(rid,k,v)
+		sql_pf="insert into {} set {}".format(self.table_name[pageStyle],pfs)
+		return [sql_pf]
 
 	def count(self,n,pageStyle):
 		if pageStyle == 'friendList':
@@ -159,3 +166,6 @@ class repo_mysql:
 			return n
 		else:
 			return -1
+
+	def tag_exceed(self,rid,k,v):
+		print('pf tag exceed. tag={},renrenId={},value={}'.format(k,rid,v))
