@@ -37,15 +37,25 @@ class Test_browser(unittest.TestCase):
 	def test_profile(self):
 		dl=new_browser()
 		dl.login('test','test')
-		renrenIds={'233330051':{'edu_college': {('北京中医药大学', '2013', '东方学院')}, 'edu_primary': {('安仁县洋际乡d岗小学',)}, 'hometown': '内蒙古 包头市', 'birth_month': '2', 'edu_senior': {('北京二十一中', '2000')}, 'edu_junior': {('北京一六六中', '1995')}, 'gender': 'f', 'birth_day': '13', 'birth_year': '1970'},#one value for each item.
-				'233330052':{'edu_college': {('北京中医药大学', '2013', '东方学院'), ('北京理工大学', '2011', '生命科学与技术学院六院')}, 'edu_primary': {('桐乡市大麻镇大YFDSF小学', '1996'), ('字段非', '2000')}, 'hometown': '内蒙古 呼伦贝尔市', 'birth_month': '2', 'edu_senior': {('北京二十一中', '2000'), ('北京二十五中', '1997')}, 'edu_junior': {('北京二十二中', '1998'), ('北京一六六中', '1995')}, 'gender': 'm', 'birth_day': '13', 'birth_year': '1998'},#two value for each item
-				'233330055':{'edu_college': set(), 'edu_primary': set(), 'hometown': '内蒙古 包头市', 'birth_month': '2', 'edu_senior': set(), 'edu_junior': set(), 'gender': 'f', 'birth_day': '13', 'birth_year': '1970'},#detail. basic info only
-				'294126602':{'edu_college': None, 'edu_primary': None, 'hometown': '', 'birth_month': None, 'edu_senior': None, 'edu_junior': None, 'gender': None, 'birth_day': None, 'birth_year': None},#empty
-				'240303471':{'hometown': '山东 烟台市', 'birth_month': None, 'gender': 'f', 'birth_day': None, 'edu_now': 'Fachhochschule Aachen', 'birth_year': None},#basic, full info.
-				'223981104':{'hometown': '', 'birth_month': None, 'gender': None, 'birth_day': None, 'edu_now': '', 'birth_year': None},#tl,no item
-				'271600917':{'hometown': '陕西 西安市', 'birth_month': '5', 'gender': 'm', 'birth_day': '16', 'edu_now': '重庆邮电大学', 'birth_year': None}#tl, full
-				}
-		#1 item/2 item/0 edu and 0 work/all empty/not available(tl,basic)
+		renrenIds={
+			# detail, full items
+			'233330051':{'所在城市': '克拉玛依市',
+			'QQ':'309097050','MSN':'','手机号':'15191895258','个人网站':'',
+			'生日': '1970 年 2 月 13 日<!-- 水瓶座 --> 水瓶座', '星座': '水瓶座',
+			'公司': 'AMD','时间': '1998年 - 10月 至 1993- 11月',
+			'家乡':'内蒙古 包头市','性别': '女', '等级': '22级',
+			'大学': '北京中医药大学 - 2013年- 东方学院<br>',
+			'高中': '北京二十一中 - 2000年','小学': '安仁县洋际乡d岗小学',
+			'初中': '北京一六六中 - 1995年', '中专技校': ''},
+			# basic, full items
+			'240303471':{'gender':'她是女生',
+			'school':'在Fachhochschule Aachen读书','hometown':'来自山东 烟台市'},
+			# tl, empty
+			'223981104':{},
+			# tl, full
+			'271600917':{'hometown': '来自 陕西 西安市','address': '现居 重庆',
+			'school':'就读于重庆邮电大学','birthday': '5月16日', 'gender': '男生 '}
+			}
 		for rid,expt in renrenIds.items():
 			details,run_info=dl.profile(rid)
 			self.assertEquals(details,expt)
