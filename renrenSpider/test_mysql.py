@@ -3,7 +3,7 @@ import repo_mysql
 
 class new_mysql(repo_mysql.repo_mysql):
 	def clearTable(self):
-		for table in self.table.values():
+		for table in self.table_name.values():
 			self.cur.execute('drop table if exists {}'.format(table))
 		self.conn.commit()
 
@@ -13,7 +13,7 @@ class test_repo_mysql(unittest.TestCase):
 		self.db=new_mysql()
 
 	def tearDown(self):
-		self.db.clearTable()
+		#self.db.clearTable()
 		self.db=None
 
 	def test_save_friendList(self):
@@ -37,10 +37,22 @@ class test_repo_mysql(unittest.TestCase):
 		self.assertEquals(self.db.save_status(stat,'02','timeout'),1)
 
 	def test_save_profile(self):
-		pfs={'profile_detail':{'大学': '西北大学- 2011年- 物理学系<br>', '高中': '阳光中学- 2008年', '初中': '西安交通大学阳光中学- 2005年'},'profile_detail':{'小学': '烟台市芝罘区新海阳小学- 1995年', '家乡': '山东 烟台市', '生日': ' 1989 年3 月 11 日双鱼座', '高中': '烟台二中- 2004年', '初中': '烟台二中- 2000年', '个性域名': 'wangzhongzhe.renren.com', '性别': '男', '大学': '西北大学- 2007年- 物理学系<br>山东大学- 2012年- 电气工程学院<br>'},'profile_mini':{'gender': '女生', 'location': '烟台市'}}
-		rids=['111','222','333']
-		for rid,pf in zip(rids,pfs.items()):
-			print('{},{}'.format(rid,self.db.profile(rid,pf[1],pf[0])))
+		contents={'111111':{'gender':'m','hometown':'shan dong','birth_year':'1999','birth_month':'2','birth_day':'3','edu_now':'nwu','edu_college':{'name':'nwu','year':'2009','major':'physics'},'edu_senior':{'name':'No.2 yantai','year':'2001'},'edu_primary':{'name':'wan xiao','year':'1999'}}}
+		for rid,pf in contents.items():
+			print(self.db.save_profile(pf,rid))
+
+	def test_read_cfg(self):
+		cfg_filename='db_renren.ini'
+		section_names={'friendList':{'renrenid2': 'varchar(15) NOT NULL'},'not_exist':None}
+		default_value=repo_mysql.get_cfg_dict('DEFAULT')
+		for section_name,expt in section_names.items():
+			# no default value
+			self.assertEquals(repo_mysql.get_cfg_dict(section_name,False),expt)
+			# has default value
+			res=repo_mysql.get_cfg_dict(section_name)
+			if res is not None:
+				expt.update(default_value)
+			self.assertEquals(res,expt)
 
 	def test_getSearched(self):
 		stat1={'81': {'cur_name': 'name1', 'timestamp': '2012-01-08 00:58', 'cur_content': "'蛋舍k歌中'", 'orig_content': None, 'orig_name': None, 'orig_owner': None, 'renrenId1': '71'}}
@@ -94,16 +106,17 @@ class test_repo_mysql(unittest.TestCase):
 
 if __name__=='__main__':
 	suite=unittest.TestSuite()
-	#suite.addTest(test_repo_mysql('test_profile'))
+	#suite.addTest(test_repo_mysql('test_save_profile'))
 	#suite.addTest(test_repo_mysql('testGetRenrenId'))
 
 	#checked
-	suite.addTest(test_repo_mysql('test_save_status'))
-	suite.addTest(test_repo_mysql('test_save_friendList'))
+	#suite.addTest(test_repo_mysql('test_save_status'))
+	#suite.addTest(test_repo_mysql('test_save_friendList'))
+	#suite.addTest(test_repo_mysql('test_save_history'))
+	#suite.addTest(test_repo_mysql('test_getSearched'))
+	#suite.addTest(test_repo_mysql('test_getFriendList'))
 	suite.addTest(test_repo_mysql('test_tableManage'))
-	suite.addTest(test_repo_mysql('test_save_history'))
-	suite.addTest(test_repo_mysql('test_getSearched'))
-	suite.addTest(test_repo_mysql('test_getFriendList'))
+	suite.addTest(test_repo_mysql('test_read_cfg'))
 
 	runner=unittest.TextTestRunner()
 	runner.run(suite)

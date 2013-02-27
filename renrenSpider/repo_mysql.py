@@ -2,9 +2,23 @@ import pymysql
 
 cfg_filename='db_renren.ini'
 
+def get_cfg_dict(section_name,has_default=True):
+	global cfg_filename
+	import configparser
+	config=configparser.ConfigParser()
+	config.read(cfg_filename)
+	try:
+		cfg=dict(config[section_name].items())
+	except KeyError:
+		return None
+	if not has_default:
+		for key in config['DEFAULT'].keys():
+			del(cfg[key])
+	return cfg
+
 class repo_mysql:
 	def __init__(self,table_pre='test'):
-		self.table={}
+		self.table_name={}
 		self.table_pre=table_pre
 		self.conn=self._getConn()
 		self.cur=self.conn.cursor()
@@ -22,25 +36,9 @@ class repo_mysql:
 		return None if input error"""
 		return self._save_process('status',record,rid,run_info)
 
-	def save_profile(self,record,rid):
+	def save_profile(self,record,rid,run_info=None):
 		"""save profile and return rows affected.return None if input error"""
-		if not isinstance(record,dict):
-			return None
-		if record == {}:
-			return 0
-		pageStyle='profile'
-		val_pf="renrenId1='{}'".format(rid)
-		for tag,value in record.items():
-			val_pf += ",{}='{}'".format(pf_cols.get(tag,'extra'),value)
-		sql_pf='insert into {} set {}'.format(self.tempTable[pfStyle],val_pf)
-		try:
-			n=self.cur.execute(sql_pf)
-		except Exception as e:
-			print(sql_pf)
-			return None
-		else:
-			self.conn.commit()
-			return n
+		return self._save_process('profile',record,rid,run_info)
 
 	def _save_process(self,pageStyle,record,rid,run_info):
 		"""save record and return rows affected.save nothing if empty.
@@ -65,7 +63,7 @@ class repo_mysql:
 	def getSearched(self,pageStyle):
 		#only success download is logged
 		res=set()
-		self.cur.execute("SELECT rid FROM {} where page_style='{}'".format(self.table['history'],pageStyle))
+		self.cur.execute("SELECT rid FROM {} where page_style='{}'".format(self.table_name['history'],pageStyle))
 		for item in self.cur.fetchall():
 			res.add(item[0])
 		return res
@@ -75,67 +73,57 @@ class repo_mysql:
 
 	def _getRenrenId(self,col,renrenId):
 		pageStyle='friendList'
-		if pageStyle not in self.table:
+		if pageStyle not in self.table_name:
 			self._init_table(pageStyle)
 		target=str(col)
 		where=str(col%2+1)
 		res=set()
-		self.cur.execute("SELECT renrenId{} FROM {} where renrenId{}={}".format(target,self.table[pageStyle],where,renrenId))
+		self.cur.execute("SELECT renrenId{} FROM {} where renrenId{}={}".format(target,self.table_name[pageStyle],where,renrenId))
 		for item in self.cur.fetchall():
 			res.add(item[0])
 		return res
 
-	def _init_table(self,pageStyle):
-		self.cur.execute(self.sql_create_table(pageStyle))
+	def _init_table(self,table):
+		cols=get_cfg_dict(table)
+		if cols is None:
+			return None
+		self.table_name[table]='{}_{}'.format(self.table_pre,table)
+		col=",".join(["{} {}".format(k,v) for k, v in cols.items()])
+		sql_create="CREATE TABLE if not exists {} ({}) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;"\
+				.format(self.table_name[table],col)
+		self.cur.execute(sql_create)
 		self.conn.commit()
-		self.table[pageStyle]='{}_{}'.format(self.table_pre,pageStyle)
 
 	def _getConn(self):
-		import configparser
-		config=configparser.ConfigParser()
-		config.read(cfg_filename)
-		paras=['user','passwd','db','host','port','charset']
-		db_info={}
-		for key in paras:
-			db_info[key]=config.get('connect',key,fallback=None)
-		db_info['port']=int(db_info['port'])
-		return pymysql.connect(**db_info)
-
-	def sql_create_table(self,pageStyle):
-		import configparser
-		config=configparser.ConfigParser()
-		config.read(cfg_filename)
-		if pageStyle in config.sections():
-			col=''
-			for key in config[pageStyle]:
-				col += '{} {},'.format(key,config[pageStyle][key])
-			col = col.rstrip(',')
-			return "CREATE TABLE if not exists {}_{} ({}) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci;".format(self.table_pre,pageStyle,col)
-		else:
-			return None
+		connect_info=get_cfg_dict('connect',False)
+		key_type={'port':int}
+		for key,t in key_type.items():
+			if key in connect_info:
+				connect_info[key]=t(connect_info[key])
+		return pymysql.connect(**connect_info)
 
 	def sql_history(self,rid,pageStyle,run_info,n_record):
-		return "insert into {} (rid,page_style,run_info,n_record) values('{}','{}','{}',{})".format(self.table['history'],rid,pageStyle,run_info,n_record)
+		return "insert into {} (rid,page_style,run_info,n_record) values('{}','{}','{}',{})".format(self.table_name['history'],rid,pageStyle,run_info,n_record)
 
 	def _sql_friendList(self,record,rid):
-		if record == {}:
+		if len(record) == 0:
 			return []
 		pageStyle='friendList'
-		if pageStyle not in self.table:
+		if pageStyle not in self.table_name:
 			self._init_table(pageStyle)
-		if 'name' not in self.table:
+		if 'name' not in self.table_name:
 			self._init_table('name')
 		val_relation="'),('{}','".format(rid).join(record.keys())
-		sql_relation="insert into {} (renrenId1,renrenId2) values ('{}','{}')".format(self.table[pageStyle],rid,val_relation)
+		sql_relation="insert into {} (renrenId1,renrenId2) values ('{}','{}')".format(self.table_name[pageStyle],rid,val_relation)
 		val_name=str(set(record.items())).strip('{}')
-		sql_name='insert into {} (renrenId1,name) values {}'.format(self.table['name'],val_name)
+		sql_name='insert into {} (renrenId1,name) values {}'.format(self.table_name['name'],val_name)
 		return [sql_relation,sql_name]
 
 	def _sql_status(self,record,rid=None):
 		pageStyle='status'
 		if record == {}:
 			return []
-		if pageStyle not in self.table:
+		if pageStyle not in self.table_name:
 			self._init_table(pageStyle)
 		sqls=[]
 		for statusId,stat in record.items():
@@ -144,13 +132,30 @@ class repo_mysql:
 				if value is not None:
 					value=value.replace("\\","\\\\").replace("'","\\'").rstrip('\\')#format ' and \ 
 				val_stat += ",{}='{}'".format(tag,value)
-			sqls.append("insert into {} set {}".format(self.table[pageStyle],val_stat))
+			sqls.append("insert into {} set {}".format(self.table_name[pageStyle],val_stat))
 		return sqls
+
+	def _sql_profile(self,record,rid=None):
+		pageStyle='profile'
+		if len(record) == 0:
+			return []
+		if pageStyle not in self.table_name:
+			self._init_table(pageStyle)
+		#sql_profile
+		key=['gender','hometown','birth_year','birth_month','birth_day','edu_now']
+		val_pf='renrenId1={}'.format(rid)
+		for k in key:
+			val_pf += ",{}='{}'".format(k,record.get(k,''))
+		sql_pf="insert into {} set {}".format(self.table_name[pageStyle],val_pf)
+		#sql_edu_high
+		return sql_pf
 
 	def count(self,n,pageStyle):
 		if pageStyle == 'friendList':
 			return int(n/2)
 		elif pageStyle == 'status':
+			return n
+		elif pageStyle == 'profile':
 			return n
 		else:
 			return -1
