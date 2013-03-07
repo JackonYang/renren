@@ -17,9 +17,18 @@ kword=dict()
 for timestamp,status in getStatus('233330059').items():
 	for word in jieba.cut(status,cut_all=False):
 		try:
-			kword[word]=kword.get(word,[])
-			kword[word].append(timestamp)
+			# timestamp to be set() to avoid repeat word in the same status
+			kword[word]=kword.get(word,set())
+			kword[word].add(timestamp)
 		except AttributeError:
 			print(u'{},{}'.format(timestamp,word))
 
-print(len(kword))
+freq=[]
+for k,v in kword.items():
+	freq.append((len(v),k))
+
+freq.sort()
+
+for k,v in freq:
+	print(u'{},{}'.format(k,v))
+#print(len(kword))
