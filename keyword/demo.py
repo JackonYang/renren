@@ -13,5 +13,13 @@ def getStatus(rid,table_pre='orig_renren'):
 	conn.close()
 	return res
 
-for k,v in getStatus('233330059').items():
-	print(u'{}: {}'.format(k,v))
+kword=dict()
+for timestamp,status in getStatus('233330059').items():
+	for word in jieba.cut(status,cut_all=False):
+		try:
+			kword[word]=kword.get(word,[])
+			kword[word].append(timestamp)
+		except AttributeError:
+			print(u'{},{}'.format(timestamp,word))
+
+print(len(kword))
