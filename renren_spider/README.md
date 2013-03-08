@@ -1,9 +1,12 @@
 design of renrenSpider
-====================
+======================
 
-抓取并在本地存储社交网络数据，数据源：[www.renren.com](www.renren.com)
+人人网信息抓取与本地存储，数据源：[www.renren.com](www.renren.com)
 
-renren spider 直接依赖于 browser 和 repo。repo 可以选择 database, file etc
+`renren_spider` 直接依赖于 `browser` 和 `repo`。
+现已支持`repo`：mysql, file。
+新增`repo`只需根据 interface-repo 接口规范实现相关接口，
+创建`spider`实例前调用`set_repo(module_name:str)`即可。
 
 * browser:抓取页面并返回 record 和 运行信息（timecost or error info)。<br>
 * repo: 本地保存 record 和 download history，提供读写接口。
@@ -26,14 +29,10 @@ USAGE
 
 * ubuntu/windows
 * python3.2
-* mysql
-* pymysql: [installation package link](https://github.com/petehunt/PyMySQL)
-
 
 #### 参数配置：
 
 1. 在 `getMyNetxxx.py` 文件开始处配置 人人网的登录帐号和密码。
-2. 在 `db_renren.ini` 中配置数据库信息，通常只需修改 `host`,`user`,`passwd`
 
 INTERFACE
 ---------
@@ -42,8 +41,9 @@ INTERFACE
 * `pageStyle(renrenId) --> (record:dict,timecost:str)` 下载 pageStyle 页面的信息字段。
 * `login(user,passwd) --> (renrenId,info)` 社交网站登录
 
-#### repo-database
-* `save_pageStyle(record,rid,run_info) --> nItemSave` 保存 record 和 history
+#### repo
+* `save_pageStyle(record, rid, run_info) --> nItemSave` 保存 record 和 history
+	pageStyle list: friendList, status
 * `getSearched(pageStyle) --> rids:set`
 * `getFriendList(rid) --> friendsId:set`
 
@@ -79,6 +79,15 @@ design of class
 _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 
 ###  repo-mysql：
+
+环境依赖:
+
+* mysql, 
+* pymysql: [installation package link](https://github.com/petehunt/PyMySQL)
+
+配置:
+
+2. 在 `db_renren.ini` 中配置数据库信息，通常只需修改 `host`,`user`,`passwd`
 
 以 mysql 作为本地存储介质。
 
