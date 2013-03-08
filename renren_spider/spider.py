@@ -2,9 +2,21 @@ import time
 import logging
 
 import browser 
-import repo_mysql 
-import parse
+# import parse
 
+default_storage=None
+importlib=None
+def set_repo(mode='repo_mysql'):
+	global importlib
+	if importlib is None:
+		import importlib
+	global default_storage
+	try:
+		default_storage=getattr(importlib.__import__(mode),mode)
+	except AttributeError:
+		print("class name in the module should be: {}".format(mode))
+	except ImportError:
+		print("module name '{}' not found".format(mode))
 
 def runlog(tt='run'):
 		logfile='run.log'
@@ -21,8 +33,10 @@ pf_sleep=2
 class spider:
 	def __init__(self,repo_name='test',user='yyttrr3242342@163.com',passwd=None):
 		self.dl=browser.browser(user,passwd)
-		self.repo=repo_mysql.repo_mysql(repo_name)
-
+		if default_storage is None:
+			set_repo()
+		self.repo=default_storage(repo_name)
+		print('storage mode: {}'.format(self.repo))
 		self.log=runlog('spider')
 
 		self.searched=dict()
@@ -38,7 +52,7 @@ class spider:
 		if pageStyle not in self.searched:
 			self.searched[pageStyle]=self.repo.getSearched(pageStyle)
 		if orig_id not in self.searched['friendList']:
-			self.seq_process(orig_id,pageStyle)
+			self.seq_process(orig_id,'friendList')
 		friends=self.repo.getFriendList(orig_id)
 		toSearch=(friends|{orig_id})-self.searched[pageStyle]
 		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',orig_id,len(toSearch),len(friends)))
