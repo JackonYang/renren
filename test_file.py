@@ -14,7 +14,7 @@ class new_file(repo_file.repo_file):
 			filenames.append('{}_{}.p'.format(self.name_pre,pageStyle))
 		return filenames
 
-class test_repo_mysql(unittest.TestCase):
+class test_repo_file(unittest.TestCase):
 
 	def setUp(self):
 		self.repo=new_file()
@@ -62,6 +62,10 @@ class test_repo_mysql(unittest.TestCase):
 		self.assertEquals(self.repo2.getSearched('friendList'),expt_friendList)
 		self.assertEquals(self.repo2.getSearched('status'),expt_status)
 
+		f=self.repo2.file_to_clear()
+		self.repo2=None
+		clear(f)
+
 	def test_getFriendList(self):
 		names=[
 			({'266754031':'王瑛','27331442':'Ethan.王哲','240303471':'刘洋English','239439171':'','222439171':'eeee','324134134':'～！@#￥%……&*（）'},'100032'),
@@ -76,13 +80,17 @@ class test_repo_mysql(unittest.TestCase):
 		for name,rid in names:
 			self.assertEquals(self.repo2.getFriendList(rid),set(name.keys()))
 
+		f=self.repo2.file_to_clear()
+		self.repo2=None
+		clear(f)
+
 if __name__=='__main__':
 	suite=unittest.TestSuite()
 
-	suite.addTest(test_repo_mysql('test_save_status'))
-	suite.addTest(test_repo_mysql('test_save_friendList'))
-	suite.addTest(test_repo_mysql('test_getSearched'))
-	suite.addTest(test_repo_mysql('test_getFriendList'))
+	suite.addTest(test_repo_file('test_save_status'))
+	suite.addTest(test_repo_file('test_save_friendList'))
+	suite.addTest(test_repo_file('test_getSearched'))
+	suite.addTest(test_repo_file('test_getFriendList'))
 
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
