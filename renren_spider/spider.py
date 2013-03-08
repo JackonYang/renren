@@ -13,6 +13,7 @@ def set_repo(mode='repo_mysql'):
 	global default_storage
 	try:
 		default_storage=getattr(importlib.__import__(mode),mode)
+		print("default repo changed to {}".format(mode))
 	except AttributeError:
 		print("class name in the module should be: {}".format(mode))
 	except ImportError:
@@ -36,7 +37,6 @@ class spider:
 		if default_storage is None:
 			set_repo()
 		self.repo=default_storage(repo_name)
-		print('storage mode: {}'.format(self.repo))
 		self.log=runlog('spider')
 
 		self.searched=dict()
