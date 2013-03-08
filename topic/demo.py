@@ -1,8 +1,12 @@
 #encoding=utf-8
-import pymysql
 import jieba
+import jieba.posseg as pseg
 
+pymysql=None
 def getStatus(rid,table_pre='orig_renren'):
+	global pymysql
+	if pymysql is None:
+		import pymysql
 	tablename='{}_{}'.format(table_pre,'status')
 	conn=pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='Kunth123', db='data_bang',charset='utf8')
 	cur=conn.cursor()
@@ -22,9 +26,9 @@ def drop_ignore(data):
 			# 2000 up
 			u'谁',u'一',u'吃',u'这么',u'一下',u'什么',u'把',u'再',u'小',u'得',u'大',u'如果',u'手机',u'多',u'我们',u'没',u'那',u'会',u'生活',u'还是',u'大笑',u'没有',u'个',u'明天',u'事',u'知道',u'着',u'过',u'等',u'不是',u'才',u'里',u'真的',u'这个',u'终于',u'比',u'他',u'怎么',u'呢',u'来',u'这是',u'大家',u'看',u'吧',u'下',u'走',u'想',u'中',u'请',u'对',u'已经',u'能',u'同学',u'看到',u'这样',
 			# more
-			u'做',u'跟',u'用',u'从',u'找',u'月',u'但是',u'开始',u'然后',u'突然',u'以后',u'还有',u'貌似',u'不用',u'应该',u'感觉',u'发现',u'需要',u'刚刚',
+			u'做',u'跟',u'用',u'从',u'找',u'月',u'但是',u'开始',u'然后',u'以后',u'还有',u'貌似',u'不用',u'应该',u'感觉',u'发现',u'需要',u'各种',
 			# time
-			u'早晨',u'中午',u'上午',u'下午',u'晚上',u'今天',u'今天下午',u'今天上午'
+			u'早晨',u'中午',u'上午',u'下午',u'晚上',u'今天',u'今天下午',u'今天上午',u'每天',u'刚刚',u'突然',u'经常'
 			}
 	for k in _ignore & set(data.keys()):
 		data.pop(k)
@@ -58,6 +62,27 @@ def extract_keyword(status):
 				kword[word]={timestamp}
 	_fix_little_age(kword)
 	drop_ignore(kword)
+	return kword
+
+def get_keyword(status):
+	kword=dict()
+	for timestamp,content in status.items():
+		words = pseg.cut(content)
+		for w in words:
+			if w.flag in kword:
+				kword[w.flag].add(w.word)
+			else:
+				kword[w.flag]={w.word}
+	for flag,word in kword.items():
+		print(u'{}:{}'.format(flag,word))
+	print(kword.keys())
+			# timestamp to be set() to avoid repeat word in the same status
+			#if word in kword:
+			#	kword[word].add(timestamp)
+			#else:
+			#	kword[word]={timestamp}
+	#_fix_little_age(kword)
+	#drop_ignore(kword)
 	return kword
 
 def show_all_keyword(friend):
@@ -140,5 +165,6 @@ if __name__ == '__main__':
 	# plot_tuple(data)
 	rid='233330059'
 	#rid = '232279547'
-	show_kword(rid)
-
+	#show_kword(rid)
+	status=getStatus(rid)
+	get_keyword(status)
