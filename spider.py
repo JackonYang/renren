@@ -48,6 +48,7 @@ class spider:
 			print('error in getNet1. orig_id={}'.format(orig_id))
 			return None
 		if orig_id not in self.searched[pageStyle]:
+			print('{} get net1 of {}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id))
 			self.seq_process(orig_id,pageStyle)
 		return self.repo.getFriendList(orig_id)
 

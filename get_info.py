@@ -2,7 +2,7 @@ import sys
 import spider
 import mytools
 
-cfg_filename='config_spider.ini'
+cfg_filename='config/spider.ini'
 
 config=None
 def get_cfg_dict(section_name,has_default=True):
@@ -73,6 +73,8 @@ if __name__ == '__main__':
 		meth=getattr(spider.spider,sys.argv[1])
 	except AttributeError:
 		print('method {} not definded. method list: {}'.format(sys.argv[1],pub_meth(spider.spider)))
+	except IndexError:
+		print('input error. expect: python3 get_info method renrenId, where method is necessary')
 	else:
 		if len(sys.argv) == 2:
 			orig_id=None
