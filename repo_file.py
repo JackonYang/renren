@@ -9,7 +9,7 @@ class repo_file:
 		self.last_saved=time.time()
 
 	def __del__(self):
-		self.save()
+		self.save('__del__')
 
 	def load(self, pageStyle):
 		filename='{}_{}.p'.format(self.name_pre, pageStyle)
@@ -19,13 +19,13 @@ class repo_file:
 		except IOError:
 				self.data_repo[pageStyle]=dict()
 
-	def save(self):
+	def save(self,orig=None):
 		for pageStyle, record in self.data_repo.items():
 			filename='{}_{}.p'.format(self.name_pre, pageStyle)
 			with open(filename, 'wb') as f:
 				pickle.dump(record, f)
 				self.last_saved = time.time()
-				#print('save in {}'.format(filename))
+				#print('save in {}, called by {}'.format(filename,orig))
 
 	def save_friendList(self, record, rid, run_info=None):
 		"""save record and return rows affected.save nothing if empty.
@@ -50,7 +50,7 @@ class repo_file:
 		# save to file every n second
 		global save_period
 		if time.time() - self.last_saved > save_period:
-			self.save()
+			self.save('auto')
 		return len(record)
 
 	def getSearched(self, pageStyle):
