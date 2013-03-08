@@ -28,7 +28,7 @@ class new_browser(browser.browser):
 		self.sent_times=dict()
 		#print('data flushed')
 
-class Test_browser(unittest.TestCase):
+class test_browser(unittest.TestCase):
 	def setUp(self):
 		pass
 	def tearDown(self):
@@ -224,20 +224,20 @@ if __name__=='__main__':
 	suite=unittest.TestSuite()
 
 	#TODO:no test data file
-	#suite.addTest(Test_browser('test_is_safety_page'))
+	#suite.addTest(test_browser('test_is_safety_page'))
 
 	#checked
-	#suite.addTest(Test_browser('test_login'))#login
-	#suite.addTest(Test_browser('test_download'))#login and download
-	suite.addTest(Test_browser('test_new_browser'))
+	#suite.addTest(test_browser('test_login'))#login
+	#suite.addTest(test_browser('test_download'))#login and download
+	suite.addTest(test_browser('test_new_browser'))
 
 	#private method
-	suite.addTest(Test_browser('test_iter_page'))
-	suite.addTest(Test_browser('test_iter_page_timeout'))
+	suite.addTest(test_browser('test_iter_page'))
+	suite.addTest(test_browser('test_iter_page_timeout'))
 	#interface
-	suite.addTest(Test_browser('test_friendList'))
-	suite.addTest(Test_browser('test_status'))
-	suite.addTest(Test_browser('test_profile'))
+	suite.addTest(test_browser('test_friendList'))
+	suite.addTest(test_browser('test_status'))
+	suite.addTest(test_browser('test_profile'))
 	
 	runner=unittest.TextTestRunner()
 	runner.run(suite)

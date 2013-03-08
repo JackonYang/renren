@@ -2,7 +2,7 @@ import unittest
 import parse
 from browser import browser
 
-class Test_parse(unittest.TestCase):
+class test_parse(unittest.TestCase):
 
 	def setUp(self):
 		pass
@@ -202,20 +202,22 @@ if __name__=='__main__':
 	suite=unittest.TestSuite()
 
 	#checked
-	suite.addTest(Test_parse('test_friendList'))#full test
-	suite.addTest(Test_parse('test_profile_detail'))#full test
-	suite.addTest(Test_parse('test_profile_mini'))#full test
+	runner=unittest.TextTestRunner()
+	runner.run(suite)
+	suite.addTest(test_parse('test_friendList'))#full test
+	suite.addTest(test_parse('test_profile_detail'))#full test
+	suite.addTest(test_parse('test_profile_mini'))#full test
 	#private method
-	#suite.addTest(Test_parse('test_get_birth'))#full test
-	#suite.addTest(Test_parse('test_get_gender'))#full test
-	#suite.addTest(Test_parse('test_split_high_edu'))#full test
-	#suite.addTest(Test_parse('test_split_low_edu'))#full test
-	suite.addTest(Test_parse('test_sub_space'))#full test
-	#suite.addTest(Test_parse('test_drop_link'))
-	#suite.addTest(Test_parse('test_drop_pf_extra'))
-	#suite.addTest(Test_parse('test_drop_href'))
-	#suite.addTest(Test_parse('test_drop_span'))
-	#suite.addTest(Test_parse('test_drop_rrurl'))
-	#suite.addTest(Test_parse('test_split_owner'))
+	#suite.addTest(test_parse('test_get_birth'))#full test
+	#suite.addTest(test_parse('test_get_gender'))#full test
+	#suite.addTest(test_parse('test_split_high_edu'))#full test
+	#suite.addTest(test_parse('test_split_low_edu'))#full test
+	suite.addTest(test_parse('test_sub_space'))#full test
+	#suite.addTest(test_parse('test_drop_link'))
+	#suite.addTest(test_parse('test_drop_pf_extra'))
+	#suite.addTest(test_parse('test_drop_href'))
+	#suite.addTest(test_parse('test_drop_span'))
+	#suite.addTest(test_parse('test_drop_rrurl'))
+	#suite.addTest(test_parse('test_split_owner'))
 	runner=unittest.TextTestRunner()
 	runner.run(suite)
