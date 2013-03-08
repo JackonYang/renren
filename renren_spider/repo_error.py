@@ -1,0 +1,2 @@
+class somethong:
+	pass
