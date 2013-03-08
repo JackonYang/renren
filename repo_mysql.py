@@ -1,6 +1,6 @@
 import pymysql
 
-cfg_filename='db_renren.ini'
+cfg_filename='config/mysql.ini'
 
 config=None
 def get_cfg_dict(section_name,has_default=True):
