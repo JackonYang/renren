@@ -1,8 +1,6 @@
 import time
 import logging
-
 import browser 
-# import parse
 
 default_storage=None
 importlib=None
@@ -30,7 +28,6 @@ def runlog(tt='run'):
 		return logger
 
 pf_sleep=2
-
 class spider:
 	def __init__(self,repo_name='test',user='yyttrr3242342@163.com',passwd=None):
 		self.dl=browser.browser(user,passwd)
@@ -41,45 +38,43 @@ class spider:
 
 		self.searched=dict()
 		self.searched['friendList']=self.repo.getSearched('friendList')
-		#self.searched['status']=self.repo.getSearched('status')
-		#self.searched['profile']={}#self.repo.getSearched('profile')
 
 	def login(self):
 		return self.dl.login()
+
+	def getNet1(self,orig_id):
+		pageStyle='friendList'
+		if not isinstance(orig_id,str):
+			print('error in getNet1. orig_id={}'.format(orig_id))
+			return None
+		if orig_id not in self.searched[pageStyle]:
+			self.seq_process(orig_id,pageStyle)
+		return self.repo.getFriendList(orig_id)
+
+	def getNet2(self,orig_id='410941086'):
+		pageStyle='friendList'
+		friends=self.getNet1(orig_id)
+		toSearch=friends-self.searched[pageStyle]
+		print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id,len(toSearch),len(friends)))
+		self.seq_process(toSearch,pageStyle)
 
 	def getStatus_friend(self,orig_id='410941086'):
 		pageStyle='status'
 		if pageStyle not in self.searched:
 			self.searched[pageStyle]=self.repo.getSearched(pageStyle)
-		if orig_id not in self.searched['friendList']:
-			self.seq_process(orig_id,'friendList')
-		friends=self.repo.getFriendList(orig_id)
+		friends=self.getNet1(orig_id)
 		toSearch=(friends|{orig_id})-self.searched[pageStyle]
-		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' status',orig_id,len(toSearch),len(friends)))
-		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' status',orig_id,len(toSearch),len(friends)))
+		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' status',orig_id,len(toSearch),len(friends)+1))
 		self.seq_process(toSearch,pageStyle)
 
 	def getProfile_friend(self,orig_id='410941086'):
 		pageStyle='profile'
 		if pageStyle not in self.searched:
 			self.searched[pageStyle]=self.repo.getSearched(pageStyle)
-		if orig_id not in self.searched['friendList']:
-			self.seq_process(orig_id,pageStyle)
-		friends=self.repo.getFriendList(orig_id)
+		friends=self.getNet1(orig_id)
 		toSearch=(friends|{orig_id})-self.searched[pageStyle]
-		self.log.info('{} of {},toSearch/total:{}/{}'.format('friends\' profile',orig_id,len(toSearch),len(friends)))
-		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' profile',orig_id,len(toSearch),len(friends)))
+		print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' profile',orig_id,len(toSearch),len(friends)+1))
 		self.seq_process(toSearch,pageStyle)
-
-	def getNet2(self,orig_id='410941086'):
-		pageStyle='friendList'
-		if orig_id not in self.searched[pageStyle]:
-			self.seq_process(orig_id,pageStyle)
-		friends=self.repo.getFriendList(orig_id)
-		toSearch=friends-self.searched[pageStyle]
-		self.log.info('get net2 of {},toSearch/total:{}/{}'.format(orig_id,len(toSearch),len(friends)))
-		print('{} get net2 of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id,len(toSearch),len(friends)))
-		self.seq_process(toSearch,'friendList')
 
 	def seq_process(self,toSearch,pageStyle):
 		"""download and save record of `toSearch` in target pageStyle"""
