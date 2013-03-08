@@ -36,7 +36,7 @@ def init_config():
 	print('config inited')
 	return repo_mode,repo_name,user,passwd
 
-def run(self,meth,orig_id=None):
+def run(meth,orig_id=None):
 	repo_mode,repo_name,user,passwd=init_config()
 	spider.set_repo(repo_mode)
 	tt=spider.spider(repo_name,user,passwd)
@@ -44,12 +44,15 @@ def run(self,meth,orig_id=None):
 	my_rid,login_info=tt.login()
 	if my_rid is None:
 		print('spider login error. detail:{}'.format(login_info))
-		return None
+		if not input('continue?(1/0)'):
+			return None
+		else:
+			my_rid='11111111'
 	else:
 		print('spider login success. rid={}'.format(my_rid))
 	if orig_id is None:
 		orig_id = my_rid
-	tt.meth(orig_id)
+	meth(tt,orig_id)
 
 def pub_meth(obj):
 	meths=set()
@@ -68,7 +71,7 @@ def pub_meth(obj):
 if __name__ == '__main__':
 	try:
 		meth=getattr(spider.spider,sys.argv[1])
-	except NameError:
+	except AttributeError:
 		print('method {} not definded. method list: {}'.format(sys.argv[1],pub_meth(spider.spider)))
 	else:
 		if len(sys.argv) == 2:
