@@ -62,4 +62,4 @@ class repo_file:
 		pageStyle='friendList'
 		if pageStyle not in self.data_repo:
 			self.load(pageStyle)
-		return set(self.data_repo[pageStyle][renrenId])
+		return set(self.data_repo[pageStyle].get(renrenId,{}))
