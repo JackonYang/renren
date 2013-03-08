@@ -44,7 +44,7 @@ class test_repo_mysql(unittest.TestCase):
 	def test_save_profile(self):
 		#tag in k, tag in v, tag in ignore
 		expt=1
-		pf={'gender': '女','大学': '北学-2013年-学院<br>理工大学-2011年-生命学院<br>','qq':'303923'}
+		pf={'gender': '女','大学': '北学-2013年-学院<br>理工大学-2011年-生命学院<br>'}
 		self.assertEquals(self.db.save_profile(pf,'22222'),expt)
 		self.assertEquals(self.db.exceed_seq,None)
 		pf_exceed={'gender': '女','大学': '北学-2013年-学院<br>理工大学-2011年-生命学院<br>','qqq':'303923'}

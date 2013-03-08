@@ -2,14 +2,18 @@ import pymysql
 
 cfg_filename='db_renren.ini'
 
+config=None
 def get_cfg_dict(section_name,has_default=True):
-	global cfg_filename
-	import configparser
-	config=configparser.ConfigParser()
+	global config
+	if config is None:
+		import configparser
+		config=configparser.ConfigParser()
+	# global cfg_filename
 	config.read(cfg_filename)
 	try:
 		cfg=dict(config[section_name].items())
 	except KeyError:
+		# raise error, no such section
 		return None
 	if not has_default:
 		for key in config['DEFAULT'].keys():
