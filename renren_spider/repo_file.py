@@ -24,6 +24,7 @@ class repo_file:
 			filename='{}_{}.p'.format(self.name_pre, pageStyle)
 			with open(filename, 'wb') as f:
 				pickle.dump(record, f)
+				self.last_saved = time.time()
 				#print('save in {}'.format(filename))
 
 	def save_friendList(self, record, rid, run_info=None):
@@ -43,7 +44,6 @@ class repo_file:
 	def _save_process(self, pageStyle, record, rid, run_info):
 		if not isinstance(record,dict):
 			return None
-
 		if pageStyle not in self.data_repo:
 			self.load(pageStyle)
 		self.data_repo[pageStyle][rid]=record
@@ -51,13 +51,15 @@ class repo_file:
 		global save_period
 		if time.time() - self.last_saved > save_period:
 			self.save()
-			self.last_saved = time.time()
-		# no history saved
 		return len(record)
 
 	def getSearched(self, pageStyle):
-		#only success download is logged
+		if pageStyle not in self.data_repo:
+			self.load(pageStyle)
 		return set(self.data_repo[pageStyle].keys())
 
 	def getFriendList(self, renrenId):
-		return set(self.data_repo['friendList'][renrenId])
+		pageStyle='friendList'
+		if pageStyle not in self.data_repo:
+			self.load(pageStyle)
+		return set(self.data_repo[pageStyle][renrenId])
