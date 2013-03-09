@@ -87,7 +87,7 @@ class spider:
 			if record is None:
 				self.log.error('{},{},error info:{}'.format(rid,pageStyle,run_info))
 			else:
-				meth_save=getattr(repo_mysql.repo_mysql,'save_{}'.format(pageStyle))
+				meth_save=getattr(default_storage,'save_{}'.format(pageStyle))
 				n=meth_save(self.repo,record,rid,run_info)
 				log_text='{}/{},saved/download:{}/{},{} of {}, time={}'.format(i,len(toSearch),n,len(record),pageStyle,rid,run_info)
 				if pageStyle=='profile':
