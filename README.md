@@ -26,6 +26,28 @@
 
 分析状态中的~@/转发/回复~信息，统计联系频率分布规律。
 
+usage
+-----
+
+1. spider 抓取信息
+
+<pre><code>
+# get friendList of my friendList
+$ python3 get_info.py getNet2
+config inited
+default repo changed to repo_file
+spider login success. rid=498934189
+15:14:09 get net1 of 498934189
+15:14:09 get net2 of 498934189,toSearch/total:40/40
+# get status of my friendList
+$ python3 get_info.py getStatus_friend
+config inited
+default repo changed to repo_file
+spider login success. rid=498934189
+15:21:09 friends' status of 498934189,toSearch/total:41/41
+</code></pre>
+
+
 一些结果
 --------
 
