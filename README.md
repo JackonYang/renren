@@ -29,7 +29,7 @@
 usage
 -----
 
-1. spider 抓取信息
+#### spider 抓取信息
 
 <pre><code>
 # get friendList of my friendList
@@ -46,6 +46,18 @@ default repo changed to repo_file
 spider login success. rid=498934189
 15:21:09 friends' status of 498934189,toSearch/total:41/41
 </code></pre>
+
+#### 好友网络结构图
+
+<pre><code>
+$ python3 net_graph.py
+</code></pre>
+
+注：为了个人隐私，图中好友姓名均使用错误字符编码。
+
+![relationship network graph][netgraph]
+
+[netgraph]:test_net_graph.png
 
 
 一些结果
