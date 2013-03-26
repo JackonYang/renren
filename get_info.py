@@ -1,3 +1,4 @@
+# -*- coding: utf-8-*-
 import sys
 import spider
 
@@ -39,11 +40,11 @@ def run(meth,orig_id=None):
 	repo_mode,repo_name,user,passwd=init_config()
 	spider.set_repo(repo_mode)
 	tt=spider.spider(repo_name,user,passwd)
-	# tt.log.setLevel(40)
+	tt.log.setLevel(20)
 	my_rid,login_info=tt.login()
 	if my_rid is None:
 		print('spider login error. detail:{}'.format(login_info))
-		if not input('continue?(1/0)'):
+		if not input('continue for test?(1/0)'):
 			return None
 		else:
 			my_rid='11111111'
@@ -60,20 +61,13 @@ def pub_meth(obj):
 			meths.add(meth)
 	return meths
 
-
-	#get net3
-	#start to search
-	#friends=mytools.getFriend()
-	#for rid in friends.keys():
-	#	tt.getStatus_friend(rid)
-
 if __name__ == '__main__':
 	try:
 		meth=getattr(spider.spider,sys.argv[1])
 	except AttributeError:
 		print('method {} not definded. method list: {}'.format(sys.argv[1],pub_meth(spider.spider)))
 	except IndexError:
-		print('input error. expect: python3 get_info method renrenId, where method is necessary')
+		print('input error, method is necessary. expect: python3 get_info method renrenId.')
 	else:
 		if len(sys.argv) == 2:
 			orig_id=None

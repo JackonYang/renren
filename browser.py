@@ -1,3 +1,4 @@
+# -*- coding: utf-8-*-
 """provide interface to download record in a certain pageStyle of someone from www.renren.com"""
 import urllib.request
 from urllib.parse import urlencode

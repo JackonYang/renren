@@ -1,3 +1,4 @@
+# -*- coding: utf-8-*-
 _href_pf_prog=None
 def friendList(href_pfs):
 	"""friendList({'<a href="..?id=1">name1</a>','<a href="..?id=3">name2</a>'}) 
