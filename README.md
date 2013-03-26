@@ -1,6 +1,19 @@
 人人网信息抓取与数据挖掘
 ========================
 
+原则上，每一个 module 提供一份单元测试用例，以 `test_moduleName` 的格式命名。
+单元测试用例，除了代码测试以外，也是一份实时更新的 API 文档。
+
+环境要求
+--------
+
+* ubuntu/win7/xp 皆可。
+* python3.2
+* igraph/pycairo: 作图依赖该组件。
+	ubuntu 下使用 `apt-get install python3-igraph` 即可。
+	win32 版本下载并安装 [igraph](https://pypi.python.org/pypi/python-igraph/0.6.5) [pycairo](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pycairo)
+* mysql: 仅当使用mysql作为存储介质依赖该组件。
+
 简单用法
 --------
 
@@ -70,8 +83,8 @@ $ python3 net_graph.py
 [demoTopic]:topic/nstatus_nkeyword.png
 
 
-design of renrenSpider
-======================
+design
+======
 
 人人网信息抓取与本地存储，数据源：[www.renren.com](www.renren.com)
 
@@ -83,31 +96,11 @@ design of renrenSpider
 * browser:抓取页面并返回 record 和 运行信息（timecost or error info)。<br>
 * repo: 本地保存 record 和 download history，提供读写接口。
 
-USAGE
------
-
-#### 用法: 
-
-1. 运行命令 `python3 getMyNet2.py` 来抓取：
-	- 自己的二级网络结构，即：自己的好友列表、好友的好友列表。
-	- 自己的人人网状态、好友的人人网状态。
-2. 运行命令 `python3 get_my_net3_status.py ` 抓取 3 级网络的状态。
-3. 运行命令 `python3 get_my_net3_friendList.py` 抓取 3 级网络结构。
-
-默认 info 级日志，记录各 renren id 的抓取细节（下载和保存的record数，抓取耗时）。
-日志输出在当前目录的  run.log 文件中。
-
-#### 环境要求：
-
-* ubuntu/windows
-* python3.2
-
-#### 参数配置：
-
-1. 在 `getMyNetxxx.py` 文件开始处配置 人人网的登录帐号和密码。
-
 INTERFACE
 ---------
+
+最新接口，参考单元测试用例。
+架构改动以前，不更新此处的接口说明。
 
 #### browse 
 * `pageStyle(renrenId) --> (record:dict,timecost:str)` 下载 pageStyle 页面的信息字段。
@@ -124,8 +117,8 @@ INTERFACE
 * `getStatus_friend(rid) --> None` get status of rid's friends
 * `getNet2(rid) --> None` get friendList of rid's friends
 
-design of class
---------------------
+design of modules
+-----------------
 
 ### browser：
 
