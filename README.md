@@ -1,6 +1,38 @@
 人人网信息抓取与数据挖掘
 ========================
 
+简单用法
+--------
+
+#### 人人网账号/密码配置
+
+ `config/spider.ini` 中根据提示配置即可。
+
+#### 抓取人人网信息
+
+<pre><code>
+# 抓取好友的好友列表，用于显示个人的好友关系图。
+$ python3 get_info.py getNet2
+# 正常的运行结果显示如下：
+spider login success. rid=498934189
+15:14:09 get net1 of 498934189
+15:14:09 get net2 of 498934189,toSearch/total:40/40
+</code></pre>
+
+#### 图像显示好友网络结构图
+
+<pre><code>
+$ python3 net_graph.py
+</code></pre>
+
+结果显示如下：
+
+注：此处因为 igraph 插件的字符编码问题，好友姓名未能正常显示。
+
+![relationship network graph][netgraph]
+
+[netgraph]:test_net_graph.png
+
 功能列表
 --------
 
@@ -25,40 +57,6 @@
 #### 联系频率
 
 分析状态中的~@/转发/回复~信息，统计联系频率分布规律。
-
-usage
------
-
-#### spider 抓取信息
-
-<pre><code>
-# get friendList of my friendList
-$ python3 get_info.py getNet2
-config inited
-default repo changed to repo_file
-spider login success. rid=498934189
-15:14:09 get net1 of 498934189
-15:14:09 get net2 of 498934189,toSearch/total:40/40
-# get status of my friendList
-$ python3 get_info.py getStatus_friend
-config inited
-default repo changed to repo_file
-spider login success. rid=498934189
-15:21:09 friends' status of 498934189,toSearch/total:41/41
-</code></pre>
-
-#### 好友网络结构图
-
-<pre><code>
-$ python3 net_graph.py
-</code></pre>
-
-注：为了个人隐私，图中好友姓名均使用错误字符编码。
-
-![relationship network graph][netgraph]
-
-[netgraph]:test_net_graph.png
-
 
 一些结果
 --------
@@ -245,4 +243,3 @@ _parse.pageStyle 每次只解析一个用户特定 pageStyle 的字段_
 **内部接口规范**
 
 1. `seq_process(toSearch:str/set,pageStyle:str)` download and save record
-
