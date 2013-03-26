@@ -27,15 +27,14 @@ def showGraph(graph,filename):
 	visual_style['layout']=ly
 	#visual_style["vertex_label"] = g.vs["uid"]
 	#visual_style["vertex_label"] = graph.vs["name"]
-	#igraph.plot(graph,"snsPic/{}.png".format(filename),**visual_style)
-	igraph.plot(graph,**visual_style)
+	if filename is not None:
+		igraph.plot(graph,"{}.png".format(filename),**visual_style)
+	else:
+		igraph.plot(graph,**visual_style)
 
 friends=pickle.load(open('spread_friendList.p','rb'))
 rid='498934189'
 
 if __name__=='__main__':
 	gg=init_graph(friends,rid)
-	#print(gg.vs)
-	#print(len(gg.vs))
-	print(len(gg.es))
-	showGraph(gg,'pic.png')
+	showGraph(gg,'pic')
