@@ -11,7 +11,7 @@ import time
 import parse
 
 run_level='info'
-timeout=3
+timeout=5
 max_timeout=5
 resend_n=3
 urls={
@@ -35,9 +35,7 @@ def format_time(runtime, req_time=None):
 	if req_time is None:
 		return '%.2f'%(runtime)
 	elif isinstance(req_time, list):
-		import numpy as np
-		tm=np.float32(req_time)
-		return '%.2f, max/min/ave: %.2f/%.2f/%.2f'%(runtime, tm.max(), tm.min(), tm.mean())
+		return '%.2f, max/min/ave: %.2f/%.2f/%.2f'%(runtime, max(req_time), min(req_time), sum(req_time)/len(req_time))
 	else:
 		return 'timecost format error'
 

@@ -1,6 +1,5 @@
 import sys
 import spider
-import mytools
 
 cfg_filename='config/spider.ini'
 
