@@ -1,6 +1,7 @@
 # -*- Encoding: utf-8 -*-
 import urllib
 from httplib2 import Http
+import pickle
 
 
 class renren:
@@ -22,6 +23,13 @@ class renren:
             self.signin()
 
     def signin(self):
+        """sigin to renren.com. return renrenId if success."""
+        # TODO:
+        # 1. deal with timeout
+        # 2. random useragent
+        # 3. more accurate headers
+        # 4. cache cookies in local files
+        # 5. deal with verfication code and passwd error
         # url
         url = 'http://www.renren.com/PLogin.do'
         home = 'http://www.renren.com/home'
@@ -51,6 +59,38 @@ class renren:
     def request(self, url, method='GET'):
         return self.h.request(url, method, headers=self.headers)
 
+
+class cookies:
+    def __init__(self, filename='cookies.p'):
+        self.filename = filename
+        self.load()
+
+    def __del__(self):
+        self.save()
+
+    def load(self):
+        try:
+            with open(self.filename, 'rb') as f:
+                self.cookie = pickle.load(f)
+        except IOError:
+            self.cookie = {}
+
+    def save(self):
+        with open(self.filename, 'wb') as f:
+            pickle.dump(self.cookie, f)
+
+    def add(self, user, website, cookie):
+        self.cookie[(user, website)] = cookie
+
+    def get(self, user, website):
+        ck = self.cookie.get((user, website), None)
+        if ck and self.isValidate(ck):
+            return ck
+        else:
+            return None
+
+    def isValidate(self, cookie):
+        return True
 
 if __name__ == '__main__':
     rr = renren()
