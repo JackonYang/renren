@@ -18,7 +18,8 @@ headers_templates = {
 class renren:
     def __init__(self, user, password, autoLogin=True):
         self.h = Http()
-        self.cookie = self.__get_cookie(user, 'renren')
+        self.cookieFile = 'renren_{}.cookie'.format(user)
+        self.cookie = self.__get_cookie()
         if autoLogin and (self.cookie is None):  # check cookie validate
             self.cookie = self.signin(user, password)
             # print 'login'
@@ -52,33 +53,41 @@ class renren:
         if '302' == rsp['status']:  # login success
             # print 'login success'
             cookie = rsp['set-cookie']
-            self.__save_cookie(cookie, user, 'renren')
+            self.__save_cookie(cookie)
             return cookie
         else:
             with open('signin_failed_{}.html'.format(user), 'w') as f:
                 f.write(content)
             return None
 
+    def renrenId(self):
+        import re
+        proj = re.compile(r'\Wid=(\d+);')
+        m = proj.search(self.cookie)
+        if m is not None:
+            return m.group(1)
+        else:
+            return None
+
     def request(self, url, method='GET'):
         return self.h.request(url, method, headers=self.headers)
 
-    def __get_cookie(self, user, website='renren'):
-        filename = '{}_{}.cookie'.format(website, user)
+    def __get_cookie(self):
         cookie = None
-        if os.path.exists(filename):
-            with open(filename, 'r') as f:
+        if os.path.exists(self.cookieFile):
+            with open(self.cookieFile, 'r') as f:
                 cookie = f.read().strip(' \n')
         return cookie
 
-    def __save_cookie(self, cookie, user, website='renren'):
-        filename = '{}_{}.cookie'.format(website, user)
-        with open(filename, 'w') as f:
+    def __save_cookie(self, cookie):
+        with open(self.cookieFile, 'w') as f:
             f.write(cookie)
 
 
 if __name__ == '__main__':
     from settings import account
-    renren(account['email'], account['password'])
+    rr = renren(account['email'], account['password'])
+    print rr.renrenId()
     #url = "http://friend.renren.com/GetFriendList.do?curpage={}&id={}".format(0, rr.renrenId)
     #print url
     #rsp, content = rr.request(url)
