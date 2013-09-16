@@ -1,5 +1,5 @@
 *.py[cod]
-*.p
+*.cookie
 
 # C extensions
 *.so
