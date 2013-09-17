@@ -4,8 +4,8 @@ from httplib2 import Http
 import os
 import re
 
-max_timeout = 5
-resend_n = 3
+maxFailed = 5
+nResend = 3
 headers_templates = {
     'Connection': 'keep-alive',
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.65 Safari/534.24',
@@ -63,13 +63,12 @@ class renren:
                 f.write(content)
             return None
 
-    def friendList(self, rid, max_pages=100):
-        url_ptn = "http://friend.renren.com/GetFriendList.do?curpage={}&id={}"
-        item_ptn = re.compile(r'<dd>\s*<a\s+href="http://www.renren.com/profile.do\?id=\d+">.*?</a>')
-        return self.__iter_page(url_ptn, item_ptn, rid, max_pages, resend_n)
+    def friendList(self, rid, maxPages=100):
+        urlPtn = "http://friend.renren.com/GetFriendList.do?curpage={}&id=" + rid
+        itemPtn = re.compile(r'<dd>\s*<a\s+href="http://www.renren.com/profile.do\?id=\d+">.*?</a>')
+        return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
     def renrenId(self):
-        import re
         proj = re.compile(r'\Wid=(\d+);')
         m = proj.search(self.cookie)
         if m is not None:
@@ -82,46 +81,45 @@ class renren:
         headers = headers_templates.copy()
         headers['Cookie'] = self.cookie
         rsp, content = self.h.request(url, method, headers=headers)
-        with open('fl.html', 'w') as f:
-            f.write(content)
+        #with open('fl.html', 'w') as f:
+        #    f.write(content)
         return content
 
-    def __iter_page(self, url_ptn, item_ptn, rid, pages, resend):
-        """__iter_page(pageStyle, rid) --> items:set()"""
-        if resend < 0:
-            return None
-        if isinstance(pages, int):
-            pages = range(pages)
+    def requestIter(self, urlPtn, itemPtn, pageRange, resend):
+        """__iter_page(urlPtn, itemPtn, pageRange, resend) --> items:set()"""
+        if isinstance(pageRange, int):
+            pageRange = range(pageRange)
 
-        itemsAll = set()
-        timeout_seq = list()
+        itemsTotal = set()
+        failedSeq = list()
 
         # request next page until no more items detected
-        for curpage in pages:
-            try:
-                html_content = self.request(url_ptn.format(curpage, rid))
-            except:
-                timeout_seq.append(curpage)
-                # break when much more timeout than normal
-                if len(timeout_seq) > max_timeout:
-                    return None  # 'more timeout than max_timeout'
-            else:
-                items_curpage = item_ptn.findall(html_content)  # detect items
-                if len(items_curpage) > 0:
-                    itemsAll.update(items_curpage)
+        for page in pageRange:
+            content = self.request(urlPtn.format(page))
+            if content is not None:
+                itemsPage = itemPtn.findall(content)
+                if itemsPage:
+                    itemsTotal.update(itemsPage)
                 else:  # privacy, all pages requested, or safety page
                     break
-        # deal with timeout_seq
-        if timeout_seq:  # resend
-            item_re = self.__iter_page(url_ptn, item_ptn, rid, timeout_seq, resend - 1)
-            if item_re is None:
-                return None
             else:
-                itemsAll.update(item_re)
+                failedSeq.append(page)
+                # break when much more timeout than normal
+                if len(failedSeq) > maxFailed:
+                    return None  # 'more timeout than maxFailed'
+
+        # deal with timeout_seq
+        if failedSeq:
+            if resend < 0:
+                return None
+            itemsMore = self.requestIter(urlPtn, itemPtn, failedSeq, resend - 1)
+            if itemsMore is None:
+                return None
+            itemsTotal.update(itemsMore)
         #_safety page check, if itemsAll empty.
         #if (len(itemsAll) ==0) and self._is_safety_page(html_content):
         #        return None, 'account forbidden by safety policy'
-        return itemsAll
+        return itemsTotal
 
     def __get_cookie(self):
         cookie = None
