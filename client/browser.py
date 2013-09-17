@@ -68,6 +68,11 @@ class renren:
         itemPtn = re.compile(r'<dd>\s*<a\s+href="http://www.renren.com/profile.do\?id=\d+">.*?</a>')
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
+    def status(self, rid, maxPages=100):
+        urlPtn = "http://status.renren.com/status?curpage={}&id=" + rid + "&__view=async-html"
+        itemPtn = re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>', re.DOTALL)
+        return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
+
     def renrenId(self):
         proj = re.compile(r'\Wid=(\d+);')
         m = proj.search(self.cookie)
@@ -81,7 +86,7 @@ class renren:
         headers = headers_templates.copy()
         headers['Cookie'] = self.cookie
         rsp, content = self.h.request(url, method, headers=headers)
-        #with open('fl.html', 'w') as f:
+        # with open('fl.html', 'w') as f:
         #    f.write(content)
         return content
 
@@ -136,4 +141,4 @@ class renren:
 if __name__ == '__main__':
     from settings import account
     rr = renren(account['email'], account['password'])
-    print len(rr.friendList(rr.renrenId()))
+    print len(rr.status(rr.renrenId()))
