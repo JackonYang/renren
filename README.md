@@ -1,14 +1,15 @@
 人人网信息抓取与数据挖掘
 ========================
 
-原则上，每一个 module 提供一份单元测试用例，以 `test_moduleName` 的格式命名。
-单元测试用例，除了代码测试以外，也是一份实时更新的 API 文档。
+人人网安全措施加强了，无法抓取原本没有权限访问的内容了。
+
+不过，通过浏览器可以访问的内容，依旧可以抓取。
 
 环境要求
 --------
 
 * ubuntu/win7/xp 皆可。
-* python3.2
+* python3.2 --> python2.7
 * igraph/pycairo: 作图依赖该组件。
 	ubuntu 下使用 `apt-get install python3-igraph` 即可。
 	win32 版本下载并安装 [igraph](https://pypi.python.org/pypi/python-igraph/0.6.5) [pycairo](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pycairo)
