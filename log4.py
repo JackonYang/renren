@@ -4,7 +4,7 @@ import logging
 import os
 
 
-def logger(root='', path='log'):
+def getLogger(root='', path='log'):
     log = logging.getLogger(root)
     log.setLevel(logging.DEBUG)
     lvls = ['debug', 'info', 'warn', 'error']
@@ -22,6 +22,6 @@ def logger(root='', path='log'):
     return log
 
 if __name__ == '__main__':
-    log = logger()
+    log = getLogger()
     log.error('test log')
     log.info('info log')
