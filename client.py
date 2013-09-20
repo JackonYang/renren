@@ -66,13 +66,13 @@ class renren:
 
     def friendList(self, rid, maxPages=100):
         urlPtn = "http://friend.renren.com/GetFriendList.do?curpage={}&id=" + rid
-        itemPtn = re.compile(r'<dd>\s*<a\s+href="http://www.renren.com/profile.do\?id=\d+">.*?</a>')
+        itemPtn = re.compile(r'<div class="info">.*?</div>', re.DOTALL)
         log.info('request {} of {}'.format('friendList', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
     def status(self, rid, maxPages=100):
         urlPtn = "http://status.renren.com/status?curpage={}&id=" + rid + "&__view=async-html"
-        itemPtn = re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>', re.DOTALL)
+        itemPtn = re.compile(r'<li data-wiki\W* id="status-\d+">.*?</li>', re.DOTALL)
         log.info('request {} of {}'.format('status', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
