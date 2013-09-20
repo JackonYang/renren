@@ -3,6 +3,7 @@ import urllib
 from httplib2 import Http
 import os
 import re
+import log4
 
 maxFailed = 5
 nResend = 3
@@ -17,18 +18,17 @@ headers_templates = {
     'Cache-Control': 'no-cache',
 }
 
+log = log4.getLogger()
+
 
 class renren:
     def __init__(self, user, password, autoLogin=True):
-        self.h = Http()
         self.cookieFile = 'renren_{}.cookie'.format(user)
         self.cookie = self.__get_cookie()
+        self.h = Http()
         if autoLogin and (self.cookie is None):  # check cookie validate
+            log.info('signin to get cookie. user = {}'.format(user))
             self.cookie = self.signin(user, password)
-            # print 'login'
-        else:
-            pass
-            # print 'no need login'
 
     def signin(self, user, password):
         """sigin to renren.com. return and save cookie if success."""
@@ -54,11 +54,12 @@ class renren:
 
         rsp, content = self.h.request(url, 'POST', headers=headers, body=body)
         if '302' == rsp['status']:  # login success
-            # print 'login success'
+            log.info('signin success. user = {}'.format(user))
             cookie = rsp['set-cookie']
             self.__save_cookie(cookie)
             return cookie
         else:
+            log.error('signin failed. user = {}'.format(user))
             with open('signin_failed_{}.html'.format(user), 'w') as f:
                 f.write(content)
             return None
@@ -66,11 +67,13 @@ class renren:
     def friendList(self, rid, maxPages=100):
         urlPtn = "http://friend.renren.com/GetFriendList.do?curpage={}&id=" + rid
         itemPtn = re.compile(r'<dd>\s*<a\s+href="http://www.renren.com/profile.do\?id=\d+">.*?</a>')
+        log.info('request {} of {}'.format('friendList', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
     def status(self, rid, maxPages=100):
         urlPtn = "http://status.renren.com/status?curpage={}&id=" + rid + "&__view=async-html"
         itemPtn = re.compile(r'<li data-wiki = "" id="status-\d+">.*?</li>', re.DOTALL)
+        log.info('request {} of {}'.format('status', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
     def renrenId(self):
@@ -106,17 +109,20 @@ class renren:
                 if itemsPage:
                     itemsTotal.update(itemsPage)
                 else:  # privacy, all pages requested, or safety page
+                    log.debug('nothing contains in page/renrenId {}/{})'.format(page, self.renrenId()))
                     break
             else:
+                log.warn('request page/renrenId {}/{} failed'.format(page, self.renrenId()))
                 failedSeq.append(page)
-                # break when much more timeout than normal
                 if len(failedSeq) > maxFailed:
-                    return None  # 'more timeout than maxFailed'
+                    log.error('more timeout than {}'.format(maxFailed))
+                    return None
 
         # deal with timeout_seq
         if failedSeq:
             if resend < 0:
                 return None
+            log.debug('resend failed pages: {}'.format(failedSeq))
             itemsMore = self.requestIter(urlPtn, itemPtn, failedSeq, resend - 1)
             if itemsMore is None:
                 return None
@@ -131,11 +137,15 @@ class renren:
         if os.path.exists(self.cookieFile):
             with open(self.cookieFile, 'r') as f:
                 cookie = f.read().strip(' \n')
+                log.info('read cookie from file={}'.format(self.cookieFile))
+        else:
+            log.warn('cookie {} not exists'.format(self.cookieFile))
         return cookie
 
     def __save_cookie(self, cookie):
         with open(self.cookieFile, 'w') as f:
             f.write(cookie)
+            log.info('cookie saved success, filename = {}'.format(self.cookieFile))
 
 
 if __name__ == '__main__':
