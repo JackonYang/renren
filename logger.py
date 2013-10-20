@@ -12,7 +12,7 @@ def getLogger(formatter, path, name=''):
     lvls = ['Debug', 'info', 'warn', 'error']
 
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
 
     for lvl in lvls:
         logfile = os.path.join(path, '{}.log'.format(lvl.lower()))
