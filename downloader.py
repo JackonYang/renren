@@ -16,7 +16,7 @@ import urllib
 from httplib2 import Http
 import os
 import re
-import log4
+import logger
 
 maxFailed = 5
 nResend = 3
@@ -31,7 +31,7 @@ headers_templates = {
     'Cache-Control': 'no-cache',
 }
 
-log = log4.getLogger()
+log = logger.debugLog()
 
 
 class renren:
@@ -164,4 +164,4 @@ class renren:
 if __name__ == '__main__':
     from settings import account
     rr = renren(account['email'], account['password'])
-    print len(rr.status(rr.renrenId()))
+    print len(rr.friendList(rr.renrenId()))
