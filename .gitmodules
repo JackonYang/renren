@@ -1,3 +1,6 @@
 [submodule "klog"]
 	path = klog
 	url = git@github.com:JackonYang/log.git
+[submodule "login"]
+	path = login
+	url = git@github.com:JackonYang/login.git
