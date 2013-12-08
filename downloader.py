@@ -16,7 +16,8 @@ import urllib
 from httplib2 import Http
 import os
 import re
-import logger
+import klog.logger as klogger
+from login.renren import login, parseRenrenId
 
 maxFailed = 5
 nResend = 3
@@ -31,51 +32,17 @@ headers_templates = {
     'Cache-Control': 'no-cache',
 }
 
-log = logger.debugLog()
+log = klogger.debugLog()
 
 
 class renren:
-    def __init__(self, user, password, autoLogin=True):
-        self.cookieFile = 'renren_{}.cookie'.format(user)
-        self.cookie = self.__get_cookie()
+    def __init__(self, user, password):
         self.h = Http()
-        if autoLogin and (self.cookie is None):  # check cookie validate
-            log.info('signin to get cookie. user = {}'.format(user))
-            self.cookie = self.signin(user, password)
+        self.headers = headers_templates.copy()
+        self.headers['Cookie'] = login(user, password)
 
-    def signin(self, user, password):
-        """sigin to renren.com. return and save cookie if success."""
-        # TODO:
-        # 1. deal with timeout
-        # 2. random useragent
-        # 3. more accurate headers
-        # 5. deal with verfication code and passwd error
-
-        # url
-        url = 'http://www.renren.com/PLogin.do'
-        home = 'http://www.renren.com/home'
-        # headers
-        headers = headers_templates.copy()
-        # body
-        login_data = {
-            'email': user,
-            'password': password,
-            'origURL': home,
-            'domain': 'renren.com'
-        }
-        body = urllib.urlencode(login_data)
-
-        rsp, content = self.h.request(url, 'POST', headers=headers, body=body)
-        if '302' == rsp['status']:  # login success
-            log.info('signin success. user = {}'.format(user))
-            cookie = rsp['set-cookie']
-            self.__save_cookie(cookie)
-            return cookie
-        else:
-            log.error('signin failed. user = {}'.format(user))
-            with open('signin_failed_{}.html'.format(user), 'w') as f:
-                f.write(content)
-            return None
+    def renrenId(self):
+        return parseRenrenId(self.headers['Cookie'])
 
     def friendList(self, rid, maxPages=100):
         urlPtn = "http://friend.renren.com/GetFriendList.do?curpage={}&id=" + rid
@@ -89,18 +56,8 @@ class renren:
         log.info('request {} of {}'.format('status', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
-    def renrenId(self):
-        proj = re.compile(r'\Wid=(\d+);')
-        m = proj.search(self.cookie)
-        if m is not None:
-            return m.group(1)
-        else:
-            return None
-
     def request(self, url, method='GET'):
         """request a page and return html content"""
-        headers = headers_templates.copy()
-        headers['Cookie'] = self.cookie
         rsp, content = self.h.request(url, method, headers=headers)
         # with open('fl.html', 'w') as f:
         #    f.write(content)
@@ -145,23 +102,9 @@ class renren:
         #        return None, 'account forbidden by safety policy'
         return itemsTotal
 
-    def __get_cookie(self):
-        cookie = None
-        if os.path.exists(self.cookieFile):
-            with open(self.cookieFile, 'r') as f:
-                cookie = f.read().strip(' \n')
-                log.info('read cookie from file={}'.format(self.cookieFile))
-        else:
-            log.warn('cookie {} not exists'.format(self.cookieFile))
-        return cookie
-
-    def __save_cookie(self, cookie):
-        with open(self.cookieFile, 'w') as f:
-            f.write(cookie)
-            log.info('cookie saved success, filename = {}'.format(self.cookieFile))
-
 
 if __name__ == '__main__':
     from settings import account
     rr = renren(account['email'], account['password'])
-    print len(rr.friendList(rr.renrenId()))
+    print rr.renrenId()
+    # print len(rr.friendList(rr.renrenId()))
