@@ -3,6 +3,7 @@
 下载并在本地保存人人网数据。
 """
 from httplib2 import Http
+import logging
 import os
 import re
 
@@ -20,11 +21,18 @@ headers_templates = {
 }
 
 class renren:
-    def __init__(self, cookie, log_handler):
+    def __init__(self, cookie):
         self.h = Http()
         self.headers = headers_templates.copy()
         self.headers['Cookie'] = cookie
-        self.m_log = log_handler
+
+        self.m_log = logging.getLogger('renren.downloader')
+        self.m_log.setLevel(logging.WARNING)
+        os.mkdir('log')
+        logfile = 'log/download.log'
+        hdlr = logging.FileHandler(logfile)
+        hdlr.setFormatter(logging.Formatter('%(asctime)s|%(levelname)s|%(message)s|%(filename)s-%(lineno)s'))
+        self.m_log.addHandler(hdlr)
 
     def renrenId(self):
         proj = re.compile(r'\Wid=(\d+);')
@@ -94,17 +102,7 @@ class renren:
 
 
 if __name__ == '__main__':
-    import logging
-    log = logging.getLogger()
-    logfile = 'debug.log'
-    hdlr = logging.FileHandler(logfile)
-    log.setLevel(logging.DEBUG)
-    hdlr.setFormatter(logging.Formatter('%(asctime)s|%(levelname)s|%(message)s|%(filename)s-%(lineno)s'))
-    log.addHandler(hdlr)
-
     test_cookie = raw_input('Input cookie(document.cookie): ')
-    print 'logfile: %s' % logfile
-    log.info('Start')
-    rr = renren(test_cookie, log)
+    rr = renren(test_cookie)
     print rr.renrenId()
     print len(rr.friendList(rr.renrenId()))
