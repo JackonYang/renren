@@ -66,7 +66,7 @@ class renren:
             content = self.request(urlPtn.format(page))
             if content is not None:
                 itemsPage = itemPtn.findall(content)
-                if itemsPage:
+                if itemsPage and len(itemsPage) > 1:
                     itemsTotal.update(itemsPage)
                 else:  # privacy, all pages requested, or safety page
                     self.m_log.debug('nothing contains in page/renrenId {}/{})'.format(page, self.renrenId()))
