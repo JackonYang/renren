@@ -37,11 +37,11 @@ def init_config():
     return repo_mode,repo_name,user,passwd
 
 def run(meth,orig_id=None):
-    repo_mode,repo_name,user,passwd=init_config()
+    repo_mode, repo_name, user, passwd = init_config()
     spider.set_repo(repo_mode)
-    tt=spider.spider(repo_name,user,passwd)
+    tt = spider.spider(repo_name,user,passwd)
     tt.log.setLevel(20)
-    my_rid,login_info=tt.login()
+    my_rid, login_info = tt.login()
     if my_rid is None:
         print('spider login error. detail:{}'.format(login_info))
         if not input('continue for test?(1/0)'):
@@ -55,24 +55,20 @@ def run(meth,orig_id=None):
     meth(tt,orig_id)
 
 def pub_meth(obj):
-    meths=set()
-    for meth in dir(obj):
-        if meth.startswith('get'):
-            meths.add(meth)
-    return meths
+    return [meth for meth in dir(obj) if meth.startswith('get')]
 
 if __name__ == '__main__':
     try:
-        meth=getattr(spider.spider,sys.argv[1])
+        meth=getattr(spider.spider, sys.argv[1])
     except AttributeError:
-        print('method {} not definded. method list: {}'.format(sys.argv[1],pub_meth(spider.spider)))
+        print('method {} not definded. method list: {}'.format(sys.argv[1], pub_meth(spider.spider)))
     except IndexError:
-        print('input error, method is necessary. expect: python3 get_info method renrenId.')
+        print('input error, method is necessary. expect: python get_info method [renrenId].')
     else:
         if len(sys.argv) == 2:
             orig_id=None
         elif len(sys.argv) == 3:
             orig_id=sys.argv[2]
         else:
-            print('input error. expect: method, renrenId')
+            print('input error, expect: python get_info method [renrenId].')
         run(meth,orig_id)
