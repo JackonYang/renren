@@ -1,7 +1,7 @@
 # -*- coding: utf-8-*-
 import time
 import logging
-import browser 
+import downloader
 
 default_storage=None
 importlib=None
@@ -31,11 +31,10 @@ def runlog(tt='run'):
 pf_sleep=2
 class spider:
     def __init__(self,repo_name='test',user='yyttrr3242342@163.com',passwd=None):
-        self.dl=browser.browser(user,passwd)
+        self.dl=downloader.renren(cookie)
         if default_storage is None:
             set_repo()
         self.repo=default_storage(repo_name)
-        self.log=runlog('spider')
 
         self.searched=dict()
         self.searched['friendList']=self.repo.getSearched('friendList')
@@ -45,12 +44,12 @@ class spider:
 
     def getNet1(self,orig_id):
         pageStyle='friendList'
-        if not isinstance(orig_id,str):
-            print('error in getNet1. orig_id={}'.format(orig_id))
+        if not isinstance(orig_id, str):
+            print('error in getNet1. orig_id = {}'.format(orig_id))
             return None
         if orig_id not in self.searched[pageStyle]:
-            print('{} get net1 of {}'.format(time.strftime('%H:%M:%S',time.localtime()),orig_id))
-            self.seq_process(orig_id,pageStyle)
+            print('{} get net1 of {}'.format(time.strftime('%H:%M:%S', time.localtime()), orig_id))
+            self.seq_process(orig_id, pageStyle)
         return self.repo.getFriendList(orig_id)
 
     def getNet2(self,orig_id='410941086'):
@@ -80,10 +79,10 @@ class spider:
 
     def seq_process(self,toSearch,pageStyle):
         """download and save record of `toSearch` in target pageStyle"""
-        if isinstance(toSearch,str):
-            toSearch={toSearch}
-        for i,rid in zip(range(1,len(toSearch)+1),toSearch):
-            meth_download=getattr(browser.browser,pageStyle)
+        if isinstance(toSearch, str):
+            toSearch = {toSearch}
+        for i, rid in zip(range(1, len(toSearch)+1), toSearch):
+            meth_download = getattr(downloader.renren, pageStyle)
             record,run_info=meth_download(self.dl,rid)
             if record is None:
                 self.log.error('{},{},error info:{}'.format(rid,pageStyle,run_info))
