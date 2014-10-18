@@ -1,3 +1,2 @@
 httplib2
-MySQL-Python
-SQLAlchemy
+mysql-python

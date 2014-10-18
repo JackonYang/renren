@@ -28,8 +28,10 @@ class renren:
 
         self.m_log = logging.getLogger('renren.downloader')
         self.m_log.setLevel(logging.WARNING)
-        os.mkdir('log')
-        logfile = 'log/download.log'
+        log_dir = 'log'
+        if not os.path.exists(log_dir):
+            os.mkdir(log_dir)
+        logfile = os.path.join(log_dir, 'download.log')
         hdlr = logging.FileHandler(logfile)
         hdlr.setFormatter(logging.Formatter('%(asctime)s|%(levelname)s|%(message)s|%(filename)s-%(lineno)s'))
         self.m_log.addHandler(hdlr)
