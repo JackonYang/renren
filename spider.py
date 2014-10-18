@@ -52,11 +52,11 @@ class spider:
         toSearch = friends - self.fl_searched
         print('{} get net2 of {}, toSearch/total: {}/{}'.format(time.strftime('%H:%M:%S',time.localtime()), orig_id, len(toSearch), len(friends)))
         for i, rid in zip(range(1, len(toSearch)+1), toSearch):
-            record = self.dl.friendList(orig_id)
+            record = self.dl.friendList(rid)
             if record is None:
                 self.log.error('{}, fail to download friend list.'.format(rid))
             else:
-                saved = self.repo.save_fl(self.login_id, orig_id, record)
+                saved = self.repo.save_fl(self.login_id, rid, record)
                 log_text = '{}/{}, saved/download: {}/{}, friendlist of {}'.format(i, len(toSearch), saved, len(record), rid)
                 if saved < len(record):
                     self.log.error(log_text)

@@ -30,7 +30,7 @@ class repo_mysql:
         n_name = self.cur.execute(_sql_name(fl_record))
         self.cur.execute(_sql_log_fl(rid, login_id, len(fl_record)))
         self.conn.commit()
-        return n_fl
+        return n_name
 
     def get_fl_searched(self):
         self.cur.execute("SELECT rid FROM stat_log_friends")
