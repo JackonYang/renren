@@ -48,6 +48,7 @@ class spider:
         return self.repo.get_fl(orig_id)
 
     def getNet2(self, orig_id):
+        n_forbidden = 0
         friends = self.getNet1(orig_id)
         toSearch = friends - self.fl_searched
         print('{} get net2 of {}, toSearch/total: {}/{}'.format(time.strftime('%H:%M:%S',time.localtime()), orig_id, len(toSearch), len(friends)))
@@ -62,7 +63,10 @@ class spider:
                     self.log.info(log_text)
                     self.fl_searched.add(rid)
                 else:
+                    n_forbidden += 1
                     self.log.error(log_text)
+        print('{} Done! net2 of {}, forbidden: {}'.format(time.strftime('%H:%M:%S',time.localtime()), orig_id, n_forbidden))
+        return n_forbidden
 
     def getStatus_friend(self,orig_id='410941086'):
         pageStyle='status'
