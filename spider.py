@@ -57,12 +57,12 @@ class spider:
                 self.log.error('{}, fail to download friend list.'.format(rid))
             else:
                 saved = self.repo.save_fl(self.login_id, rid, record)
-                log_text = '{}/{}, saved/download: {}/{}, friendlist of {}'.format(i, len(toSearch), saved, len(record), rid)
-                if saved < len(record):
-                    self.log.error(log_text)
-                else:
+                log_text = '{}/{}, newName/friends: {}/{}, friendlist of {}'.format(i, len(toSearch), saved, len(record), rid)
+                if saved > 0:
                     self.log.info(log_text)
                     self.fl_searched.add(rid)
+                else:
+                    self.log.error(log_text)
 
     def getStatus_friend(self,orig_id='410941086'):
         pageStyle='status'
