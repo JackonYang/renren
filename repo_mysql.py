@@ -30,8 +30,9 @@ class repo_mysql:
         n_name = 0
 
         try:
-            n_fl = self.cur.execute(_sql_fl(fl_record, rid))
-            n_name = self.cur.executemany("INSERT INTO profile (rid, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE rid=VALUES(rid)",  fl_record)
+            if len(fl_record):
+                n_fl = self.cur.execute(_sql_fl(fl_record, rid))
+                n_name = self.cur.executemany("INSERT INTO profile (rid, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE rid=VALUES(rid)",  fl_record)
             self.cur.execute(_sql_log_fl(rid, login_id, len(fl_record)))
         except Exception as e:
             print 'Error ID: %s' % rid
@@ -92,7 +93,7 @@ if __name__ == '__main__':
     test_cookie = raw_input('Input cookie(document.cookie): ')
     rr = renren(test_cookie)
     rid = rr.renrenId()
-    target_id = rid
+    target_id = '336283681'
     print rid
     record = rr.friendList(target_id)
     print '%d got' % len(record)
