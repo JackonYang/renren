@@ -89,4 +89,7 @@ if __name__ == '__main__':
     runner = spider(test_cookie)
 
     # start by login id
-    print runner.getNet2(runner.login_id)
+    friends = runner.getNet1(runner.login_id)
+    for orig_id in friends:
+        runner.getNet2(orig_id)
+
