@@ -26,10 +26,19 @@ class repo_mysql:
     def save_fl(self, login_id, rid, fl_record):
         """save record and return rows affected.save nothing if empty.
         return None if input error"""
-        n_fl = self.cur.execute(_sql_fl(fl_record, rid))
-        n_name = self.cur.execute(_sql_name(fl_record))
-        self.cur.execute(_sql_log_fl(rid, login_id, len(fl_record)))
-        self.conn.commit()
+
+        n_name = 0
+
+        try:
+            n_fl = self.cur.execute(_sql_fl(fl_record, rid))
+            n_name = self.cur.executemany("INSERT INTO profile (rid, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE rid=VALUES(rid)",  fl_record)
+            self.cur.execute(_sql_log_fl(rid, login_id, len(fl_record)))
+        except Exception as e:
+            print 'Error ID: %s' % rid
+            print e
+        else:
+            self.conn.commit()
+
         return n_name
 
     def get_fl_searched(self):
@@ -83,12 +92,13 @@ if __name__ == '__main__':
     test_cookie = raw_input('Input cookie(document.cookie): ')
     rr = renren(test_cookie)
     rid = rr.renrenId()
+    target_id = rid
     print rid
-    record = rr.friendList(rr.renrenId())
+    record = rr.friendList(target_id)
     print '%d got' % len(record)
 
     repo = repo_mysql()
-    print repo.save_fl(rid, rid, record)
-    print 'friends of rid: %s' % len(repo.get_fl(rid))
-    print 'searched: %s' % ','.join(repo.get_fl_searched())
+    print repo.save_fl(rid, target_id, record)
+    print 'friends of rid: %s' % len(repo.get_fl(target_id))
+    # print 'searched: %s' % ','.join(repo.get_fl_searched())
 
