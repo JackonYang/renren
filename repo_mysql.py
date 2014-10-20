@@ -64,12 +64,12 @@ class repo_mysql:
 
         return n_saved
 
-    def get_fl_searched(self):
-        self.cur.execute("SELECT rid FROM stat_log_friends")
+    def get_fl_searched(self, rid):
+        self.cur.execute("SELECT rid FROM stat_log_friends where n_record>0 OR login_id=%s" % rid)
         return {item[0] for item in self.cur.fetchall()}
 
-    def get_status_searched(self):
-        self.cur.execute("SELECT rid FROM stat_log_status")
+    def get_status_searched(self, rid):
+        self.cur.execute("SELECT rid FROM stat_log_status where n_record>0 OR login_id=%s" % rid)
         return {item[0] for item in self.cur.fetchall()}
 
     def get_fl(self, rid):
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     test_cookie = raw_input('Input cookie(document.cookie): ')
     rr = renren(test_cookie)
     rid = rr.renrenId()
-    target_id = '292611424'
+    target_id = rid
     print rid
     # record = rr.friendList(target_id)
     record = rr.status(target_id)
@@ -120,5 +120,7 @@ if __name__ == '__main__':
     print repo.save_status(rid, target_id, record)
     #print 'friends of rid: %s' % len(repo.get_fl(target_id))
     print 'status of rid: %s' % len(repo.get_status(target_id))
-    print 'searched: %s' % ','.join(repo.get_status_searched())
-
+    print 'friends searched: %s' % len(repo.get_fl_searched('233330059'))
+    print 'friends searched: %s' % len(repo.get_fl_searched('23333005'))
+    print 'status searched: %s' % len(repo.get_status_searched('233330059'))
+    print 'status searched: %s' % len(repo.get_status_searched('23333005'))
