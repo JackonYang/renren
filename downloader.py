@@ -52,7 +52,7 @@ class renren:
 
     def status(self, rid, maxPages=100):
         urlPtn = "http://status.renren.com/status?curpage={}&id=" + rid + "&__view=async-html"
-        itemPtn = re.compile(r'<li data-wiki\W* id="status-\d+">.*?</li>', re.DOTALL)
+        itemPtn = re.compile(r'<li data-wiki\W* id="status-(\d+)">(.*?)</li>', re.DOTALL)
         self.m_log.info('request {} of {}'.format('status', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
@@ -107,4 +107,5 @@ if __name__ == '__main__':
     test_cookie = raw_input('Input cookie(document.cookie): ')
     rr = renren(test_cookie)
     print rr.renrenId()
-    print len(rr.friendList(rr.renrenId()))
+    # print len(rr.friendList(rr.renrenId()))
+    print len(rr.status(rr.renrenId()))
