@@ -2,6 +2,9 @@ import MySQLdb
 from settings import db_connet_info as connect_info
 
 
+def _sql_log_status(rid, login_id, n_record):
+    return "INSERT INTO stat_log_status (rid, login_id, n_record) VALUES ('%s', '%s', %d)" % (rid, login_id, n_record)
+
 def _sql_log_fl(rid, login_id, n_record):
     return "INSERT INTO stat_log_friends (rid, login_id, n_record) VALUES ('%s', '%s', %d)" % (rid, login_id, n_record)
 
@@ -12,6 +15,7 @@ def _sql_fl(record, rid):
 def _sql_name(record):
         val_name = ','.join(["('%s', '%s')" % item for item in record])
         return "INSERT INTO profile (rid, name) VALUES %s" % val_name
+
 
 class repo_mysql:
 
@@ -42,27 +46,39 @@ class repo_mysql:
 
         return n_name
 
+    def save_status(self, login_id, rid, status_record):
+        """save record and return rows affected.save nothing if empty.
+        return None if input error"""
+
+        n_saved = 0
+
+        try:
+            if len(status_record):
+                n_saved = self.cur.executemany("INSERT INTO status_raw (rid, status_id, content) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE rid=VALUES(rid)",  [(rid, item[0], item[1]) for item in status_record])
+            self.cur.execute(_sql_log_status(rid, login_id, len(status_record)))
+        except Exception as e:
+            print 'Error ID: %s' % rid
+            print e
+        else:
+            self.conn.commit()
+
+        return n_saved
+
     def get_fl_searched(self):
         self.cur.execute("SELECT rid FROM stat_log_friends")
+        return {item[0] for item in self.cur.fetchall()}
+
+    def get_status_searched(self):
+        self.cur.execute("SELECT rid FROM stat_log_status")
         return {item[0] for item in self.cur.fetchall()}
 
     def get_fl(self, rid):
         self.cur.execute("SELECT rid2 FROM friends where rid1='%s'" % rid)
         return {item[0] for item in self.cur.fetchall()}
 
-    def _sql_status(self,record,rid=None):
-        pageStyle='status'
-        if record == {}:
-            return []
-        sqls=[]
-        for statusId,stat in record.items():
-            val_stat="statusId='{}'".format(statusId)
-            for tag,value in stat.items():
-                if value is not None:
-                    value=value.replace("\\","\\\\").replace("'","\\'").rstrip('\\')#format ' and \ 
-                val_stat += ",{}='{}'".format(tag,value)
-            sqls.append("insert into {} set {}".format(self.table_name[pageStyle],val_stat))
-        return sqls
+    def get_status(self, rid):
+        self.cur.execute("SELECT status_id FROM status_raw where rid='%s'" % rid)
+        return {item[0] for item in self.cur.fetchall()}
 
     def _sql_profile(self,record,rid=None):
         pageStyle='profile'
@@ -93,13 +109,16 @@ if __name__ == '__main__':
     test_cookie = raw_input('Input cookie(document.cookie): ')
     rr = renren(test_cookie)
     rid = rr.renrenId()
-    target_id = '336283681'
+    target_id = '292611424'
     print rid
-    record = rr.friendList(target_id)
+    # record = rr.friendList(target_id)
+    record = rr.status(target_id)
     print '%d got' % len(record)
 
     repo = repo_mysql()
-    print repo.save_fl(rid, target_id, record)
-    print 'friends of rid: %s' % len(repo.get_fl(target_id))
-    # print 'searched: %s' % ','.join(repo.get_fl_searched())
+    # print repo.save_fl(rid, target_id, record)
+    print repo.save_status(rid, target_id, record)
+    #print 'friends of rid: %s' % len(repo.get_fl(target_id))
+    print 'status of rid: %s' % len(repo.get_status(target_id))
+    print 'searched: %s' % ','.join(repo.get_status_searched())
 
