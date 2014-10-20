@@ -50,7 +50,7 @@ class renren:
         self.m_log.info('request {} of {}'.format('friendList', rid))
         return self.requestIter(urlPtn, itemPtn, maxPages, nResend)
 
-    def status(self, rid, maxPages=100):
+    def status(self, rid, maxPages=1000):
         urlPtn = "http://status.renren.com/status?curpage={}&id=" + rid + "&__view=async-html"
         itemPtn = re.compile(r'<li data-wiki\W* id="status-(\d+)">(.*?)</li>', re.DOTALL)
         self.m_log.info('request {} of {}'.format('status', rid))
