@@ -31,7 +31,8 @@ class spider:
         self.dl = downloader.renren(cookie)
         self.repo = repo_mysql.repo_mysql()
         self.login_id = self.dl.renrenId()
-        self.fl_searched = self.repo.get_fl_searched()
+        self.fl_searched = self.repo.get_fl_searched(self.login_id)
+        self.status_searched = self.repo.get_status_searched(self.login_id)
         self.log = debug_log()
 
     def getNet1(self, orig_id):
@@ -68,14 +69,27 @@ class spider:
         print('{} Done! net2 of {}, forbidden: {}'.format(time.strftime('%H:%M:%S',time.localtime()), orig_id, n_forbidden))
         return n_forbidden
 
-    def getStatus_friend(self,orig_id='410941086'):
-        pageStyle='status'
-        if pageStyle not in self.searched:
-            self.searched[pageStyle]=self.repo.getSearched(pageStyle)
-        friends=self.getNet1(orig_id)
-        toSearch=(friends|{orig_id})-self.searched[pageStyle]
-        print('{} {} of {},toSearch/total:{}/{}'.format(time.strftime('%H:%M:%S',time.localtime()),'friends\' status',orig_id,len(toSearch),len(friends)+1))
-        self.seq_process(toSearch,pageStyle)
+    def getStatus_friend(self, orig_id):
+        n_forbidden = 0
+        friends = self.getNet1(orig_id)
+        friends.add(orig_id)
+        toSearch = friends - self.status_searched
+        print('{} {} of {}, toSearch/total: {}/{}'.format(time.strftime('%H:%M:%S', time.localtime()), 'friends\' status', orig_id, len(toSearch), len(friends)+1))
+        for i, rid in zip(range(1, len(toSearch)+1), toSearch):
+            record = self.dl.status(rid)
+            if record is None:
+                self.log.error('{}, fail to download status.'.format(rid))
+            else:
+                saved = self.repo.save_status(self.login_id, rid, record)
+                log_text = '{}/{}, saved/download: {}/{}, status of {}'.format(i, len(toSearch), saved, len(record), rid)
+                if saved > 0:
+                    self.log.info(log_text)
+                    self.status_searched.add(rid)
+                else:
+                    n_forbidden += 1
+                    self.log.error(log_text)
+        print('{} Done! friends\' status of {}, forbidden: {}'.format(time.strftime('%H:%M:%S',time.localtime()), orig_id, n_forbidden))
+        return n_forbidden
 
     def getProfile_friend(self,orig_id='410941086'):
         pageStyle='profile'
@@ -93,7 +107,8 @@ if __name__ == '__main__':
     runner = spider(test_cookie)
 
     # start by login id
-    friends = runner.getNet1(runner.login_id)
-    for orig_id in friends:
-        runner.getNet2(orig_id)
+    #friends = runner.getNet1(runner.login_id)
+    #for orig_id in friends:
+    #    runner.getNet2(orig_id)
 
+    runner.getStatus_friend(runner.login_id)
