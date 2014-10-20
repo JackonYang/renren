@@ -87,15 +87,18 @@ def saveFriends(rid, friends, filename, file_encoding='UTF-8'):
 
 
 if __name__ == '__main__':
-    cookies = raw_input('Please input cookies(get from browser by document.cookie): ')
-    rr = renren(cookies)
-    rid = rr.renrenId()
-    friends = rr.friendList(rid)
-
-    file_encoding = 'UTF-8'
-    filename = 'friendlist_%s.txt' % rid
-    saveFriends(rid, friends, filename, file_encoding)
-    print('\nDone! {} friends got. saved in {}'.format(max(len(friends)-1, 0), filename))
-    # self.headers['Cookie'] = raw_input('Please input cookie(document.cookie): ')
-    # if False: #user.lower() == 'cookie':
-            #password = raw_input('Please input your password: ')
+    cookies = raw_input('Please input cookies(document.cookie): ')
+    if not cookies:
+        print 'Error. cookie is None'
+    else:
+        rr = renren(cookies)
+        rid = rr.renrenId()
+	if rid is None:
+            print "Error. unavailable cookie"
+	else:
+            friends = rr.friendList(rid)
+    
+            file_encoding = 'UTF-8'
+            filename = 'friendlist_%s.txt' % rid
+            saveFriends(rid, friends, filename, file_encoding)
+            print('\nDone! {} friends got. saved in {}'.format(max(len(friends)-1, 0), filename))
