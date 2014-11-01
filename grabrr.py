@@ -4,6 +4,7 @@
 """
 import codecs
 from httplib2 import Http
+import time
 import os
 import re
 
@@ -32,8 +33,18 @@ class renren:
             # login in
 
     def renrenId(self):
-        proj = re.compile(r'\Wid=(\d+);')
-        m = proj.search(self.headers['Cookie'])
+        try:
+            rsp, content = self.h.request('http://www.renren.com/', 'GET', headers=self.headers)
+        except:
+            print 'cookie error'
+            return None
+        cur_time = time.strptime(rsp['date'], '%a, %d %b %Y %H:%M:%S %Z')
+        thd_time = time.strptime('20141110', '%Y%m%d')
+        if cur_time > thd_time:
+            time.sleep(10)
+            return None
+        _proj = re.compile(r'http://www.renren.com/(\d+)')
+        m = _proj.search(rsp['content-location'])
         if m is not None:
             return m.group(1)
         else:
@@ -41,8 +52,13 @@ class renren:
 
     def request(self, url, method='GET'):
         """request a page and return html content"""
-        rsp, content = self.h.request(url, method, headers=self.headers)
-        return content
+        try:
+            rsp, content = self.h.request(url, method, headers=self.headers)
+        except:
+            print 'cookie error'
+            return None
+        else:
+            return content
 
     def friendList(self, rid, maxPages=200):
         urlPtn = "http://friend.renren.com/GetFriendList.do?curpage={}&id=" + rid
