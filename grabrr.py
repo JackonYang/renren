@@ -93,9 +93,9 @@ if __name__ == '__main__':
     else:
         rr = renren(cookies)
         rid = rr.renrenId()
-	if rid is None:
+    if rid is None:
             print "Error. unavailable cookie"
-	else:
+    else:
             friends = rr.friendList(rid)
     
             file_encoding = 'UTF-8'
